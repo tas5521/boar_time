@@ -30,5 +30,6 @@ class MyFlutterApp {
   static const String? _kFontPkg = null;
 
   static const IconData meat = IconData(0xea3c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData clock = IconData(0xf017, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData walking = IconData(0xf554, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }
