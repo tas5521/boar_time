@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:boar_time/view/view_parts/show_year_month_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,9 +19,28 @@ class ButcheringTimeView extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        actions: [showYearMonthPickerButton(context, year, month)],
+        actions: [
+          showYearMonthPickerButton(
+            context,
+            onPressed: () async {
+              final now = DateTime.now();
+              final result = await showYearMonthPicker(
+                context,
+                now.year,
+                now.month,
+              );
+              if (result != null) {
+                year.value = result['year']!;
+                month.value = result['month']!;
+              }
+            },
+          ),
+        ],
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('解体時間'),
+        title: const Text(
+          '解体時間',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: Center(
         child: Column(
@@ -88,98 +107,6 @@ class ButcheringTimeView extends HookConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget showYearMonthPickerButton(
-    BuildContext context,
-    ValueNotifier<int> year,
-    ValueNotifier<int> month,
-  ) {
-    return ElevatedButton(
-      onPressed: () async {
-        final now = DateTime.now();
-        final result = await showYearMonthPicker(context, now.year, now.month);
-        if (result != null) {
-          year.value = result['year']!;
-          month.value = result['month']!;
-        }
-      },
-      child: Icon(Icons.calendar_month, size: 20.w),
-    );
-  }
-
-  Future<Map<String, int>?> showYearMonthPicker(
-    BuildContext context,
-    int initialYear,
-    int initialMonth,
-  ) {
-    final years = List.generate(100, (i) => 2025 + i);
-    final months = List.generate(12, (i) => i + 1);
-
-    int selectedYear = initialYear;
-    int selectedMonth = initialMonth;
-
-    final yearController = FixedExtentScrollController(
-      initialItem: years.indexOf(initialYear),
-    );
-    final monthController = FixedExtentScrollController(
-      initialItem: initialMonth - 1,
-    );
-
-    return showDialog<Map<String, int>>(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          title: const Text("年月を選択"),
-          content: SizedBox(
-            height: 200.w,
-            child: Row(
-              children: [
-                Expanded(
-                  child: CupertinoPicker(
-                    scrollController: yearController,
-                    itemExtent: 36,
-                    onSelectedItemChanged: (index) {
-                      selectedYear = years[index];
-                    },
-                    children: years
-                        .map((y) => Center(child: Text("$y年")))
-                        .toList(),
-                  ),
-                ),
-                Expanded(
-                  child: CupertinoPicker(
-                    scrollController: monthController,
-                    itemExtent: 36,
-                    onSelectedItemChanged: (index) {
-                      selectedMonth = months[index];
-                    },
-                    children: months
-                        .map((m) => Center(child: Text("$m月")))
-                        .toList(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("キャンセル"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, {
-                  "year": selectedYear,
-                  "month": selectedMonth,
-                });
-              },
-              child: const Text("決定"),
-            ),
-          ],
-        );
-      },
     );
   }
 }
