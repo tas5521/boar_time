@@ -9,7 +9,7 @@ class StampingView extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('打刻'),
+        title: Text('打刻', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
