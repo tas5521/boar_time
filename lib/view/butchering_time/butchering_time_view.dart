@@ -1,3 +1,4 @@
+import 'package:boar_time/view/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/view/view_parts/show_year_month_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -88,12 +89,39 @@ class ButcheringTimeView extends HookConsumerWidget {
                         ),
                         DataCell(
                           Text('08:00', style: TextStyle(fontSize: 16.sp)),
+                          onTap: () {
+                            // TODO: Isar実装後、時間の初期値の取り方を修正
+                            final existingTime = TimeOfDay(hour: 8, minute: 0);
+                            showEditTimeDialog(
+                              context,
+                              label: '出勤時間',
+                              date: date,
+                              onPressed: (_) {},
+                              initialTime: existingTime,
+                            );
+                          },
                         ),
                         DataCell(
                           Text('17:00', style: TextStyle(fontSize: 16.sp)),
+                          onTap: () {
+                            showEditTimeDialog(
+                              context,
+                              label: '退勤時間',
+                              date: date,
+                              onPressed: (_) {},
+                            );
+                          },
                         ),
                         DataCell(
                           Text('01:00', style: TextStyle(fontSize: 16.sp)),
+                          onTap: () {
+                            showEditTimeDialog(
+                              context,
+                              label: '休憩時間',
+                              date: date,
+                              onPressed: (_) {},
+                            );
+                          },
                         ),
                         DataCell(
                           Text('08:00', style: TextStyle(fontSize: 16.sp)),
