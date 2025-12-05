@@ -1,5 +1,6 @@
+import 'package:boar_time/icons/my_flutter_app_icons.dart';
 import 'package:boar_time/view/view_parts/edit_time_dialog.dart';
-import 'package:boar_time/view/view_parts/iconActionButton.dart';
+import 'package:boar_time/view/view_parts/icon_action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,6 +19,16 @@ class ButcheringTimeView extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          iconActionButton(
+            context,
+            onPressed: () async {
+              final result = await showConfirmExportDialog(context);
+              if (result == true) {
+                // 勤務表出力処理
+              }
+            },
+            icon: Icon(MyFlutterApp.doc, size: 24.w),
+          ),
           iconActionButton(
             context,
             onPressed: () async {

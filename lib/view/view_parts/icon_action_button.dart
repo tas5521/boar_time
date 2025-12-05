@@ -83,3 +83,25 @@ Future<Map<String, int>?> showYearMonthPicker(
     },
   );
 }
+
+Future<bool?> showConfirmExportDialog(BuildContext context) {
+  return showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('確認'),
+        content: Text('勤務表を出力しますか？', style: TextStyle(fontSize: 16.sp)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('キャンセル'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('出力する'),
+          ),
+        ],
+      );
+    },
+  );
+}

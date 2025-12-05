@@ -11,7 +11,7 @@
 ///      fonts:
 ///       - asset: fonts/MyFlutterApp.ttf
 ///
-/// 
+///
 /// * RPG Awesome, Copyright (c) 2014, Daniela Howe
 ///         Author:    Daniela Howe & Ivan Montiel
 ///         License:   SIL (http://scripts.sil.org/OFL)
@@ -20,6 +20,10 @@
 ///         Author:    Dave Gandy
 ///         License:   SIL (https://github.com/FortAwesome/Font-Awesome/blob/master/LICENSE.txt)
 ///         Homepage:  http://fortawesome.github.com/Font-Awesome/
+/// * MFG Labs, Copyright (C) 2012 by Daniel Bruce
+///         Author:    MFG Labs
+///         License:   SIL (http://scripts.sil.org/OFL)
+///         Homepage:  http://www.mfglabs.com/
 ///
 import 'package:flutter/widgets.dart';
 
@@ -29,7 +33,24 @@ class MyFlutterApp {
   static const _kFontFam = 'MyFlutterApp';
   static const String? _kFontPkg = null;
 
-  static const IconData meat = IconData(0xea3c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData clock = IconData(0xf017, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData walking = IconData(0xf554, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData meat = IconData(
+    0xea3c,
+    fontFamily: _kFontFam,
+    fontPackage: _kFontPkg,
+  );
+  static const IconData clock = IconData(
+    0xf017,
+    fontFamily: _kFontFam,
+    fontPackage: _kFontPkg,
+  );
+  static const IconData doc = IconData(
+    0xf04a,
+    fontFamily: _kFontFam,
+    fontPackage: _kFontPkg,
+  );
+  static const IconData walking = IconData(
+    0xf554,
+    fontFamily: _kFontFam,
+    fontPackage: _kFontPkg,
+  );
 }
