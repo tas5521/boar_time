@@ -2,14 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-Widget showYearMonthPickerButton(
+Widget iconActionButton(
   BuildContext context, {
   required Future<void> Function() onPressed,
+  required Icon icon,
 }) {
-  return IconButton(
-    onPressed: onPressed,
-    icon: Icon(Icons.calendar_month, size: 24.w),
-  );
+  return IconButton(onPressed: onPressed, icon: icon);
 }
 
 Future<Map<String, int>?> showYearMonthPicker(
