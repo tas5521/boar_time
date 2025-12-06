@@ -8,21 +8,21 @@ Future<void> showEditBreakDialog(
   required DateTime date,
   TimeOfDay? initialStart,
   TimeOfDay? initialEnd,
-  required FutureOr<void> Function({
-    required TimeOfDay breakStart,
-    required TimeOfDay breakEnd,
-  }) onPressed,
+  required FutureOr<void> Function({TimeOfDay? breakStart, TimeOfDay? breakEnd})
+  onPressed,
 }) {
   final formattedDate = DateFormat('yyyy/MM/dd').format(date);
 
   return showDialog(
     context: context,
     builder: (_) {
-      TimeOfDay start = initialStart ?? TimeOfDay(hour: 12, minute: 0);
-      TimeOfDay end = initialEnd ?? TimeOfDay(hour: 13, minute: 0);
+      TimeOfDay? start = initialStart;
+      TimeOfDay? end = initialEnd;
 
       return StatefulBuilder(
         builder: (context, setState) {
+          String formatTime(TimeOfDay? t) => t?.format(context) ?? '--:--';
+
           return AlertDialog(
             title: const Text('休憩時間の編集'),
             content: SizedBox(
@@ -41,24 +41,30 @@ Future<void> showEditBreakDialog(
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '休憩開始',
-                        style: TextStyle(fontSize: 16.sp),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          final picked = await showTimePicker(
-                            context: context,
-                            initialTime: start,
-                          );
-                          if (picked != null) {
-                            setState(() => start = picked);
-                          }
-                        },
-                        child: Text(
-                          start.format(context),
-                          style: TextStyle(fontSize: 16.sp),
-                        ),
+                      Text('休憩開始', style: TextStyle(fontSize: 16.sp)),
+                      Row(
+                        children: [
+                          TextButton(
+                            onPressed: () async {
+                              final picked = await showTimePicker(
+                                context: context,
+                                initialTime:
+                                    start ?? TimeOfDay(hour: 12, minute: 0),
+                              );
+                              if (picked != null) {
+                                setState(() => start = picked);
+                              }
+                            },
+                            child: Text(
+                              formatTime(start),
+                              style: TextStyle(fontSize: 16.sp),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () => setState(() => start = null),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -66,24 +72,30 @@ Future<void> showEditBreakDialog(
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '休憩終了',
-                        style: TextStyle(fontSize: 16.sp),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          final picked = await showTimePicker(
-                            context: context,
-                            initialTime: end,
-                          );
-                          if (picked != null) {
-                            setState(() => end = picked);
-                          }
-                        },
-                        child: Text(
-                          end.format(context),
-                          style: TextStyle(fontSize: 16.sp),
-                        ),
+                      Text('休憩終了', style: TextStyle(fontSize: 16.sp)),
+                      Row(
+                        children: [
+                          TextButton(
+                            onPressed: () async {
+                              final picked = await showTimePicker(
+                                context: context,
+                                initialTime:
+                                    end ?? TimeOfDay(hour: 13, minute: 0),
+                              );
+                              if (picked != null) {
+                                setState(() => end = picked);
+                              }
+                            },
+                            child: Text(
+                              formatTime(end),
+                              style: TextStyle(fontSize: 16.sp),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () => setState(() => end = null),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -98,9 +110,7 @@ Future<void> showEditBreakDialog(
               ElevatedButton(
                 onPressed: () async {
                   await onPressed(breakStart: start, breakEnd: end);
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                  }
+                  if (context.mounted) Navigator.pop(context);
                 },
                 child: const Text('保存'),
               ),

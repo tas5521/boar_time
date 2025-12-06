@@ -27,6 +27,71 @@ class ButcheringTimeNotifier
     }
   }
 
+  Future<void> upsert(int year, int month, WorkRecord rec) async {
+    state = const AsyncValue.loading();
+    try {
+      await WorkRecordManager.upsertByDate(
+        rec,
+        upsertType: UpsertType.butchering,
+      );
+      final records = await _loadRecords(year, month);
+      final converted = _convertRecords(year, month, records);
+      state = AsyncValue.data(converted);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  Future<void> clearButcheringStartTime(
+    int year,
+    int month,
+    DateTime date,
+  ) async {
+    state = const AsyncValue.loading();
+    try {
+      await WorkRecordManager.clearButcheringStartTime(date);
+      final records = await _loadRecords(year, month);
+      final converted = _convertRecords(year, month, records);
+      state = AsyncValue.data(converted);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  Future<void> clearButcheringEndTime(
+    int year,
+    int month,
+    DateTime date,
+  ) async {
+    state = const AsyncValue.loading();
+    try {
+      await WorkRecordManager.clearButcheringEndTime(date);
+      final records = await _loadRecords(year, month);
+      final converted = _convertRecords(year, month, records);
+      state = AsyncValue.data(converted);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  Future<void> updateBreak(
+    int year,
+    int month,
+    DateTime date,
+    DateTime? breakStart,
+    DateTime? breakEnd,
+  ) async {
+    state = const AsyncValue.loading();
+    try {
+      await WorkRecordManager.updateBreak(date, breakStart, breakEnd);
+      final records = await _loadRecords(year, month);
+      final converted = _convertRecords(year, month, records);
+      state = AsyncValue.data(converted);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
   Future<List<WorkRecord>> _loadRecords(int year, int month) async {
     final all = await WorkRecordManager.getAll();
     return all

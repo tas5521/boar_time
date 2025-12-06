@@ -9,6 +9,7 @@ Future<void> showEditTimeDialog(
   required DateTime date,
   TimeOfDay? initialTime,
   required FutureOr<void> Function(TimeOfDay selectedTime) onPressed,
+  FutureOr<void> Function()? onDelete,
 }) {
   final formattedDate = DateFormat('yyyy/MM/dd').format(date);
 
@@ -57,15 +58,22 @@ Future<void> showEditTimeDialog(
             ),
             actions: [
               TextButton(
+                onPressed: () async {
+                  if (onDelete != null) {
+                    await onDelete();
+                  }
+                  if (context.mounted) Navigator.pop(context);
+                },
+                child: const Text('削除', style: TextStyle(color: Colors.red)),
+              ),
+              TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text('キャンセル'),
               ),
               ElevatedButton(
                 onPressed: () async {
                   await onPressed(selectedTime);
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                  }
+                  if (context.mounted) Navigator.pop(context);
                 },
                 child: const Text('保存'),
               ),

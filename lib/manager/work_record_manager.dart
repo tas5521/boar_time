@@ -33,6 +33,56 @@ class WorkRecordManager {
     await isar.writeTxn(() => isar.workRecords.put(record));
   }
 
+  static Future<void> clearButcheringStartTime(DateTime date) async {
+    final record = await getByDate(date);
+    if (record != null) {
+      record.startTime = null;
+      await update(record);
+    }
+  }
+
+  static Future<void> clearButcheringEndTime(DateTime date) async {
+    final record = await getByDate(date);
+    if (record != null) {
+      record.endTime = null;
+      await update(record);
+    }
+  }
+
+  static Future<void> clearBreakStart(DateTime date) async {
+    final targetDate = DateTime(date.year, date.month, date.day);
+    final record = await getByDate(targetDate);
+    if (record != null) {
+      record.breakStart = null;
+      await update(record);
+    }
+  }
+
+  static Future<void> clearBreakEnd(DateTime date) async {
+    final targetDate = DateTime(date.year, date.month, date.day);
+    final record = await getByDate(targetDate);
+    if (record != null) {
+      record.breakEnd = null;
+      await update(record);
+    }
+  }
+
+  static Future<void> clearPatrolStart(DateTime date) async {
+    final record = await getByDate(date);
+    if (record != null) {
+      record.patrolStart = null;
+      await update(record);
+    }
+  }
+
+  static Future<void> clearPatrolEnd(DateTime date) async {
+    final record = await getByDate(date);
+    if (record != null) {
+      record.patrolEnd = null;
+      await update(record);
+    }
+  }
+
   static Future<void> delete(int id) async {
     await isar.writeTxn(() => isar.workRecords.delete(id));
   }
@@ -65,8 +115,8 @@ class WorkRecordManager {
 
   static Future<void> updateBreak(
     DateTime date,
-    DateTime breakStart,
-    DateTime breakEnd,
+    DateTime? breakStart,
+    DateTime? breakEnd,
   ) async {
     final targetDate = DateTime(date.year, date.month, date.day);
     final record = await getByDate(targetDate);

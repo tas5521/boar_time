@@ -25,5 +25,8 @@ class ButcheringTimeState with _$ButcheringTimeState {
     return end!.difference(start!);
   }
 
-  Duration get actualDuration => totalDuration - breakDuration;
+  Duration get actualDuration {
+    if (start == null || end == null) return Duration.zero;
+    return totalDuration - breakDuration;
+  }
 }

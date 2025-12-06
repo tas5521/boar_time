@@ -1,5 +1,4 @@
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
-import 'package:boar_time/manager/work_record_manager.dart';
 import 'package:boar_time/model/butchering_time_state/butchering_time_state.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:boar_time/notifier/butchering/butchering_time_notifier.dart';
@@ -25,8 +24,8 @@ class ButcheringTimeView extends HookConsumerWidget {
     final butcheringTimeState = ref.watch(butcheringTimeNotifierProvider);
 
     useEffect(() {
-      Future.microtask(() {
-        ref
+      Future.microtask(() async {
+        await ref
             .read(butcheringTimeNotifierProvider.notifier)
             .loadMonth(year.value, month.value);
       });
@@ -156,15 +155,22 @@ class ButcheringTimeView extends HookConsumerWidget {
                                   breakStart: row.breakStart,
                                   breakEnd: row.breakEnd,
                                 );
-                                await WorkRecordManager.upsertByDate(
-                                  rec,
-                                  upsertType: UpsertType.butchering,
-                                );
-                                ref
+                                await ref
                                     .read(
                                       butcheringTimeNotifierProvider.notifier,
                                     )
-                                    .loadMonth(year.value, month.value);
+                                    .upsert(year.value, month.value, rec);
+                              },
+                              onDelete: () async {
+                                await ref
+                                    .read(
+                                      butcheringTimeNotifierProvider.notifier,
+                                    )
+                                    .clearButcheringStartTime(
+                                      year.value,
+                                      month.value,
+                                      date,
+                                    );
                               },
                             );
                           },
@@ -202,15 +208,22 @@ class ButcheringTimeView extends HookConsumerWidget {
                                   breakStart: row.breakStart,
                                   breakEnd: row.breakEnd,
                                 );
-                                await WorkRecordManager.upsertByDate(
-                                  rec,
-                                  upsertType: UpsertType.butchering,
-                                );
-                                ref
+                                await ref
                                     .read(
                                       butcheringTimeNotifierProvider.notifier,
                                     )
-                                    .loadMonth(year.value, month.value);
+                                    .upsert(year.value, month.value, rec);
+                              },
+                              onDelete: () async {
+                                await ref
+                                    .read(
+                                      butcheringTimeNotifierProvider.notifier,
+                                    )
+                                    .clearButcheringEndTime(
+                                      year.value,
+                                      month.value,
+                                      date,
+                                    );
                               },
                             );
                           },
@@ -238,43 +251,40 @@ class ButcheringTimeView extends HookConsumerWidget {
                                     initialEnd: row.breakEnd != null
                                         ? TimeOfDay.fromDateTime(row.breakEnd!)
                                         : null,
-                                    onPressed:
-                                        ({
-                                          required breakStart,
-                                          required breakEnd,
-                                        }) async {
-                                          final start = DateTime(
-                                            row.date.year,
-                                            row.date.month,
-                                            row.date.day,
-                                            breakStart.hour,
-                                            breakStart.minute,
-                                          );
+                                    onPressed: ({breakStart, breakEnd}) async {
+                                      final start = breakStart != null
+                                          ? DateTime(
+                                              row.date.year,
+                                              row.date.month,
+                                              row.date.day,
+                                              breakStart.hour,
+                                              breakStart.minute,
+                                            )
+                                          : null;
 
-                                          final end = DateTime(
-                                            row.date.year,
-                                            row.date.month,
-                                            row.date.day,
-                                            breakEnd.hour,
-                                            breakEnd.minute,
-                                          );
+                                      final end = breakEnd != null
+                                          ? DateTime(
+                                              row.date.year,
+                                              row.date.month,
+                                              row.date.day,
+                                              breakEnd.hour,
+                                              breakEnd.minute,
+                                            )
+                                          : null;
 
-                                          await WorkRecordManager.updateBreak(
+                                      await ref
+                                          .read(
+                                            butcheringTimeNotifierProvider
+                                                .notifier,
+                                          )
+                                          .updateBreak(
+                                            year.value,
+                                            month.value,
                                             row.date,
                                             start,
                                             end,
                                           );
-
-                                          ref
-                                              .read(
-                                                butcheringTimeNotifierProvider
-                                                    .notifier,
-                                              )
-                                              .loadMonth(
-                                                year.value,
-                                                month.value,
-                                              );
-                                        },
+                                    },
                                   );
                                 },
                         ),
