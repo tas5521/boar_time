@@ -33,7 +33,10 @@ class StampingNotifier extends Notifier<AsyncValue<Null>> {
     state = AsyncValue.loading();
     final record = await _getOrCreateTodayRecord();
     record.startTime = _nowRounded();
-    await WorkRecordManager.upsertByDate(record);
+    await WorkRecordManager.upsertByDate(
+      record,
+      upsertType: UpsertType.butchering,
+    );
     state = AsyncValue.data(null);
   }
 
@@ -41,7 +44,10 @@ class StampingNotifier extends Notifier<AsyncValue<Null>> {
     state = AsyncValue.loading();
     final record = await _getOrCreateTodayRecord();
     record.endTime = _nowRounded();
-    await WorkRecordManager.upsertByDate(record);
+    await WorkRecordManager.upsertByDate(
+      record,
+      upsertType: UpsertType.butchering,
+    );
     state = AsyncValue.data(null);
   }
 
@@ -49,7 +55,10 @@ class StampingNotifier extends Notifier<AsyncValue<Null>> {
     state = AsyncValue.loading();
     final record = await _getOrCreateTodayRecord();
     record.breakStart = _nowRounded();
-    await WorkRecordManager.upsertByDate(record);
+    await WorkRecordManager.upsertByDate(
+      record,
+      upsertType: UpsertType.butchering,
+    );
     state = AsyncValue.data(null);
   }
 
@@ -57,7 +66,10 @@ class StampingNotifier extends Notifier<AsyncValue<Null>> {
     state = AsyncValue.loading();
     final record = await _getOrCreateTodayRecord();
     record.breakEnd = _nowRounded();
-    await WorkRecordManager.upsertByDate(record);
+    await WorkRecordManager.upsertByDate(
+      record,
+      upsertType: UpsertType.butchering,
+    );
     state = AsyncValue.data(null);
   }
 
@@ -65,7 +77,7 @@ class StampingNotifier extends Notifier<AsyncValue<Null>> {
     state = AsyncValue.loading();
     final record = await _getOrCreateTodayRecord();
     record.patrolStart = _nowRounded();
-    await WorkRecordManager.upsertByDate(record);
+    await WorkRecordManager.upsertByDate(record, upsertType: UpsertType.patrol);
     state = AsyncValue.data(null);
   }
 
@@ -73,7 +85,7 @@ class StampingNotifier extends Notifier<AsyncValue<Null>> {
     state = AsyncValue.loading();
     final record = await _getOrCreateTodayRecord();
     record.patrolEnd = _nowRounded();
-    await WorkRecordManager.upsertByDate(record);
+    await WorkRecordManager.upsertByDate(record, upsertType: UpsertType.patrol);
     state = AsyncValue.data(null);
   }
 }

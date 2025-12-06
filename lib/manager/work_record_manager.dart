@@ -2,6 +2,8 @@ import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
+enum UpsertType { butchering, patrol }
+
 class WorkRecordManager {
   static Isar? _isar;
 
@@ -9,20 +11,14 @@ class WorkRecordManager {
     if (_isar != null) return;
 
     final dir = await getApplicationDocumentsDirectory();
-    _isar = await Isar.open(
-      [WorkRecordSchema],
-      directory: dir.path,
-    );
+    _isar = await Isar.open([WorkRecordSchema], directory: dir.path);
   }
 
   static Isar get isar => _isar!;
 
   static Future<WorkRecord?> getByDate(DateTime date) async {
     final targetDate = DateTime(date.year, date.month, date.day);
-    return await isar.workRecords
-        .filter()
-        .dateEqualTo(targetDate)
-        .findFirst();
+    return await isar.workRecords.filter().dateEqualTo(targetDate).findFirst();
   }
 
   static Future<List<WorkRecord>> getAll() async {
@@ -45,19 +41,47 @@ class WorkRecordManager {
     await isar.writeTxn(() => isar.workRecords.clear());
   }
 
-  static Future<void> upsertByDate(WorkRecord newRecord) async {
+  static Future<void> upsertByDate(
+    WorkRecord newRecord, {
+    required UpsertType upsertType,
+  }) async {
     final exist = await getByDate(newRecord.date);
-
     if (exist == null) {
       await add(newRecord);
     } else {
-      exist.startTime = newRecord.startTime;
-      exist.endTime = newRecord.endTime;
-      exist.breakStart = newRecord.breakStart;
-      exist.breakEnd = newRecord.breakEnd;
-      exist.patrolStart = newRecord.patrolStart;
-      exist.patrolEnd = newRecord.patrolEnd;
+      switch (upsertType) {
+        case UpsertType.butchering:
+          exist.startTime = newRecord.startTime;
+          exist.endTime = newRecord.endTime;
+          exist.breakStart = newRecord.breakStart;
+          exist.breakEnd = newRecord.breakEnd;
+        case UpsertType.patrol:
+          exist.patrolStart = newRecord.patrolStart;
+          exist.patrolEnd = newRecord.patrolEnd;
+      }
       await update(exist);
+    }
+  }
+
+  static Future<void> updateBreak(
+    DateTime date,
+    DateTime breakStart,
+    DateTime breakEnd,
+  ) async {
+    final targetDate = DateTime(date.year, date.month, date.day);
+    final record = await getByDate(targetDate);
+    if (record == null) {
+      await add(
+        WorkRecord(
+          date: targetDate,
+          breakStart: breakStart,
+          breakEnd: breakEnd,
+        ),
+      );
+    } else {
+      record.breakStart = breakStart;
+      record.breakEnd = breakEnd;
+      await update(record);
     }
   }
 }
