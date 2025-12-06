@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/view/view_parts/time_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,31 +24,59 @@ class StampingView extends HookConsumerWidget {
             SizedBox(width: 360.w, child: const TimeDisplay(fontSize: 24)),
             Column(
               spacing: 32.w,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
                   spacing: 16.w,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    customButton('解体 出勤', onPressed: () {}),
-                    customButton('解体 退勤', onPressed: () {}),
+                    customButton(
+                      '解体 出勤',
+                      onPressed: () => ref
+                          .read(stampingNotifierProvider.notifier)
+                          .setStartTime(),
+                    ),
+                    customButton(
+                      '解体 退勤',
+                      onPressed: () => ref
+                          .read(stampingNotifierProvider.notifier)
+                          .setEndTime(),
+                    ),
                   ],
                 ),
                 Row(
                   spacing: 16.w,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    customButton('休憩 開始', onPressed: () {}),
-                    customButton('休憩 終了', onPressed: () {}),
+                    customButton(
+                      '休憩 開始',
+                      onPressed: () => ref
+                          .read(stampingNotifierProvider.notifier)
+                          .setBreakStart(),
+                    ),
+                    customButton(
+                      '休憩 終了',
+                      onPressed: () => ref
+                          .read(stampingNotifierProvider.notifier)
+                          .setBreakEnd(),
+                    ),
                   ],
                 ),
                 Row(
                   spacing: 16.w,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    customButton('見回り 開始', onPressed: () {}),
-                    customButton('見回り 終了', onPressed: () {}),
+                    customButton(
+                      '見回り 開始',
+                      onPressed: () => ref
+                          .read(stampingNotifierProvider.notifier)
+                          .setPatrolStart(),
+                    ),
+                    customButton(
+                      '見回り 終了',
+                      onPressed: () => ref
+                          .read(stampingNotifierProvider.notifier)
+                          .setPatrolEnd(),
+                    ),
                   ],
                 ),
               ],
