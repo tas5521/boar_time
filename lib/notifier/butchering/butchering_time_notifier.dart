@@ -49,7 +49,11 @@ class ButcheringTimeNotifier
   ) async {
     state = const AsyncValue.loading();
     try {
-      await WorkRecordManager.clearButcheringStartTime(date);
+      final record = await WorkRecordManager.getByDate(date);
+      if (record != null) {
+        record.startTime = null;
+        await WorkRecordManager.update(record);
+      }
       final records = await _loadRecords(year, month);
       final converted = _convertRecords(year, month, records);
       state = AsyncValue.data(converted);
@@ -65,7 +69,11 @@ class ButcheringTimeNotifier
   ) async {
     state = const AsyncValue.loading();
     try {
-      await WorkRecordManager.clearButcheringEndTime(date);
+      final record = await WorkRecordManager.getByDate(date);
+      if (record != null) {
+        record.endTime = null;
+        await WorkRecordManager.update(record);
+      }
       final records = await _loadRecords(year, month);
       final converted = _convertRecords(year, month, records);
       state = AsyncValue.data(converted);
@@ -112,10 +120,10 @@ class ButcheringTimeNotifier
       final date = DateTime(year, month, day);
 
       final rec = records.firstWhere(
-        (e) =>
-            e.date.year == date.year &&
-            e.date.month == date.month &&
-            e.date.day == date.day,
+        (r) =>
+            r.date.year == date.year &&
+            r.date.month == date.month &&
+            r.date.day == date.day,
         orElse: () => WorkRecord(date: date),
       );
 
@@ -129,7 +137,6 @@ class ButcheringTimeNotifier
       );
 
       cumulative += state.actualDuration;
-
       state = state.copyWith(cumulativeDuration: cumulative);
 
       list.add(state);

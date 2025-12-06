@@ -33,22 +33,6 @@ class WorkRecordManager {
     await isar.writeTxn(() => isar.workRecords.put(record));
   }
 
-  static Future<void> clearButcheringStartTime(DateTime date) async {
-    final record = await getByDate(date);
-    if (record != null) {
-      record.startTime = null;
-      await update(record);
-    }
-  }
-
-  static Future<void> clearButcheringEndTime(DateTime date) async {
-    final record = await getByDate(date);
-    if (record != null) {
-      record.endTime = null;
-      await update(record);
-    }
-  }
-
   static Future<void> clearBreakStart(DateTime date) async {
     final targetDate = DateTime(date.year, date.month, date.day);
     final record = await getByDate(targetDate);

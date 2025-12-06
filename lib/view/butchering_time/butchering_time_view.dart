@@ -96,7 +96,7 @@ class ButcheringTimeView extends HookConsumerWidget {
               child: SingleChildScrollView(
                 child: DataTable(
                   headingRowHeight: 0,
-                  columnSpacing: 12.w,
+                  columnSpacing: 10.w,
                   horizontalMargin: 12.w,
                   columns: const [
                     DataColumn(label: SizedBox()),
@@ -109,7 +109,20 @@ class ButcheringTimeView extends HookConsumerWidget {
                     final day = i + 1;
                     final date = DateTime(year.value, month.value, day);
                     final formattedDate = DateFormat('yyyy/MM/dd').format(date);
-                    final row = butcheringTimeState.value?[i];
+                    final row = butcheringTimeState.value?.firstWhere(
+                      (r) =>
+                          r.date.year == date.year &&
+                          r.date.month == date.month &&
+                          r.date.day == date.day,
+                      orElse: () => ButcheringTimeState(
+                        date: date,
+                        start: null,
+                        end: null,
+                        breakStart: null,
+                        breakEnd: null,
+                        cumulativeDuration: Duration.zero,
+                      ),
+                    );
                     return DataRow(
                       cells: [
                         DataCell(
@@ -125,7 +138,7 @@ class ButcheringTimeView extends HookConsumerWidget {
                         DataCell(
                           Container(
                             alignment: Alignment.center,
-                            width: 50.w,
+                            width: 52.w,
                             child: Text(
                               _fmt(row?.start),
                               style: TextStyle(fontSize: 16.sp),
@@ -178,7 +191,7 @@ class ButcheringTimeView extends HookConsumerWidget {
                         DataCell(
                           Container(
                             alignment: Alignment.center,
-                            width: 50.w,
+                            width: 52.w,
                             child: Text(
                               _fmt(row?.end),
                               style: TextStyle(fontSize: 16.sp),
@@ -231,7 +244,7 @@ class ButcheringTimeView extends HookConsumerWidget {
                         DataCell(
                           Container(
                             alignment: Alignment.center,
-                            width: 50.w,
+                            width: 52.w,
                             child: Text(
                               _fmtBreak(row),
                               style: TextStyle(fontSize: 16.sp),
@@ -291,7 +304,7 @@ class ButcheringTimeView extends HookConsumerWidget {
                         DataCell(
                           Container(
                             alignment: Alignment.center,
-                            width: 50.w,
+                            width: 52.w,
                             child: Text(
                               _fmtDuration(
                                 row?.cumulativeDuration ?? Duration.zero,
