@@ -17,11 +17,13 @@ class ButcheringTimeState with _$ButcheringTimeState {
 
   Duration get breakDuration {
     if (breakStart == null || breakEnd == null) return Duration.zero;
+    if (breakEnd!.isBefore(breakStart!)) return Duration.zero;
     return breakEnd!.difference(breakStart!);
   }
 
   Duration get totalDuration {
     if (start == null || end == null) return Duration.zero;
+    if (end!.isBefore(start!)) return Duration.zero;
     return end!.difference(start!);
   }
 
