@@ -39,33 +39,42 @@ Future<void> showEditTimeDialog(
                     style: TextStyle(fontSize: 16.sp),
                   ),
                   SizedBox(height: 12.w),
-                  ElevatedButton(
-                    onPressed: () async {
-                      final TimeOfDay? picked = await showTimePicker(
-                        context: context,
-                        initialTime: selectedTime,
-                      );
-                      if (picked != null) {
-                        setState(() {
-                          selectedTime = picked;
-                        });
-                      }
-                    },
-                    child: const Text('時間を選択する'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () async {
+                          final TimeOfDay? picked = await showTimePicker(
+                            context: context,
+                            initialTime: selectedTime,
+                          );
+                          if (picked != null) {
+                            setState(() {
+                              selectedTime = picked;
+                            });
+                          }
+                        },
+                        child: const Text('時間を選択する'),
+                      ),
+                      SizedBox(width: 20.w),
+                      TextButton(
+                        onPressed: () async {
+                          if (onDelete != null) {
+                            await onDelete();
+                          }
+                          if (context.mounted) Navigator.pop(context);
+                        },
+                        child: const Text(
+                          '削除',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
             actions: [
-              TextButton(
-                onPressed: () async {
-                  if (onDelete != null) {
-                    await onDelete();
-                  }
-                  if (context.mounted) Navigator.pop(context);
-                },
-                child: const Text('削除', style: TextStyle(color: Colors.red)),
-              ),
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text('キャンセル'),

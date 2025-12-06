@@ -60,9 +60,12 @@ Future<void> showEditBreakDialog(
                               style: TextStyle(fontSize: 16.sp),
                             ),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
+                          TextButton(
                             onPressed: () => setState(() => start = null),
+                            child: const Text(
+                              '削除',
+                              style: TextStyle(color: Colors.red),
+                            ),
                           ),
                         ],
                       ),
@@ -91,9 +94,12 @@ Future<void> showEditBreakDialog(
                               style: TextStyle(fontSize: 16.sp),
                             ),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
+                          TextButton(
                             onPressed: () => setState(() => end = null),
+                            child: const Text(
+                              '削除',
+                              style: TextStyle(color: Colors.red),
+                            ),
                           ),
                         ],
                       ),
