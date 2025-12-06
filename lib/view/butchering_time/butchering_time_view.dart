@@ -22,7 +22,11 @@ class ButcheringTimeView extends HookConsumerWidget {
           iconActionButton(
             context,
             onPressed: () async {
-              final result = await showConfirmExportDialog(context);
+              final result = await showConfirmExportDialog(
+                context,
+                title: '解体の勤務表の出力',
+                description: '勤務表を出力しますか？',
+              );
               if (result == true) {
                 // 勤務表出力処理
               }

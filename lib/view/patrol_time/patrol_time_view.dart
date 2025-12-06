@@ -1,3 +1,4 @@
+import 'package:boar_time/icons/my_flutter_app_icons.dart';
 import 'package:boar_time/view/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/view/view_parts/icon_action_button.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,20 @@ class PatrolTimeView extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          iconActionButton(
+            context,
+            onPressed: () async {
+              final result = await showConfirmExportDialog(
+                context,
+                title: '見回りの勤務表の出力',
+                description: '勤務表を出力しますか？',
+              );
+              if (result == true) {
+                // 勤務表出力処理
+              }
+            },
+            icon: Icon(MyFlutterApp.doc, size: 24.w),
+          ),
           iconActionButton(
             context,
             onPressed: () async {

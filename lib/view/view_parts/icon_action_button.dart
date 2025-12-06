@@ -84,13 +84,17 @@ Future<Map<String, int>?> showYearMonthPicker(
   );
 }
 
-Future<bool?> showConfirmExportDialog(BuildContext context) {
+Future<bool?> showConfirmExportDialog(
+  BuildContext context, {
+  required String title,
+  required String description,
+}) {
   return showDialog<bool>(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: const Text('確認'),
-        content: Text('勤務表を出力しますか？', style: TextStyle(fontSize: 16.sp)),
+        title: Text(title),
+        content: Text(description, style: TextStyle(fontSize: 16.sp)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
