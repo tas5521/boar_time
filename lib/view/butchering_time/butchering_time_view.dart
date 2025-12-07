@@ -76,19 +76,36 @@ class ButcheringTimeView extends HookConsumerWidget {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.fromLTRB(48.0.w, 12.0.w, 12.0.w, 12.0.w),
+              padding: EdgeInsets.fromLTRB(12.0.w, 12.0.w, 12.0.w, 12.0.w),
               color: Colors.orangeAccent,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('日付', style: TextStyle(fontSize: 16.sp)),
-                  SizedBox(width: 54.w),
-                  Text('出勤', style: TextStyle(fontSize: 16.sp)),
-                  SizedBox(width: 28.w),
-                  Text('退勤', style: TextStyle(fontSize: 16.sp)),
-                  SizedBox(width: 30.w),
-                  Text('休憩', style: TextStyle(fontSize: 16.sp)),
-                  SizedBox(width: 30.w),
-                  Text('累計', style: TextStyle(fontSize: 16.sp)),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 100.w,
+                    child: Text('日付', style: TextStyle(fontSize: 16.sp)),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 52.w,
+                    child: Text('出勤', style: TextStyle(fontSize: 16.sp)),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 52.w,
+                    child: Text('退勤', style: TextStyle(fontSize: 16.sp)),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 52.w,
+                    child: Text('休憩', style: TextStyle(fontSize: 16.sp)),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 52.w,
+                    child: Text('累計', style: TextStyle(fontSize: 16.sp)),
+                  ),
                 ],
               ),
             ),
