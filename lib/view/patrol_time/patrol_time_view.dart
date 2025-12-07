@@ -1,4 +1,7 @@
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
+import 'package:boar_time/model/patrol_time_state/patrol_time_state.dart';
+import 'package:boar_time/model/work_record/work_record.dart';
+import 'package:boar_time/notifier/patrol/patrol_time_notifier.dart';
 import 'package:boar_time/view/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/view/view_parts/icon_action_button.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +19,18 @@ class PatrolTimeView extends HookConsumerWidget {
     final year = useState(now.year);
     final month = useState(now.month);
     final int lastDay = DateTime(year.value, month.value + 1, 0).day;
+
+    final patrolTimeState = ref.watch(patrolTimeNotifierProvider);
+
+    useEffect(() {
+      Future.microtask(() async {
+        await ref
+            .read(patrolTimeNotifierProvider.notifier)
+            .loadMonth(year.value, month.value);
+      });
+      return null;
+    }, [year.value, month.value]);
+
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -57,17 +72,31 @@ class PatrolTimeView extends HookConsumerWidget {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.fromLTRB(50.0, 12.0, 12.0, 12.0),
+              padding: EdgeInsets.fromLTRB(12.0.w, 12.0.w, 12.0.w, 12.0.w),
               color: Colors.orangeAccent,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('日付', style: TextStyle(fontSize: 16.sp)),
-                  SizedBox(width: 75.w),
-                  Text('開始', style: TextStyle(fontSize: 16.sp)),
-                  SizedBox(width: 49.w),
-                  Text('終了', style: TextStyle(fontSize: 16.sp)),
-                  SizedBox(width: 47.w),
-                  Text('累計', style: TextStyle(fontSize: 16.sp)),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 100.w,
+                    child: Text('日付', style: TextStyle(fontSize: 16.sp)),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 52.w,
+                    child: Text('開始', style: TextStyle(fontSize: 16.sp)),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 52.w,
+                    child: Text('終了', style: TextStyle(fontSize: 16.sp)),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 52.w,
+                    child: Text('累計', style: TextStyle(fontSize: 16.sp)),
+                  ),
                 ],
               ),
             ),
@@ -75,7 +104,8 @@ class PatrolTimeView extends HookConsumerWidget {
               child: SingleChildScrollView(
                 child: DataTable(
                   headingRowHeight: 0,
-                  columnSpacing: 36.w,
+                  columnSpacing: 30.75.w,
+                  horizontalMargin: 12.w,
                   columns: const [
                     DataColumn(label: SizedBox()),
                     DataColumn(label: SizedBox()),
@@ -86,38 +116,135 @@ class PatrolTimeView extends HookConsumerWidget {
                     final day = i + 1;
                     final date = DateTime(year.value, month.value, day);
                     final formattedDate = DateFormat('yyyy/MM/dd').format(date);
+                    final row = patrolTimeState.value?.firstWhere(
+                      (r) =>
+                          r.date.year == date.year &&
+                          r.date.month == date.month &&
+                          r.date.day == date.day,
+                      orElse: () => PatrolTimeState(
+                        date: date,
+                        start: null,
+                        end: null,
+                        cumulativeDuration: Duration.zero,
+                      ),
+                    );
                     return DataRow(
                       cells: [
                         DataCell(
-                          Text(
-                            formattedDate,
-                            style: TextStyle(fontSize: 16.sp),
+                          Container(
+                            alignment: Alignment.center,
+                            width: 100.w,
+                            child: Text(
+                              formattedDate,
+                              style: TextStyle(fontSize: 16.sp),
+                            ),
                           ),
                         ),
                         DataCell(
-                          Text('08:00', style: TextStyle(fontSize: 16.sp)),
+                          Container(
+                            alignment: Alignment.center,
+                            width: 52.w,
+                            child: Text(
+                              _fmt(row?.start),
+                              style: TextStyle(fontSize: 16.sp),
+                            ),
+                          ),
                           onTap: () {
                             showEditTimeDialog(
                               context,
                               label: '見回り開始時間',
-                              date: date,
-                              onPressed: (_) {},
+                              date: row!.date,
+                              initialTime: row.start != null
+                                  ? TimeOfDay.fromDateTime(row.start!)
+                                  : null,
+                              onPressed: (selected) async {
+                                final date = row.date;
+                                final dt = DateTime(
+                                  date.year,
+                                  date.month,
+                                  date.day,
+                                  selected.hour,
+                                  selected.minute,
+                                );
+                                final rec = WorkRecord(
+                                  date: row.date,
+                                  patrolStart: dt,
+                                  patrolEnd: row.end,
+                                );
+                                await ref
+                                    .read(patrolTimeNotifierProvider.notifier)
+                                    .upsert(year.value, month.value, rec);
+                              },
+                              onDelete: () async {
+                                await ref
+                                    .read(patrolTimeNotifierProvider.notifier)
+                                    .clearPatrolStart(
+                                      year.value,
+                                      month.value,
+                                      date,
+                                    );
+                              },
                             );
                           },
                         ),
                         DataCell(
-                          Text('17:00', style: TextStyle(fontSize: 16.sp)),
+                          Container(
+                            alignment: Alignment.center,
+                            width: 52.w,
+                            child: Text(
+                              _fmt(row?.end),
+                              style: TextStyle(fontSize: 16.sp),
+                            ),
+                          ),
                           onTap: () {
                             showEditTimeDialog(
                               context,
                               label: '見回り終了時間',
-                              date: date,
-                              onPressed: (_) {},
+                              date: row!.date,
+                              initialTime: row.end != null
+                                  ? TimeOfDay.fromDateTime(row.end!)
+                                  : null,
+                              onPressed: (selected) async {
+                                final date = row.date;
+                                final dt = DateTime(
+                                  date.year,
+                                  date.month,
+                                  date.day,
+                                  selected.hour,
+                                  selected.minute,
+                                );
+                                final rec = WorkRecord(
+                                  date: row.date,
+                                  patrolStart: row.start,
+                                  patrolEnd: dt,
+                                );
+                                await ref
+                                    .read(patrolTimeNotifierProvider.notifier)
+                                    .upsert(year.value, month.value, rec);
+                              },
+                              onDelete: () async {
+                                await ref
+                                    .read(patrolTimeNotifierProvider.notifier)
+                                    .clearPatrolEnd(
+                                      year.value,
+                                      month.value,
+                                      date,
+                                    );
+                              },
                             );
                           },
                         ),
                         DataCell(
-                          Text('08:00', style: TextStyle(fontSize: 16.sp)),
+                          Container(
+                            alignment: Alignment.center,
+                            width: 52.w,
+                            child: Text(
+                              _fmtDuration(
+                                row?.cumulativeDuration ?? Duration.zero,
+                              ),
+                              style: TextStyle(fontSize: 16.sp),
+                            ),
+                          ),
                         ),
                       ],
                     );
@@ -129,5 +256,16 @@ class PatrolTimeView extends HookConsumerWidget {
         ),
       ),
     );
+  }
+
+  String _fmt(DateTime? dt) {
+    if (dt == null) return '--:--';
+    return DateFormat('HH:mm').format(dt);
+  }
+
+  String _fmtDuration(Duration d) {
+    final h = d.inHours.toString().padLeft(2, '0');
+    final m = (d.inMinutes % 60).toString().padLeft(2, '0');
+    return '$h:$m';
   }
 }
