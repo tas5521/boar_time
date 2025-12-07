@@ -11,6 +11,7 @@ class StampingView extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(stampingNotifierProvider).value;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -31,6 +32,7 @@ class StampingView extends HookConsumerWidget {
                   children: [
                     customButton(
                       '解体 出勤',
+                      enabled: state != null && state.startTime == null,
                       onPressed: () async {
                         await ref
                             .read(stampingNotifierProvider.notifier)
@@ -44,6 +46,7 @@ class StampingView extends HookConsumerWidget {
                     ),
                     customButton(
                       '解体 退勤',
+                      enabled: state != null && state.endTime == null,
                       onPressed: () async {
                         await ref
                             .read(stampingNotifierProvider.notifier)
@@ -63,6 +66,7 @@ class StampingView extends HookConsumerWidget {
                   children: [
                     customButton(
                       '休憩 開始',
+                      enabled: state != null && state.breakStart == null,
                       onPressed: () async {
                         await ref
                             .read(stampingNotifierProvider.notifier)
@@ -76,6 +80,7 @@ class StampingView extends HookConsumerWidget {
                     ),
                     customButton(
                       '休憩 終了',
+                      enabled: state != null && state.breakEnd == null,
                       onPressed: () async {
                         await ref
                             .read(stampingNotifierProvider.notifier)
@@ -95,6 +100,7 @@ class StampingView extends HookConsumerWidget {
                   children: [
                     customButton(
                       '見回り 開始',
+                      enabled: state != null && state.patrolStart == null,
                       onPressed: () async {
                         await ref
                             .read(stampingNotifierProvider.notifier)
@@ -108,6 +114,7 @@ class StampingView extends HookConsumerWidget {
                     ),
                     customButton(
                       '見回り 終了',
+                      enabled: state != null && state.patrolEnd == null,
                       onPressed: () async {
                         await ref
                             .read(stampingNotifierProvider.notifier)
@@ -131,7 +138,8 @@ class StampingView extends HookConsumerWidget {
 
   Widget customButton(
     String title, {
-    required FutureOr<void> Function() onPressed,
+    required FutureOr<void> Function()? onPressed,
+    required bool enabled,
   }) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -139,8 +147,11 @@ class StampingView extends HookConsumerWidget {
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.w),
         fixedSize: Size(160.w, 80.w),
       ),
-      onPressed: onPressed,
-      child: Text(title, style: TextStyle(fontSize: 20.sp)),
+      onPressed: enabled ? onPressed : null,
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 20.sp, color: enabled ? null : Colors.grey),
+      ),
     );
   }
 

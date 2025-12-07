@@ -20,7 +20,7 @@ Future<void> showEditTimeDialog(
       return StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            title: Text('$label の修正'),
+            title: Text('$labelの修正'),
             content: SizedBox(
               width: 300.w,
               child: Column(

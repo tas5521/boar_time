@@ -2,6 +2,7 @@ import 'package:boar_time/icons/my_flutter_app_icons.dart';
 import 'package:boar_time/model/butchering_time_state/butchering_time_state.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:boar_time/notifier/butchering/butchering_time_notifier.dart';
+import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/view/view_parts/edit_break_dalog.dart';
 import 'package:boar_time/view/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/view/view_parts/icon_action_button.dart';
@@ -190,6 +191,9 @@ class ButcheringTimeView extends HookConsumerWidget {
                                       butcheringTimeNotifierProvider.notifier,
                                     )
                                     .upsert(year.value, month.value, rec);
+                                await ref
+                                    .read(stampingNotifierProvider.notifier)
+                                    .fetch();
                               },
                               onDelete: () async {
                                 await ref
@@ -201,6 +205,9 @@ class ButcheringTimeView extends HookConsumerWidget {
                                       month.value,
                                       date,
                                     );
+                                await ref
+                                    .read(stampingNotifierProvider.notifier)
+                                    .fetch();
                               },
                             );
                           },
@@ -243,6 +250,9 @@ class ButcheringTimeView extends HookConsumerWidget {
                                       butcheringTimeNotifierProvider.notifier,
                                     )
                                     .upsert(year.value, month.value, rec);
+                                await ref
+                                    .read(stampingNotifierProvider.notifier)
+                                    .fetch();
                               },
                               onDelete: () async {
                                 await ref
@@ -254,6 +264,9 @@ class ButcheringTimeView extends HookConsumerWidget {
                                       month.value,
                                       date,
                                     );
+                                await ref
+                                    .read(stampingNotifierProvider.notifier)
+                                    .fetch();
                               },
                             );
                           },
@@ -272,6 +285,7 @@ class ButcheringTimeView extends HookConsumerWidget {
                               : () {
                                   showEditBreakDialog(
                                     context,
+                                    ref,
                                     date: row.date,
                                     initialStart: row.breakStart != null
                                         ? TimeOfDay.fromDateTime(
@@ -291,7 +305,6 @@ class ButcheringTimeView extends HookConsumerWidget {
                                               breakStart.minute,
                                             )
                                           : null;
-
                                       final end = breakEnd != null
                                           ? DateTime(
                                               row.date.year,
@@ -301,7 +314,6 @@ class ButcheringTimeView extends HookConsumerWidget {
                                               breakEnd.minute,
                                             )
                                           : null;
-
                                       await ref
                                           .read(
                                             butcheringTimeNotifierProvider
@@ -314,6 +326,11 @@ class ButcheringTimeView extends HookConsumerWidget {
                                             start,
                                             end,
                                           );
+                                      await ref
+                                          .read(
+                                            stampingNotifierProvider.notifier,
+                                          )
+                                          .fetch();
                                     },
                                   );
                                 },

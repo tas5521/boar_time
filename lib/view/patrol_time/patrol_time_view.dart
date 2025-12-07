@@ -2,6 +2,7 @@ import 'package:boar_time/icons/my_flutter_app_icons.dart';
 import 'package:boar_time/model/patrol_time_state/patrol_time_state.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:boar_time/notifier/patrol/patrol_time_notifier.dart';
+import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/view/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/view/view_parts/icon_action_button.dart';
 import 'package:flutter/material.dart';
@@ -174,6 +175,9 @@ class PatrolTimeView extends HookConsumerWidget {
                                 await ref
                                     .read(patrolTimeNotifierProvider.notifier)
                                     .upsert(year.value, month.value, rec);
+                                await ref
+                                    .read(stampingNotifierProvider.notifier)
+                                    .fetch();
                               },
                               onDelete: () async {
                                 await ref
@@ -183,6 +187,9 @@ class PatrolTimeView extends HookConsumerWidget {
                                       month.value,
                                       date,
                                     );
+                                await ref
+                                    .read(stampingNotifierProvider.notifier)
+                                    .fetch();
                               },
                             );
                           },
@@ -221,6 +228,9 @@ class PatrolTimeView extends HookConsumerWidget {
                                 await ref
                                     .read(patrolTimeNotifierProvider.notifier)
                                     .upsert(year.value, month.value, rec);
+                                await ref
+                                    .read(stampingNotifierProvider.notifier)
+                                    .fetch();
                               },
                               onDelete: () async {
                                 await ref
@@ -230,6 +240,9 @@ class PatrolTimeView extends HookConsumerWidget {
                                       month.value,
                                       date,
                                     );
+                                await ref
+                                    .read(stampingNotifierProvider.notifier)
+                                    .fetch();
                               },
                             );
                           },
