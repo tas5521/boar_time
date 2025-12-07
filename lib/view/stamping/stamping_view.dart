@@ -31,15 +31,29 @@ class StampingView extends HookConsumerWidget {
                   children: [
                     customButton(
                       '解体 出勤',
-                      onPressed: () => ref
-                          .read(stampingNotifierProvider.notifier)
-                          .setStartTime(),
+                      onPressed: () async {
+                        await ref
+                            .read(stampingNotifierProvider.notifier)
+                            .setStartTime();
+                        if (!context.mounted) return;
+                        await showStampCompletedDialog(
+                          context,
+                          message: '解体の出勤を記録しました。',
+                        );
+                      },
                     ),
                     customButton(
                       '解体 退勤',
-                      onPressed: () => ref
-                          .read(stampingNotifierProvider.notifier)
-                          .setEndTime(),
+                      onPressed: () async {
+                        await ref
+                            .read(stampingNotifierProvider.notifier)
+                            .setEndTime();
+                        if (!context.mounted) return;
+                        await showStampCompletedDialog(
+                          context,
+                          message: '解体の退勤を記録しました。',
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -49,15 +63,29 @@ class StampingView extends HookConsumerWidget {
                   children: [
                     customButton(
                       '休憩 開始',
-                      onPressed: () => ref
-                          .read(stampingNotifierProvider.notifier)
-                          .setBreakStart(),
+                      onPressed: () async {
+                        await ref
+                            .read(stampingNotifierProvider.notifier)
+                            .setBreakStart();
+                        if (!context.mounted) return;
+                        await showStampCompletedDialog(
+                          context,
+                          message: '休憩開始を記録しました。',
+                        );
+                      },
                     ),
                     customButton(
                       '休憩 終了',
-                      onPressed: () => ref
-                          .read(stampingNotifierProvider.notifier)
-                          .setBreakEnd(),
+                      onPressed: () async {
+                        await ref
+                            .read(stampingNotifierProvider.notifier)
+                            .setBreakEnd();
+                        if (!context.mounted) return;
+                        await showStampCompletedDialog(
+                          context,
+                          message: '休憩終了を記録しました。',
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -67,15 +95,29 @@ class StampingView extends HookConsumerWidget {
                   children: [
                     customButton(
                       '見回り 開始',
-                      onPressed: () => ref
-                          .read(stampingNotifierProvider.notifier)
-                          .setPatrolStart(),
+                      onPressed: () async {
+                        await ref
+                            .read(stampingNotifierProvider.notifier)
+                            .setPatrolStart();
+                        if (!context.mounted) return;
+                        await showStampCompletedDialog(
+                          context,
+                          message: '見回り開始を記録しました。',
+                        );
+                      },
                     ),
                     customButton(
                       '見回り 終了',
-                      onPressed: () => ref
-                          .read(stampingNotifierProvider.notifier)
-                          .setPatrolEnd(),
+                      onPressed: () async {
+                        await ref
+                            .read(stampingNotifierProvider.notifier)
+                            .setPatrolEnd();
+                        if (!context.mounted) return;
+                        await showStampCompletedDialog(
+                          context,
+                          message: '見回り終了を記録しました。',
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -99,6 +141,30 @@ class StampingView extends HookConsumerWidget {
       ),
       onPressed: onPressed,
       child: Text(title, style: TextStyle(fontSize: 20.sp)),
+    );
+  }
+
+  Future<void> showStampCompletedDialog(
+    BuildContext context, {
+    required String message,
+  }) async {
+    return showDialog<void>(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: const Text(
+            '打刻完了',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Text(message, style: TextStyle(fontSize: 16.w)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
