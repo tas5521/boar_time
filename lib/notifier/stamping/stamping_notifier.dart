@@ -16,6 +16,11 @@ class StampingNotifier extends Notifier<AsyncValue<Null>> {
     return DateTime(now.year, now.month, now.day);
   }
 
+  DateTime _nowRounded() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, now.hour, now.minute);
+  }
+
   Future<WorkRecord> _getOrCreateTodayRecord() async {
     final exist = await WorkRecordManager.getByDate(todayDate);
     if (exist != null) {
@@ -27,48 +32,60 @@ class StampingNotifier extends Notifier<AsyncValue<Null>> {
   Future<void> setStartTime() async {
     state = AsyncValue.loading();
     final record = await _getOrCreateTodayRecord();
-    record.startTime = DateTime.now();
-    await WorkRecordManager.upsertByDate(record);
+    record.startTime = _nowRounded();
+    await WorkRecordManager.upsertByDate(
+      record,
+      upsertType: UpsertType.butchering,
+    );
     state = AsyncValue.data(null);
   }
 
   Future<void> setEndTime() async {
     state = AsyncValue.loading();
     final record = await _getOrCreateTodayRecord();
-    record.endTime = DateTime.now();
-    await WorkRecordManager.upsertByDate(record);
+    record.endTime = _nowRounded();
+    await WorkRecordManager.upsertByDate(
+      record,
+      upsertType: UpsertType.butchering,
+    );
     state = AsyncValue.data(null);
   }
 
   Future<void> setBreakStart() async {
     state = AsyncValue.loading();
     final record = await _getOrCreateTodayRecord();
-    record.breakStart = DateTime.now();
-    await WorkRecordManager.upsertByDate(record);
+    record.breakStart = _nowRounded();
+    await WorkRecordManager.upsertByDate(
+      record,
+      upsertType: UpsertType.butchering,
+    );
     state = AsyncValue.data(null);
   }
 
   Future<void> setBreakEnd() async {
     state = AsyncValue.loading();
     final record = await _getOrCreateTodayRecord();
-    record.breakEnd = DateTime.now();
-    await WorkRecordManager.upsertByDate(record);
+    record.breakEnd = _nowRounded();
+    await WorkRecordManager.upsertByDate(
+      record,
+      upsertType: UpsertType.butchering,
+    );
     state = AsyncValue.data(null);
   }
 
   Future<void> setPatrolStart() async {
     state = AsyncValue.loading();
     final record = await _getOrCreateTodayRecord();
-    record.patrolStart = DateTime.now();
-    await WorkRecordManager.upsertByDate(record);
+    record.patrolStart = _nowRounded();
+    await WorkRecordManager.upsertByDate(record, upsertType: UpsertType.patrol);
     state = AsyncValue.data(null);
   }
 
   Future<void> setPatrolEnd() async {
     state = AsyncValue.loading();
     final record = await _getOrCreateTodayRecord();
-    record.patrolEnd = DateTime.now();
-    await WorkRecordManager.upsertByDate(record);
+    record.patrolEnd = _nowRounded();
+    await WorkRecordManager.upsertByDate(record, upsertType: UpsertType.patrol);
     state = AsyncValue.data(null);
   }
 }

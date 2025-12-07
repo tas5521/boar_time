@@ -7,8 +7,6 @@ version: 1.0.0+1
 environment:
   sdk: ^3.8.1
 
-isar_version: &isar_version 3.1.0
-
 dependencies:
   flutter:
     sdk: flutter
@@ -17,16 +15,19 @@ dependencies:
   flutter_hooks: ^0.21.3+1
   flutter_screenutil: ^5.9.3
   intl: ^0.20.2
-  isar: *isar_version
-  isar_flutter_libs: *isar_version
+  isar: 3.1.0
+  isar_flutter_libs: 3.1.0
+  freezed_annotation: ^2.4.1
+
   path_provider: ^2.1.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
-  isar_generator: *isar_version
-  build_runner: any
+  isar_generator: 3.1.0
+  build_runner: ^2.4.10
+  freezed: ^2.4.1
 
 flutter:
   uses-material-design: true

@@ -1,4 +1,8 @@
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
+import 'package:boar_time/model/butchering_time_state/butchering_time_state.dart';
+import 'package:boar_time/model/work_record/work_record.dart';
+import 'package:boar_time/notifier/butchering/butchering_time_notifier.dart';
+import 'package:boar_time/view/view_parts/edit_break_dalog.dart';
 import 'package:boar_time/view/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/view/view_parts/icon_action_button.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +20,18 @@ class ButcheringTimeView extends HookConsumerWidget {
     final year = useState(now.year);
     final month = useState(now.month);
     final int lastDay = DateTime(year.value, month.value + 1, 0).day;
+
+    final butcheringTimeState = ref.watch(butcheringTimeNotifierProvider);
+
+    useEffect(() {
+      Future.microtask(() async {
+        await ref
+            .read(butcheringTimeNotifierProvider.notifier)
+            .loadMonth(year.value, month.value);
+      });
+      return null;
+    }, [year.value, month.value]);
+
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -60,7 +76,7 @@ class ButcheringTimeView extends HookConsumerWidget {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.fromLTRB(50.0, 12.0, 12.0, 12.0),
+              padding: EdgeInsets.fromLTRB(48.0.w, 12.0.w, 12.0.w, 12.0.w),
               color: Colors.orangeAccent,
               child: Row(
                 children: [
@@ -69,9 +85,9 @@ class ButcheringTimeView extends HookConsumerWidget {
                   Text('出勤', style: TextStyle(fontSize: 16.sp)),
                   SizedBox(width: 28.w),
                   Text('退勤', style: TextStyle(fontSize: 16.sp)),
-                  SizedBox(width: 28.w),
+                  SizedBox(width: 30.w),
                   Text('休憩', style: TextStyle(fontSize: 16.sp)),
-                  SizedBox(width: 28.w),
+                  SizedBox(width: 30.w),
                   Text('累計', style: TextStyle(fontSize: 16.sp)),
                 ],
               ),
@@ -80,7 +96,8 @@ class ButcheringTimeView extends HookConsumerWidget {
               child: SingleChildScrollView(
                 child: DataTable(
                   headingRowHeight: 0,
-                  columnSpacing: 16.w,
+                  columnSpacing: 10.w,
+                  horizontalMargin: 12.w,
                   columns: const [
                     DataColumn(label: SizedBox()),
                     DataColumn(label: SizedBox()),
@@ -92,52 +109,209 @@ class ButcheringTimeView extends HookConsumerWidget {
                     final day = i + 1;
                     final date = DateTime(year.value, month.value, day);
                     final formattedDate = DateFormat('yyyy/MM/dd').format(date);
+                    final row = butcheringTimeState.value?.firstWhere(
+                      (r) =>
+                          r.date.year == date.year &&
+                          r.date.month == date.month &&
+                          r.date.day == date.day,
+                      orElse: () => ButcheringTimeState(
+                        date: date,
+                        start: null,
+                        end: null,
+                        breakStart: null,
+                        breakEnd: null,
+                        cumulativeDuration: Duration.zero,
+                      ),
+                    );
                     return DataRow(
                       cells: [
                         DataCell(
-                          Text(
-                            formattedDate,
-                            style: TextStyle(fontSize: 16.sp),
+                          Container(
+                            alignment: Alignment.center,
+                            width: 100.w,
+                            child: Text(
+                              formattedDate,
+                              style: TextStyle(fontSize: 16.sp),
+                            ),
                           ),
                         ),
                         DataCell(
-                          Text('08:00', style: TextStyle(fontSize: 16.sp)),
+                          Container(
+                            alignment: Alignment.center,
+                            width: 52.w,
+                            child: Text(
+                              _fmt(row?.start),
+                              style: TextStyle(fontSize: 16.sp),
+                            ),
+                          ),
                           onTap: () {
-                            // TODO: Isar実装後、時間の初期値の取り方を修正
-                            final existingTime = TimeOfDay(hour: 8, minute: 0);
                             showEditTimeDialog(
                               context,
                               label: '出勤時間',
-                              date: date,
-                              onPressed: (_) {},
-                              initialTime: existingTime,
+                              date: row!.date,
+                              initialTime: row.start != null
+                                  ? TimeOfDay.fromDateTime(row.start!)
+                                  : null,
+                              onPressed: (selected) async {
+                                final date = row.date;
+                                final dt = DateTime(
+                                  date.year,
+                                  date.month,
+                                  date.day,
+                                  selected.hour,
+                                  selected.minute,
+                                );
+                                final rec = WorkRecord(
+                                  date: row.date,
+                                  startTime: dt,
+                                  endTime: row.end,
+                                  breakStart: row.breakStart,
+                                  breakEnd: row.breakEnd,
+                                );
+                                await ref
+                                    .read(
+                                      butcheringTimeNotifierProvider.notifier,
+                                    )
+                                    .upsert(year.value, month.value, rec);
+                              },
+                              onDelete: () async {
+                                await ref
+                                    .read(
+                                      butcheringTimeNotifierProvider.notifier,
+                                    )
+                                    .clearButcheringStartTime(
+                                      year.value,
+                                      month.value,
+                                      date,
+                                    );
+                              },
                             );
                           },
                         ),
                         DataCell(
-                          Text('17:00', style: TextStyle(fontSize: 16.sp)),
+                          Container(
+                            alignment: Alignment.center,
+                            width: 52.w,
+                            child: Text(
+                              _fmt(row?.end),
+                              style: TextStyle(fontSize: 16.sp),
+                            ),
+                          ),
                           onTap: () {
                             showEditTimeDialog(
                               context,
                               label: '退勤時間',
-                              date: date,
-                              onPressed: (_) {},
+                              date: row!.date,
+                              initialTime: row.end != null
+                                  ? TimeOfDay.fromDateTime(row.end!)
+                                  : null,
+                              onPressed: (selected) async {
+                                final date = row.date;
+                                final dt = DateTime(
+                                  date.year,
+                                  date.month,
+                                  date.day,
+                                  selected.hour,
+                                  selected.minute,
+                                );
+                                final rec = WorkRecord(
+                                  date: row.date,
+                                  startTime: row.start,
+                                  endTime: dt,
+                                  breakStart: row.breakStart,
+                                  breakEnd: row.breakEnd,
+                                );
+                                await ref
+                                    .read(
+                                      butcheringTimeNotifierProvider.notifier,
+                                    )
+                                    .upsert(year.value, month.value, rec);
+                              },
+                              onDelete: () async {
+                                await ref
+                                    .read(
+                                      butcheringTimeNotifierProvider.notifier,
+                                    )
+                                    .clearButcheringEndTime(
+                                      year.value,
+                                      month.value,
+                                      date,
+                                    );
+                              },
                             );
                           },
                         ),
                         DataCell(
-                          Text('01:00', style: TextStyle(fontSize: 16.sp)),
-                          onTap: () {
-                            showEditTimeDialog(
-                              context,
-                              label: '休憩時間',
-                              date: date,
-                              onPressed: (_) {},
-                            );
-                          },
+                          Container(
+                            alignment: Alignment.center,
+                            width: 52.w,
+                            child: Text(
+                              _fmtBreak(row),
+                              style: TextStyle(fontSize: 16.sp),
+                            ),
+                          ),
+                          onTap: row == null
+                              ? null
+                              : () {
+                                  showEditBreakDialog(
+                                    context,
+                                    date: row.date,
+                                    initialStart: row.breakStart != null
+                                        ? TimeOfDay.fromDateTime(
+                                            row.breakStart!,
+                                          )
+                                        : null,
+                                    initialEnd: row.breakEnd != null
+                                        ? TimeOfDay.fromDateTime(row.breakEnd!)
+                                        : null,
+                                    onPressed: ({breakStart, breakEnd}) async {
+                                      final start = breakStart != null
+                                          ? DateTime(
+                                              row.date.year,
+                                              row.date.month,
+                                              row.date.day,
+                                              breakStart.hour,
+                                              breakStart.minute,
+                                            )
+                                          : null;
+
+                                      final end = breakEnd != null
+                                          ? DateTime(
+                                              row.date.year,
+                                              row.date.month,
+                                              row.date.day,
+                                              breakEnd.hour,
+                                              breakEnd.minute,
+                                            )
+                                          : null;
+
+                                      await ref
+                                          .read(
+                                            butcheringTimeNotifierProvider
+                                                .notifier,
+                                          )
+                                          .updateBreak(
+                                            year.value,
+                                            month.value,
+                                            row.date,
+                                            start,
+                                            end,
+                                          );
+                                    },
+                                  );
+                                },
                         ),
                         DataCell(
-                          Text('08:00', style: TextStyle(fontSize: 16.sp)),
+                          Container(
+                            alignment: Alignment.center,
+                            width: 52.w,
+                            child: Text(
+                              _fmtDuration(
+                                row?.cumulativeDuration ?? Duration.zero,
+                              ),
+                              style: TextStyle(fontSize: 16.sp),
+                            ),
+                          ),
                         ),
                       ],
                     );
@@ -149,5 +323,27 @@ class ButcheringTimeView extends HookConsumerWidget {
         ),
       ),
     );
+  }
+
+  String _fmt(DateTime? dt) {
+    if (dt == null) return '--:--';
+    return DateFormat('HH:mm').format(dt);
+  }
+
+  String _fmtDuration(Duration d) {
+    final h = d.inHours.toString().padLeft(2, '0');
+    final m = (d.inMinutes % 60).toString().padLeft(2, '0');
+    return '$h:$m';
+  }
+
+  String _fmtBreak(ButcheringTimeState? row) {
+    if (row == null) return "--:--";
+
+    if (row.breakDuration.inMinutes == 0) return "--:--";
+
+    final h = row.breakDuration.inHours;
+    final m = row.breakDuration.inMinutes % 60;
+
+    return "${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}";
   }
 }
