@@ -16,6 +16,18 @@ class StampingView extends HookConsumerWidget {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('打刻', style: TextStyle(fontWeight: FontWeight.bold)),
+        actions: [
+          PopupMenuButton(
+            itemBuilder: (_) => [
+              const PopupMenuItem(value: 'license', child: Text('ライセンス情報')),
+            ],
+            onSelected: (value) {
+              if (value == 'license') {
+                showLicensePage(context: context, applicationName: 'InoTime');
+              }
+            },
+          ),
+        ],
       ),
       body: Container(
         padding: EdgeInsets.all(16.w),
