@@ -1,14 +1,18 @@
+import 'package:boar_time/model/stamping_state/stamping_state.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:boar_time/manager/work_record_manager.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final stampingNotifierProvider =
-    NotifierProvider<StampingNotifier, AsyncValue<Null>>(StampingNotifier.new);
+    AsyncNotifierProvider<StampingNotifier, StampingTimeState>(
+      StampingNotifier.new,
+    );
 
-class StampingNotifier extends Notifier<AsyncValue<Null>> {
+class StampingNotifier extends AsyncNotifier<StampingTimeState> {
   @override
-  AsyncValue<Null> build() {
-    return const AsyncValue.data(null);
+  Future<StampingTimeState> build() async {
+    final todayRecord = await _getOrCreateTodayRecord();
+    return StampingTimeState.fromRecord(todayRecord);
   }
 
   DateTime get todayDate {
@@ -29,6 +33,12 @@ class StampingNotifier extends Notifier<AsyncValue<Null>> {
     return WorkRecord(date: todayDate);
   }
 
+  Future<void> fetch() async {
+    final todayRecord = await _getOrCreateTodayRecord();
+    final stampingTimeState = StampingTimeState.fromRecord(todayRecord);
+    state = AsyncValue.data(stampingTimeState);
+  }
+
   Future<void> setStartTime() async {
     state = AsyncValue.loading();
     final record = await _getOrCreateTodayRecord();
@@ -37,7 +47,8 @@ class StampingNotifier extends Notifier<AsyncValue<Null>> {
       record,
       upsertType: UpsertType.butchering,
     );
-    state = AsyncValue.data(null);
+    final stampingTimeState = StampingTimeState.fromRecord(record);
+    state = AsyncValue.data(stampingTimeState);
   }
 
   Future<void> setEndTime() async {
@@ -48,7 +59,8 @@ class StampingNotifier extends Notifier<AsyncValue<Null>> {
       record,
       upsertType: UpsertType.butchering,
     );
-    state = AsyncValue.data(null);
+    final stampingTimeState = StampingTimeState.fromRecord(record);
+    state = AsyncValue.data(stampingTimeState);
   }
 
   Future<void> setBreakStart() async {
@@ -59,7 +71,8 @@ class StampingNotifier extends Notifier<AsyncValue<Null>> {
       record,
       upsertType: UpsertType.butchering,
     );
-    state = AsyncValue.data(null);
+    final stampingTimeState = StampingTimeState.fromRecord(record);
+    state = AsyncValue.data(stampingTimeState);
   }
 
   Future<void> setBreakEnd() async {
@@ -70,7 +83,8 @@ class StampingNotifier extends Notifier<AsyncValue<Null>> {
       record,
       upsertType: UpsertType.butchering,
     );
-    state = AsyncValue.data(null);
+    final stampingTimeState = StampingTimeState.fromRecord(record);
+    state = AsyncValue.data(stampingTimeState);
   }
 
   Future<void> setPatrolStart() async {
@@ -78,7 +92,8 @@ class StampingNotifier extends Notifier<AsyncValue<Null>> {
     final record = await _getOrCreateTodayRecord();
     record.patrolStart = _nowRounded();
     await WorkRecordManager.upsertByDate(record, upsertType: UpsertType.patrol);
-    state = AsyncValue.data(null);
+    final stampingTimeState = StampingTimeState.fromRecord(record);
+    state = AsyncValue.data(stampingTimeState);
   }
 
   Future<void> setPatrolEnd() async {
@@ -86,6 +101,7 @@ class StampingNotifier extends Notifier<AsyncValue<Null>> {
     final record = await _getOrCreateTodayRecord();
     record.patrolEnd = _nowRounded();
     await WorkRecordManager.upsertByDate(record, upsertType: UpsertType.patrol);
-    state = AsyncValue.data(null);
+    final stampingTimeState = StampingTimeState.fromRecord(record);
+    state = AsyncValue.data(stampingTimeState);
   }
 }
