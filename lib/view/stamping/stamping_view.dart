@@ -34,7 +34,8 @@ class StampingView extends HookConsumerWidget {
         child: Column(
           spacing: 40.w,
           children: [
-            SizedBox(
+            Container(
+              margin: EdgeInsets.fromLTRB(12.w, 0.w, 0.w, 0.w),
               width: 340.w,
               child: TimeDisplay(
                 fontSize: 24,
