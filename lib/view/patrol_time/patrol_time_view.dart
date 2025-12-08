@@ -38,14 +38,11 @@ class PatrolTimeView extends HookConsumerWidget {
           iconActionButton(
             context,
             onPressed: () async {
-              final result = await showConfirmExportDialog(
+              await showExportDialog(
                 context,
                 title: '見回りの勤務表の出力',
-                description: '勤務表を出力しますか？',
+                onExport: (_) {},
               );
-              if (result == true) {
-                // 勤務表出力処理
-              }
             },
             icon: Icon(MyFlutterApp.doc, size: 24.w),
           ),
