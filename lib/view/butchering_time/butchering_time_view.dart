@@ -103,6 +103,7 @@ class ButcheringTimeView extends HookConsumerWidget {
                     child: Text('休憩', style: TextStyle(fontSize: 16.sp)),
                   ),
                   Container(
+                    margin: EdgeInsets.fromLTRB(2.w, 0.w, 0.w, 0.w),
                     alignment: Alignment.center,
                     width: 52.w,
                     child: Text('累計', style: TextStyle(fontSize: 16.sp)),
@@ -338,7 +339,7 @@ class ButcheringTimeView extends HookConsumerWidget {
                         DataCell(
                           Container(
                             alignment: Alignment.center,
-                            width: 52.w,
+                            width: 60.w,
                             child: Text(
                               _fmtDuration(
                                 row?.cumulativeDuration ?? Duration.zero,
