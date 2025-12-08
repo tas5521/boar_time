@@ -371,9 +371,9 @@ class ButcheringTimeView extends HookConsumerWidget {
   }
 
   String _fmtBreak(ButcheringTimeState? row) {
-    if (row == null) return "--:--";
-
-    if (row.breakDuration.inMinutes == 0) return "--:--";
+    if (row == null || row.breakStart == null || row.breakEnd == null) {
+      return "--:--";
+    }
 
     final h = row.breakDuration.inHours;
     final m = row.breakDuration.inMinutes % 60;
