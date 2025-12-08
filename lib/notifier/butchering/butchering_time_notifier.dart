@@ -1,3 +1,4 @@
+import 'package:boar_time/manager/export_manager.dart';
 import 'package:boar_time/manager/work_record_manager.dart';
 import 'package:boar_time/model/butchering_time_state/butchering_time_state.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
@@ -112,7 +113,12 @@ class ButcheringTimeNotifier
     int month,
     List<WorkRecord> records,
   ) {
-    final lastDay = DateTime(year, month + 1, 0).day;
+    final lastDay = DateTime(
+      year,
+      month + 1,
+      1,
+    ).subtract(const Duration(days: 1)).day;
+
     final List<ButcheringTimeState> list = [];
     Duration cumulative = Duration.zero;
 
@@ -143,5 +149,18 @@ class ButcheringTimeNotifier
     }
 
     return list;
+  }
+
+  Future<void> exportAndSave({
+    required ExportFormat format,
+    required String filename,
+  }) async {
+    final data = state.valueOrNull ?? [];
+    await ExportManager.exportAndSave(
+      type: ExportType.butchering,
+      format: format,
+      data: data,
+      filename: filename,
+    );
   }
 }

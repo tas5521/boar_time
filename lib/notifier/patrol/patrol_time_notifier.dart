@@ -1,3 +1,4 @@
+import 'package:boar_time/manager/export_manager.dart';
 import 'package:boar_time/manager/work_record_manager.dart';
 import 'package:boar_time/model/patrol_time_state/patrol_time_state.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
@@ -28,10 +29,7 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
   Future<void> upsert(int year, int month, WorkRecord rec) async {
     state = const AsyncValue.loading();
     try {
-      await WorkRecordManager.upsertByDate(
-        rec,
-        upsertType: UpsertType.patrol,
-      );
+      await WorkRecordManager.upsertByDate(rec, upsertType: UpsertType.patrol);
       final records = await _loadRecords(year, month);
       final converted = _convertRecords(year, month, records);
       state = AsyncValue.data(converted);
@@ -40,11 +38,7 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     }
   }
 
-  Future<void> clearPatrolStart(
-    int year,
-    int month,
-    DateTime date,
-  ) async {
+  Future<void> clearPatrolStart(int year, int month, DateTime date) async {
     state = const AsyncValue.loading();
     try {
       final record = await WorkRecordManager.getByDate(date);
@@ -60,11 +54,7 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     }
   }
 
-  Future<void> clearPatrolEnd(
-    int year,
-    int month,
-    DateTime date,
-  ) async {
+  Future<void> clearPatrolEnd(int year, int month, DateTime date) async {
     state = const AsyncValue.loading();
     try {
       final record = await WorkRecordManager.getByDate(date);
@@ -92,7 +82,12 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     int month,
     List<WorkRecord> records,
   ) {
-    final lastDay = DateTime(year, month + 1, 0).day;
+    final lastDay = DateTime(
+      year,
+      month + 1,
+      1,
+    ).subtract(const Duration(days: 1)).day;
+
     final List<PatrolTimeState> list = [];
     Duration cumulative = Duration.zero;
 
@@ -121,5 +116,18 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     }
 
     return list;
+  }
+
+  Future<void> exportAndSave({
+    required ExportFormat format,
+    required String filename,
+  }) async {
+    final data = state.valueOrNull ?? [];
+    await ExportManager.exportAndSave(
+      type: ExportType.patrol,
+      format: format,
+      data: data,
+      filename: filename,
+    );
   }
 }

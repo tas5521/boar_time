@@ -1,9 +1,10 @@
+import 'package:boar_time/model/abstract_model/time_state_base.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'butchering_time_state.freezed.dart';
 
 @freezed
-class ButcheringTimeState with _$ButcheringTimeState {
+class ButcheringTimeState with _$ButcheringTimeState implements TimeStateBase {
   const ButcheringTimeState._();
 
   const factory ButcheringTimeState({
