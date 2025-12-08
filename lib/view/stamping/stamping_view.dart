@@ -34,7 +34,15 @@ class StampingView extends HookConsumerWidget {
         child: Column(
           spacing: 40.w,
           children: [
-            SizedBox(width: 360.w, child: const TimeDisplay(fontSize: 24)),
+            SizedBox(
+              width: 360.w,
+              child: TimeDisplay(
+                fontSize: 24,
+                onDateChanged: () {
+                  ref.read(stampingNotifierProvider.notifier).fetch();
+                },
+              ),
+            ),
             Column(
               spacing: 32.w,
               children: [
