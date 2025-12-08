@@ -94,6 +94,7 @@ class PatrolTimeView extends HookConsumerWidget {
                     child: Text('終了', style: TextStyle(fontSize: 16.sp)),
                   ),
                   Container(
+                    margin: EdgeInsets.fromLTRB(2.w, 0.w, 0.w, 0.w),
                     alignment: Alignment.center,
                     width: 52.w,
                     child: Text('累計', style: TextStyle(fontSize: 16.sp)),
@@ -105,7 +106,7 @@ class PatrolTimeView extends HookConsumerWidget {
               child: SingleChildScrollView(
                 child: DataTable(
                   headingRowHeight: 0,
-                  columnSpacing: 30.75.w,
+                  columnSpacing: 30.7.w,
                   horizontalMargin: 12.w,
                   columns: const [
                     DataColumn(label: SizedBox()),
@@ -250,7 +251,7 @@ class PatrolTimeView extends HookConsumerWidget {
                         DataCell(
                           Container(
                             alignment: Alignment.center,
-                            width: 52.w,
+                            width: 60.w,
                             child: Text(
                               _fmtDuration(
                                 row?.cumulativeDuration ?? Duration.zero,
