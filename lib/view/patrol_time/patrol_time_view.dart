@@ -19,7 +19,11 @@ class PatrolTimeView extends HookConsumerWidget {
     final now = DateTime.now();
     final year = useState(now.year);
     final month = useState(now.month);
-    final int lastDay = DateTime(year.value, month.value + 1, 0).day;
+    final lastDay = DateTime(
+      year.value,
+      month.value + 1,
+      1,
+    ).subtract(const Duration(days: 1)).day;
 
     final patrolTimeState = ref.watch(patrolTimeNotifierProvider);
 
@@ -38,14 +42,18 @@ class PatrolTimeView extends HookConsumerWidget {
           iconActionButton(
             context,
             onPressed: () async {
-              final result = await showConfirmExportDialog(
+              await showExportDialog(
                 context,
                 title: '見回りの勤務表の出力',
-                description: '勤務表を出力しますか？',
+                onExport: (format) async {
+                  await ref
+                      .read(patrolTimeNotifierProvider.notifier)
+                      .exportAndSave(
+                        format: format,
+                        filename: '見回り_${year.value}_${month.value}',
+                      );
+                },
               );
-              if (result == true) {
-                // 勤務表出力処理
-              }
             },
             icon: Icon(MyFlutterApp.doc, size: 24.w),
           ),

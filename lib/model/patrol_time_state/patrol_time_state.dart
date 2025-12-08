@@ -1,9 +1,10 @@
+import 'package:boar_time/model/abstract_model/time_state_base.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'patrol_time_state.freezed.dart';
 
 @freezed
-class PatrolTimeState with _$PatrolTimeState {
+class PatrolTimeState with _$PatrolTimeState implements TimeStateBase {
   const PatrolTimeState._();
 
   const factory PatrolTimeState({
