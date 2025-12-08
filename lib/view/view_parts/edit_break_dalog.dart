@@ -63,7 +63,10 @@ Future<void> showEditBreakDialog(
                             ),
                           ),
                           TextButton(
-                            onPressed: () => setState(() => start = null),
+                            onPressed: () async {
+                              await onPressed(breakStart: null, breakEnd: end);
+                              setState(() => start = null);
+                            },
                             child: const Text(
                               '削除',
                               style: TextStyle(color: Colors.red),
@@ -97,7 +100,13 @@ Future<void> showEditBreakDialog(
                             ),
                           ),
                           TextButton(
-                            onPressed: () => setState(() => end = null),
+                            onPressed: () async {
+                              await onPressed(
+                                breakStart: start,
+                                breakEnd: null,
+                              );
+                              setState(() => end = null);
+                            },
                             child: const Text(
                               '削除',
                               style: TextStyle(color: Colors.red),
