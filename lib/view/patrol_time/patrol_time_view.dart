@@ -202,13 +202,13 @@ class PatrolTimeView extends HookConsumerWidget {
                                     patrolStart: dt,
                                     patrolEnd: row.end,
                                   );
-                                  await ref
-                                      .read(patrolTimeNotifierProvider.notifier)
-                                      .upsert(year.value, month.value, rec);
-                                  await ref
-                                      .read(stampingNotifierProvider.notifier)
-                                      .fetch();
                                 }
+                                await ref
+                                    .read(patrolTimeNotifierProvider.notifier)
+                                    .upsert(year.value, month.value, rec);
+                                await ref
+                                    .read(stampingNotifierProvider.notifier)
+                                    .fetch();
                               },
                             );
                           },
