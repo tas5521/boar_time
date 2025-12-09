@@ -182,36 +182,33 @@ class PatrolTimeView extends HookConsumerWidget {
                                   : null,
                               onPressed: (selected) async {
                                 final date = row.date;
-                                final dt = DateTime(
-                                  date.year,
-                                  date.month,
-                                  date.day,
-                                  selected.hour,
-                                  selected.minute,
-                                );
-                                final rec = WorkRecord(
-                                  date: row.date,
-                                  patrolStart: dt,
-                                  patrolEnd: row.end,
-                                );
-                                await ref
-                                    .read(patrolTimeNotifierProvider.notifier)
-                                    .upsert(year.value, month.value, rec);
-                                await ref
-                                    .read(stampingNotifierProvider.notifier)
-                                    .fetch();
-                              },
-                              onDelete: () async {
-                                await ref
-                                    .read(patrolTimeNotifierProvider.notifier)
-                                    .clearPatrolStart(
-                                      year.value,
-                                      month.value,
-                                      date,
-                                    );
-                                await ref
-                                    .read(stampingNotifierProvider.notifier)
-                                    .fetch();
+                                final WorkRecord rec;
+                                if (selected == null) {
+                                  rec = WorkRecord(
+                                    date: row.date,
+                                    patrolStart: null,
+                                    patrolEnd: row.end,
+                                  );
+                                } else {
+                                  final dt = DateTime(
+                                    date.year,
+                                    date.month,
+                                    date.day,
+                                    selected.hour,
+                                    selected.minute,
+                                  );
+                                  rec = WorkRecord(
+                                    date: row.date,
+                                    patrolStart: dt,
+                                    patrolEnd: row.end,
+                                  );
+                                  await ref
+                                      .read(patrolTimeNotifierProvider.notifier)
+                                      .upsert(year.value, month.value, rec);
+                                  await ref
+                                      .read(stampingNotifierProvider.notifier)
+                                      .fetch();
+                                }
                               },
                             );
                           },
@@ -235,36 +232,33 @@ class PatrolTimeView extends HookConsumerWidget {
                                   : null,
                               onPressed: (selected) async {
                                 final date = row.date;
-                                final dt = DateTime(
-                                  date.year,
-                                  date.month,
-                                  date.day,
-                                  selected.hour,
-                                  selected.minute,
-                                );
-                                final rec = WorkRecord(
-                                  date: row.date,
-                                  patrolStart: row.start,
-                                  patrolEnd: dt,
-                                );
-                                await ref
-                                    .read(patrolTimeNotifierProvider.notifier)
-                                    .upsert(year.value, month.value, rec);
-                                await ref
-                                    .read(stampingNotifierProvider.notifier)
-                                    .fetch();
-                              },
-                              onDelete: () async {
-                                await ref
-                                    .read(patrolTimeNotifierProvider.notifier)
-                                    .clearPatrolEnd(
-                                      year.value,
-                                      month.value,
-                                      date,
-                                    );
-                                await ref
-                                    .read(stampingNotifierProvider.notifier)
-                                    .fetch();
+                                final WorkRecord rec;
+                                if (selected == null) {
+                                  rec = WorkRecord(
+                                    date: row.date,
+                                    patrolStart: row.start,
+                                    patrolEnd: null,
+                                  );
+                                } else {
+                                  final dt = DateTime(
+                                    date.year,
+                                    date.month,
+                                    date.day,
+                                    selected.hour,
+                                    selected.minute,
+                                  );
+                                  rec = WorkRecord(
+                                    date: row.date,
+                                    patrolStart: row.start,
+                                    patrolEnd: dt,
+                                  );
+                                  await ref
+                                      .read(patrolTimeNotifierProvider.notifier)
+                                      .upsert(year.value, month.value, rec);
+                                  await ref
+                                      .read(stampingNotifierProvider.notifier)
+                                      .fetch();
+                                }
                               },
                             );
                           },

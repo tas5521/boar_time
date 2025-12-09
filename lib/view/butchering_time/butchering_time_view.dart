@@ -194,39 +194,36 @@ class ButcheringTimeView extends HookConsumerWidget {
                                   : null,
                               onPressed: (selected) async {
                                 final date = row.date;
-                                final dt = DateTime(
-                                  date.year,
-                                  date.month,
-                                  date.day,
-                                  selected.hour,
-                                  selected.minute,
-                                );
-                                final rec = WorkRecord(
-                                  date: row.date,
-                                  startTime: dt,
-                                  endTime: row.end,
-                                  breakStart: row.breakStart,
-                                  breakEnd: row.breakEnd,
-                                );
+                                final WorkRecord rec;
+                                if (selected == null) {
+                                  rec = WorkRecord(
+                                    date: row.date,
+                                    startTime: null,
+                                    endTime: row.end,
+                                    breakStart: row.breakStart,
+                                    breakEnd: row.breakEnd,
+                                  );
+                                } else {
+                                  final dt = DateTime(
+                                    date.year,
+                                    date.month,
+                                    date.day,
+                                    selected.hour,
+                                    selected.minute,
+                                  );
+                                  rec = WorkRecord(
+                                    date: row.date,
+                                    startTime: dt,
+                                    endTime: row.end,
+                                    breakStart: row.breakStart,
+                                    breakEnd: row.breakEnd,
+                                  );
+                                }
                                 await ref
                                     .read(
                                       butcheringTimeNotifierProvider.notifier,
                                     )
                                     .upsert(year.value, month.value, rec);
-                                await ref
-                                    .read(stampingNotifierProvider.notifier)
-                                    .fetch();
-                              },
-                              onDelete: () async {
-                                await ref
-                                    .read(
-                                      butcheringTimeNotifierProvider.notifier,
-                                    )
-                                    .clearButcheringStartTime(
-                                      year.value,
-                                      month.value,
-                                      date,
-                                    );
                                 await ref
                                     .read(stampingNotifierProvider.notifier)
                                     .fetch();
@@ -253,39 +250,36 @@ class ButcheringTimeView extends HookConsumerWidget {
                                   : null,
                               onPressed: (selected) async {
                                 final date = row.date;
-                                final dt = DateTime(
-                                  date.year,
-                                  date.month,
-                                  date.day,
-                                  selected.hour,
-                                  selected.minute,
-                                );
-                                final rec = WorkRecord(
-                                  date: row.date,
-                                  startTime: row.start,
-                                  endTime: dt,
-                                  breakStart: row.breakStart,
-                                  breakEnd: row.breakEnd,
-                                );
+                                final WorkRecord rec;
+                                if (selected == null) {
+                                  rec = WorkRecord(
+                                    date: row.date,
+                                    startTime: row.start,
+                                    endTime: null,
+                                    breakStart: row.breakStart,
+                                    breakEnd: row.breakEnd,
+                                  );
+                                } else {
+                                  final dt = DateTime(
+                                    date.year,
+                                    date.month,
+                                    date.day,
+                                    selected.hour,
+                                    selected.minute,
+                                  );
+                                  rec = WorkRecord(
+                                    date: row.date,
+                                    startTime: dt,
+                                    endTime: row.end,
+                                    breakStart: row.breakStart,
+                                    breakEnd: row.breakEnd,
+                                  );
+                                }
                                 await ref
                                     .read(
                                       butcheringTimeNotifierProvider.notifier,
                                     )
                                     .upsert(year.value, month.value, rec);
-                                await ref
-                                    .read(stampingNotifierProvider.notifier)
-                                    .fetch();
-                              },
-                              onDelete: () async {
-                                await ref
-                                    .read(
-                                      butcheringTimeNotifierProvider.notifier,
-                                    )
-                                    .clearButcheringEndTime(
-                                      year.value,
-                                      month.value,
-                                      date,
-                                    );
                                 await ref
                                     .read(stampingNotifierProvider.notifier)
                                     .fetch();

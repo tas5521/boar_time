@@ -8,15 +8,15 @@ Future<void> showEditTimeDialog(
   required String label,
   required DateTime date,
   TimeOfDay? initialTime,
-  required FutureOr<void> Function(TimeOfDay selectedTime) onPressed,
-  FutureOr<void> Function()? onDelete,
+  required FutureOr<void> Function(TimeOfDay? selectedTime) onPressed,
 }) {
   final formattedDate = DateFormat('yyyy/MM/dd').format(date);
 
   return showDialog(
     context: context,
     builder: (context) {
-      TimeOfDay selectedTime = initialTime ?? TimeOfDay.now();
+      TimeOfDay? selectedTime = initialTime;
+
       return StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
@@ -25,18 +25,27 @@ Future<void> showEditTimeDialog(
               width: 300.w,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '対象日：$formattedDate',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
+                  Container(
+                    margin: EdgeInsets.only(left: 50.w),
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '対象日：$formattedDate',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   SizedBox(height: 16.w),
-                  Text(
-                    '選択した時間： ${selectedTime.format(context)}',
-                    style: TextStyle(fontSize: 16.sp),
+                  Container(
+                    margin: EdgeInsets.only(left: 50.w),
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '選択した時間： ${selectedTime != null ? selectedTime?.format(context) : "--:--"}',
+                      style: TextStyle(fontSize: 16.sp),
+                    ),
                   ),
                   SizedBox(height: 12.w),
                   Row(
@@ -46,7 +55,7 @@ Future<void> showEditTimeDialog(
                         onPressed: () async {
                           final TimeOfDay? picked = await showTimePicker(
                             context: context,
-                            initialTime: selectedTime,
+                            initialTime: selectedTime ?? TimeOfDay.now(),
                           );
                           if (picked != null) {
                             setState(() {
@@ -58,11 +67,10 @@ Future<void> showEditTimeDialog(
                       ),
                       SizedBox(width: 20.w),
                       TextButton(
-                        onPressed: () async {
-                          if (onDelete != null) {
-                            await onDelete();
-                          }
-                          if (context.mounted) Navigator.pop(context);
+                        onPressed: () {
+                          setState(() {
+                            selectedTime = null;
+                          });
                         },
                         child: const Text(
                           '削除',
