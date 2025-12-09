@@ -43,46 +43,6 @@ class ButcheringTimeNotifier
     }
   }
 
-  Future<void> clearButcheringStartTime(
-    int year,
-    int month,
-    DateTime date,
-  ) async {
-    state = const AsyncValue.loading();
-    try {
-      final record = await WorkRecordManager.getByDate(date);
-      if (record != null) {
-        record.startTime = null;
-        await WorkRecordManager.update(record);
-      }
-      final records = await _loadRecords(year, month);
-      final converted = _convertRecords(year, month, records);
-      state = AsyncValue.data(converted);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
-
-  Future<void> clearButcheringEndTime(
-    int year,
-    int month,
-    DateTime date,
-  ) async {
-    state = const AsyncValue.loading();
-    try {
-      final record = await WorkRecordManager.getByDate(date);
-      if (record != null) {
-        record.endTime = null;
-        await WorkRecordManager.update(record);
-      }
-      final records = await _loadRecords(year, month);
-      final converted = _convertRecords(year, month, records);
-      state = AsyncValue.data(converted);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
-
   Future<void> updateBreak(
     int year,
     int month,
