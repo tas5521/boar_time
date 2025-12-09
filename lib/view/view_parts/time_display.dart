@@ -5,32 +5,31 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TimeDisplay extends HookWidget {
-  const TimeDisplay({this.fontSize = 24, this.onDateChanged, super.key});
+  const TimeDisplay({
+    required this.onDateChanged,
+    this.fontSize = 24,
+    super.key,
+  });
 
   final int fontSize;
-  final VoidCallback? onDateChanged;
+  final Future<void> Function() onDateChanged;
 
   @override
   Widget build(BuildContext context) {
     final now = useState(DateTime.now());
-    final previousDate = useState(DateTime.now());
 
     useEffect(() {
       final timer = Timer.periodic(const Duration(seconds: 1), (_) {
         final current = DateTime.now();
         now.value = current;
-        final prev = previousDate.value;
-        final isNextDay =
-            current.year != prev.year ||
-            current.month != prev.month ||
-            current.day != prev.day;
-        if (isNextDay) {
-          onDateChanged?.call();
-          previousDate.value = current;
-        }
       });
       return timer.cancel;
     }, []);
+
+    useEffect(() {
+      onDateChanged();
+      return null;
+    }, [now.value.day]);
 
     final dt = now.value;
 

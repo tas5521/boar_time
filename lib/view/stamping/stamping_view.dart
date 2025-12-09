@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/view/view_parts/time_display.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -12,6 +13,15 @@ class StampingView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(stampingNotifierProvider).value;
+    final lifecycle = useAppLifecycleState();
+
+    useEffect(() {
+      if (lifecycle == AppLifecycleState.resumed) {
+        ref.read(stampingNotifierProvider.notifier).fetch();
+      }
+      return;
+    }, [lifecycle]);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -38,9 +48,8 @@ class StampingView extends HookConsumerWidget {
               margin: EdgeInsets.fromLTRB(12.w, 0.w, 0.w, 0.w),
               width: 340.w,
               child: TimeDisplay(
-                fontSize: 24,
-                onDateChanged: () {
-                  ref.read(stampingNotifierProvider.notifier).fetch();
+                onDateChanged: () async {
+                  await ref.read(stampingNotifierProvider.notifier).fetch();
                 },
               ),
             ),
