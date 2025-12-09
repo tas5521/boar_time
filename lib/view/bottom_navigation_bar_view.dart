@@ -11,15 +11,16 @@ class BottomNavigationBarView extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentIndex = useState(0);
+
     final pages = [
       const StampingView(),
       const ButcheringTimeView(),
       const PatrolTimeView(),
     ];
-    final currentIndex = useState(0);
 
     return Scaffold(
-      body: pages.elementAt(currentIndex.value),
+      body: IndexedStack(index: currentIndex.value, children: pages),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(icon: Icon(MyFlutterApp.clock), label: '打刻'),
