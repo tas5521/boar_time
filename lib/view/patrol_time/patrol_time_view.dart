@@ -3,6 +3,7 @@ import 'package:boar_time/model/patrol_time_state/patrol_time_state.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:boar_time/notifier/patrol/patrol_time_notifier.dart';
 import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
+import 'package:boar_time/view/bottom_navigation_bar_view.dart';
 import 'package:boar_time/view/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/view/view_parts/icon_action_button.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class PatrolTimeView extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final activeTab = ref.watch(activeTabProvider);
     final now = DateTime.now();
     final year = useState(now.year);
     final month = useState(now.month);
@@ -35,6 +37,17 @@ class PatrolTimeView extends HookConsumerWidget {
       });
       return null;
     }, [year.value, month.value]);
+
+    useEffect(() {
+      if (activeTab == 2) {
+        Future.microtask(() async {
+          await ref
+              .read(patrolTimeNotifierProvider.notifier)
+              .loadMonth(year.value, month.value);
+        });
+      }
+      return null;
+    }, [activeTab]);
 
     return Scaffold(
       appBar: AppBar(

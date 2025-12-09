@@ -33,8 +33,11 @@ class BottomNavigationBarView extends HookConsumerWidget {
         currentIndex: currentIndex.value,
         onTap: (int index) {
           currentIndex.value = index;
+          ref.read(activeTabProvider.notifier).state = index;
         },
       ),
     );
   }
 }
+
+final activeTabProvider = StateProvider<int>((ref) => 0);
