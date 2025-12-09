@@ -63,8 +63,7 @@ Future<void> showEditBreakDialog(
                             ),
                           ),
                           TextButton(
-                            onPressed: () async {
-                              await onPressed(breakStart: null, breakEnd: end);
+                            onPressed: () {
                               setState(() => start = null);
                             },
                             child: const Text(
@@ -100,11 +99,7 @@ Future<void> showEditBreakDialog(
                             ),
                           ),
                           TextButton(
-                            onPressed: () async {
-                              await onPressed(
-                                breakStart: start,
-                                breakEnd: null,
-                              );
+                            onPressed: () {
                               setState(() => end = null);
                             },
                             child: const Text(
