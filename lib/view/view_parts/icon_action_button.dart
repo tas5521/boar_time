@@ -97,11 +97,11 @@ Future<void> showExportDialog(
       return HookBuilder(
         builder: (context) {
           final format = useState<ExportFormat>(ExportFormat.pdf);
-
           return AlertDialog(
             title: Text(title),
-            content: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
@@ -112,10 +112,14 @@ Future<void> showExportDialog(
                         if (v != null) format.value = v;
                       },
                     ),
-                    const Text('PDF'),
+                    GestureDetector(
+                      onTap: () {
+                        format.value = ExportFormat.pdf;
+                      },
+                      child: const Text('PDF'),
+                    ),
                   ],
                 ),
-                SizedBox(width: 24.w),
                 Row(
                   children: [
                     Radio<ExportFormat>(
@@ -125,7 +129,29 @@ Future<void> showExportDialog(
                         if (v != null) format.value = v;
                       },
                     ),
-                    const Text('CSV'),
+                    GestureDetector(
+                      onTap: () {
+                        format.value = ExportFormat.csv;
+                      },
+                      child: const Text('CSV'),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Radio<ExportFormat>(
+                      value: ExportFormat.xlsx,
+                      groupValue: format.value,
+                      onChanged: (v) {
+                        if (v != null) format.value = v;
+                      },
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        format.value = ExportFormat.xlsx;
+                      },
+                      child: const Text('Excel'),
+                    ),
                   ],
                 ),
               ],

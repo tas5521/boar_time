@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:boar_time/model/abstract_model/time_state_base.dart';
+import 'package:excel/excel.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
@@ -14,7 +15,7 @@ import 'package:boar_time/model/patrol_time_state/patrol_time_state.dart';
 
 enum ExportType { butchering, patrol }
 
-enum ExportFormat { pdf, csv }
+enum ExportFormat { pdf, csv, xlsx }
 
 class ExportManager {
   // ======================================================
@@ -45,22 +46,36 @@ class ExportManager {
   }) async {
     await _loadFonts();
 
-    switch (type) {
-      case ExportType.butchering:
-        return format == ExportFormat.pdf
-            ? _exportPdf(
-                headers: ["日付", "出勤", "退勤", "休憩", "累計"],
-                rows: _mapButcheringRows(data.cast<ButcheringTimeState>()),
-              )
-            : _exportButcheringCsv(data.cast<ButcheringTimeState>());
+    switch (format) {
+      case ExportFormat.pdf:
+        switch (type) {
+          case ExportType.butchering:
+            return _exportPdf(
+              headers: ["日付", "出勤", "退勤", "休憩", "累計"],
+              rows: _mapButcheringRows(data.cast<ButcheringTimeState>()),
+            );
+          case ExportType.patrol:
+            return _exportPdf(
+              headers: ["日付", "開始", "終了", "累計"],
+              rows: _mapPatrolRows(data.cast<PatrolTimeState>()),
+            );
+        }
 
-      case ExportType.patrol:
-        return format == ExportFormat.pdf
-            ? _exportPdf(
-                headers: ["日付", "開始", "終了", "累計"],
-                rows: _mapPatrolRows(data.cast<PatrolTimeState>()),
-              )
-            : _exportPatrolCsv(data.cast<PatrolTimeState>());
+      case ExportFormat.csv:
+        switch (type) {
+          case ExportType.butchering:
+            return _exportButcheringCsv(data.cast<ButcheringTimeState>());
+          case ExportType.patrol:
+            return _exportPatrolCsv(data.cast<PatrolTimeState>());
+        }
+
+      case ExportFormat.xlsx:
+        switch (type) {
+          case ExportType.butchering:
+            return _exportButcheringExcel(data.cast<ButcheringTimeState>());
+          case ExportType.patrol:
+            return _exportPatrolExcel(data.cast<PatrolTimeState>());
+        }
     }
   }
 
@@ -72,7 +87,13 @@ class ExportManager {
     required String filename,
   }) async {
     final bytes = await export(type: type, format: format, data: data);
-    final ext = format == ExportFormat.pdf ? "pdf" : "csv";
+
+    final ext = switch (format) {
+      ExportFormat.pdf => "pdf",
+      ExportFormat.csv => "csv",
+      ExportFormat.xlsx => "xlsx",
+    };
+
     return saveAndOpen(bytes: bytes, filename: filename, extension: ext);
   }
 
@@ -214,6 +235,69 @@ class ExportManager {
     }
 
     return Uint8List.fromList(utf8.encode(buffer.toString()));
+  }
+
+  // ======================================================
+  //              Excel - Butchering
+  // ======================================================
+
+  static Future<Uint8List> _exportButcheringExcel(
+    List<ButcheringTimeState> list,
+  ) async {
+    final excel = Excel.createExcel();
+    final sheet = excel['Sheet1'];
+
+    // Header
+    sheet.appendRow([
+      TextCellValue("日付"),
+      TextCellValue("出勤"),
+      TextCellValue("退勤"),
+      TextCellValue("休憩"),
+      TextCellValue("累計"),
+    ]);
+
+    for (final e in list) {
+      sheet.appendRow([
+        TextCellValue(_fmtDate(e.date)),
+        TextCellValue(_fmtTime(e.start)),
+        TextCellValue(_fmtTime(e.end)),
+        TextCellValue(
+          _fmtBreakDuration(e.breakStart, e.breakEnd, e.breakDuration),
+        ),
+        TextCellValue(_fmtDuration(e.cumulativeDuration)),
+      ]);
+    }
+
+    return Uint8List.fromList(excel.encode()!);
+  }
+
+  // ======================================================
+  //              Excel - Patrol
+  // ======================================================
+
+  static Future<Uint8List> _exportPatrolExcel(
+    List<PatrolTimeState> list,
+  ) async {
+    final excel = Excel.createExcel();
+    final sheet = excel['Sheet1'];
+
+    sheet.appendRow([
+      TextCellValue("日付"),
+      TextCellValue("開始"),
+      TextCellValue("終了"),
+      TextCellValue("累計"),
+    ]);
+
+    for (final e in list) {
+      sheet.appendRow([
+        TextCellValue(_fmtDate(e.date)),
+        TextCellValue(_fmtTime(e.start)),
+        TextCellValue(_fmtTime(e.end)),
+        TextCellValue(_fmtDuration(e.cumulativeDuration)),
+      ]);
+    }
+
+    return Uint8List.fromList(excel.encode()!);
   }
 
   // ======================================================
