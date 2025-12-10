@@ -10,6 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
   
   flutter_localizations:
     sdk: flutter
@@ -46,3 +47,13 @@ flutter:
     - family: MyFlutterApp
       fonts:
         - asset: assets/fonts/MyFlutterApp.ttf
+
+flutter_icons: 
+  image_path_android: assets/launcher_icon/android_icon.png
+  adaptive_icon_background: assets/launcher_icon/android_icon_background.png
+  adaptive_icon_foreground: assets/launcher_icon/android_icon_foreground.png
+  image_path_ios: assets/launcher_icon/ios_icon.png
+  android: true
+  adaptive_icon_padding: true
+  min_sdk_android: 21
+  ios: true
