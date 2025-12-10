@@ -32,7 +32,7 @@ Future<Map<String, int>?> showYearMonthPicker(
 
   return showDialog<Map<String, int>>(
     context: context,
-    builder: (_) {
+    builder: (dialogContext) {
       return AlertDialog(
         title: const Text("年月を選択"),
         content: SizedBox(
@@ -68,12 +68,12 @@ Future<Map<String, int>?> showYearMonthPicker(
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text("キャンセル"),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context, {
+              Navigator.pop(dialogContext, {
                 "year": selectedYear,
                 "month": selectedMonth,
               });
@@ -95,7 +95,7 @@ Future<void> showExportDialog(
     context: context,
     builder: (_) {
       return HookBuilder(
-        builder: (context) {
+        builder: (hookContext) {
           final format = useState<ExportFormat>(ExportFormat.pdf);
           return AlertDialog(
             title: Text(title),
@@ -158,13 +158,13 @@ Future<void> showExportDialog(
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(hookContext),
                 child: const Text("キャンセル"),
               ),
               ElevatedButton(
                 onPressed: () {
                   onExport(format.value);
-                  Navigator.pop(context);
+                  Navigator.pop(hookContext);
                 },
                 child: const Text("出力する"),
               ),
