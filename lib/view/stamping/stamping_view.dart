@@ -45,7 +45,7 @@ class StampingView extends HookConsumerWidget {
           spacing: 40.w,
           children: [
             Container(
-              margin: EdgeInsets.fromLTRB(12.w, 0.w, 0.w, 0.w),
+              margin: EdgeInsets.only(left: 4.w),
               width: 340.w,
               child: TimeDisplay(
                 onDateChanged: () async {
