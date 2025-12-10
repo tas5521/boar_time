@@ -269,8 +269,8 @@ class ButcheringTimeView extends HookConsumerWidget {
                                   );
                                   rec = WorkRecord(
                                     date: row.date,
-                                    startTime: dt,
-                                    endTime: row.end,
+                                    startTime: row.start,
+                                    endTime: dt,
                                     breakStart: row.breakStart,
                                     breakEnd: row.breakEnd,
                                   );
