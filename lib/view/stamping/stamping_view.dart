@@ -33,7 +33,7 @@ class StampingView extends HookConsumerWidget {
             ],
             onSelected: (value) {
               if (value == 'license') {
-                showLicensePage(context: context, applicationName: 'InoTime');
+                showLicensePage(context: context, applicationName: 'Wild Boar');
               }
             },
           ),
