@@ -89,9 +89,9 @@ class ButcheringTimeView extends HookConsumerWidget {
           ),
         ],
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text(
+        title: Text(
           '解体時間',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.bold),
         ),
       ),
       body: Center(

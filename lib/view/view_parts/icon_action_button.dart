@@ -34,9 +34,9 @@ Future<Map<String, int>?> showYearMonthPicker(
     context: context,
     builder: (dialogContext) {
       return AlertDialog(
-        title: const Text("年月を選択"),
+        title: Text("年月を選択", style: TextStyle(fontSize: 20.sp)),
         content: SizedBox(
-          height: 200.w,
+          height: 200.sp,
           child: Row(
             children: [
               Expanded(
@@ -47,7 +47,11 @@ Future<Map<String, int>?> showYearMonthPicker(
                     selectedYear = years[index];
                   },
                   children: years
-                      .map((y) => Center(child: Text("$y年")))
+                      .map(
+                        (y) => Center(
+                          child: Text("$y年", style: TextStyle(fontSize: 20.sp)),
+                        ),
+                      )
                       .toList(),
                 ),
               ),
@@ -59,7 +63,11 @@ Future<Map<String, int>?> showYearMonthPicker(
                     selectedMonth = months[index];
                   },
                   children: months
-                      .map((m) => Center(child: Text("$m月")))
+                      .map(
+                        (m) => Center(
+                          child: Text("$m月", style: TextStyle(fontSize: 20.sp)),
+                        ),
+                      )
                       .toList(),
                 ),
               ),
@@ -69,7 +77,7 @@ Future<Map<String, int>?> showYearMonthPicker(
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text("キャンセル"),
+            child: Text("キャンセル", style: TextStyle(fontSize: 14.sp)),
           ),
           TextButton(
             onPressed: () {
@@ -78,7 +86,7 @@ Future<Map<String, int>?> showYearMonthPicker(
                 "month": selectedMonth,
               });
             },
-            child: const Text("決定"),
+            child: Text("決定", style: TextStyle(fontSize: 14.sp)),
           ),
         ],
       );
@@ -98,7 +106,7 @@ Future<void> showExportDialog(
         builder: (hookContext) {
           final format = useState<ExportFormat>(ExportFormat.pdf);
           return AlertDialog(
-            title: Text(title),
+            title: Text(title, style: TextStyle(fontSize: 20.sp)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +124,7 @@ Future<void> showExportDialog(
                       onTap: () {
                         format.value = ExportFormat.pdf;
                       },
-                      child: const Text('PDF'),
+                      child: Text('PDF', style: TextStyle(fontSize: 16.sp)),
                     ),
                   ],
                 ),
@@ -133,7 +141,7 @@ Future<void> showExportDialog(
                       onTap: () {
                         format.value = ExportFormat.csv;
                       },
-                      child: const Text('CSV'),
+                      child: Text('CSV', style: TextStyle(fontSize: 16.sp)),
                     ),
                   ],
                 ),
@@ -150,7 +158,7 @@ Future<void> showExportDialog(
                       onTap: () {
                         format.value = ExportFormat.xlsx;
                       },
-                      child: const Text('Excel'),
+                      child: Text('Excel', style: TextStyle(fontSize: 16.sp)),
                     ),
                   ],
                 ),
@@ -159,14 +167,14 @@ Future<void> showExportDialog(
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(hookContext),
-                child: const Text("キャンセル"),
+                child: Text("キャンセル", style: TextStyle(fontSize: 14.sp)),
               ),
               ElevatedButton(
                 onPressed: () {
                   onExport(format.value);
                   Navigator.pop(hookContext);
                 },
-                child: const Text("出力する"),
+                child: Text("出力する", style: TextStyle(fontSize: 14.sp)),
               ),
             ],
           );

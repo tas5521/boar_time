@@ -20,7 +20,7 @@ Future<void> showEditTimeDialog(
       return StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            title: Text('$labelの修正'),
+            title: Text('$labelの修正', style: TextStyle(fontSize: 20.sp)),
             content: SizedBox(
               width: 300.w,
               child: Column(
@@ -63,7 +63,10 @@ Future<void> showEditTimeDialog(
                             });
                           }
                         },
-                        child: const Text('時間を選択する'),
+                        child: Text(
+                          '時間を選択する',
+                          style: TextStyle(fontSize: 14.sp),
+                        ),
                       ),
                       SizedBox(width: 20.w),
                       TextButton(
@@ -72,9 +75,9 @@ Future<void> showEditTimeDialog(
                             selectedTime = null;
                           });
                         },
-                        child: const Text(
+                        child: Text(
                           '削除',
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(fontSize: 14.sp, color: Colors.red),
                         ),
                       ),
                     ],
@@ -85,14 +88,14 @@ Future<void> showEditTimeDialog(
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('キャンセル'),
+                child: Text('キャンセル', style: TextStyle(fontSize: 14.sp)),
               ),
               ElevatedButton(
                 onPressed: () async {
                   await onPressed(selectedTime);
                   if (context.mounted) Navigator.pop(context);
                 },
-                child: const Text('保存'),
+                child: Text('保存', style: TextStyle(fontSize: 14.sp)),
               ),
             ],
           );

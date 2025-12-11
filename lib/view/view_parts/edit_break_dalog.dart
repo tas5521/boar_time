@@ -26,7 +26,7 @@ Future<void> showEditBreakDialog(
           String formatTime(TimeOfDay? t) => t?.format(context) ?? '--:--';
 
           return AlertDialog(
-            title: const Text('休憩時間の編集'),
+            title: Text('休憩時間の編集', style: TextStyle(fontSize: 20.sp)),
             content: SizedBox(
               width: 320.w,
               child: Column(
@@ -66,9 +66,12 @@ Future<void> showEditBreakDialog(
                             onPressed: () {
                               setState(() => start = null);
                             },
-                            child: const Text(
+                            child: Text(
                               '削除',
-                              style: TextStyle(color: Colors.red),
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: Colors.red,
+                              ),
                             ),
                           ),
                         ],
@@ -102,9 +105,12 @@ Future<void> showEditBreakDialog(
                             onPressed: () {
                               setState(() => end = null);
                             },
-                            child: const Text(
+                            child: Text(
                               '削除',
-                              style: TextStyle(color: Colors.red),
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: Colors.red,
+                              ),
                             ),
                           ),
                         ],
@@ -117,14 +123,14 @@ Future<void> showEditBreakDialog(
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('キャンセル'),
+                child: Text('キャンセル', style: TextStyle(fontSize: 16.sp)),
               ),
               ElevatedButton(
                 onPressed: () async {
                   await onPressed(breakStart: start, breakEnd: end);
                   if (context.mounted) Navigator.pop(context);
                 },
-                child: const Text('保存'),
+                child: Text('保存', style: TextStyle(fontSize: 16.sp)),
               ),
             ],
           );

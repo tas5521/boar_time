@@ -25,7 +25,10 @@ class StampingView extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('打刻', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          '打刻',
+          style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.bold),
+        ),
         actions: [
           PopupMenuButton(
             itemBuilder: (_) => [
@@ -193,15 +196,15 @@ class StampingView extends HookConsumerWidget {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text(
+          title: Text(
             '打刻完了',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20.w, fontWeight: FontWeight.bold),
           ),
           content: Text(message, style: TextStyle(fontSize: 16.w)),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('OK'),
+              child: Text('OK', style: TextStyle(fontSize: 14.w)),
             ),
           ],
         );
