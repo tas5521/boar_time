@@ -79,7 +79,7 @@ Future<Map<String, int>?> showYearMonthPicker(
             onPressed: () => Navigator.pop(dialogContext),
             child: Text("キャンセル", style: TextStyle(fontSize: 14.sp)),
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () {
               Navigator.pop(dialogContext, {
                 "year": selectedYear,
