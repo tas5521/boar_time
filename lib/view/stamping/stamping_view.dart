@@ -32,7 +32,10 @@ class StampingView extends HookConsumerWidget {
         actions: [
           PopupMenuButton(
             itemBuilder: (_) => [
-              const PopupMenuItem(value: 'license', child: Text('ライセンス情報')),
+              PopupMenuItem(
+                value: 'license',
+                child: Text('ライセンス情報', style: TextStyle(fontSize: 14.sp)),
+              ),
             ],
             onSelected: (value) {
               if (value == 'license') {
