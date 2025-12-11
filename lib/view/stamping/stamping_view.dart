@@ -191,7 +191,7 @@ class StampingView extends HookConsumerWidget {
   }) async {
     return showDialog<void>(
       context: context,
-      builder: (_) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text(
             '打刻完了',
@@ -200,7 +200,7 @@ class StampingView extends HookConsumerWidget {
           content: Text(message, style: TextStyle(fontSize: 16.w)),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Navigator.of(dialogContext).pop(),
               child: const Text('OK'),
             ),
           ],
