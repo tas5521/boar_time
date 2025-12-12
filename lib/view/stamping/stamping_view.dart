@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
+import 'package:boar_time/view/view_parts/speech_bubble.dart';
 import 'package:boar_time/view/view_parts/time_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -162,6 +163,26 @@ class StampingView extends HookConsumerWidget {
                         );
                       },
                     ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Spacer(),
+                    SpeechBubble(
+                      color: Colors.grey.shade200,
+                      child: Text(
+                        Speech.fromNow().text,
+                        style: TextStyle(fontSize: 16.w),
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Image.asset(
+                      'assets/images/contents/boar.png',
+                      width: 80.w,
+                      height: 80.w,
+                      fit: BoxFit.cover,
+                    ),
+                    SizedBox(width: 10.w),
                   ],
                 ),
               ],
