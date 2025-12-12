@@ -26,21 +26,19 @@ class MyApp extends StatelessWidget {
           ).copyWith(textScaler: TextScaler.linear(1.0), boldText: false),
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: MaterialApp(
-              locale: const Locale('ja'),
-              supportedLocales: const [Locale('ja')],
-              localizationsDelegates: [
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(
-                  seedColor: Colors.deepOrangeAccent,
-                ),
+            locale: const Locale('ja'),
+            supportedLocales: const [Locale('ja')],
+            localizationsDelegates: [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.deepOrangeAccent,
               ),
-              home: const BottomNavigationBarView(),
             ),
+            home: const BottomNavigationBarView(),
           ),
         );
       },
