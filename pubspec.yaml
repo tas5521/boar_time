@@ -43,6 +43,7 @@ flutter:
 
   assets:
     - assets/fonts/NotoSansJP-VariableFont_wght.ttf
+    - assets/images/contents/
 
   fonts:
     - family: MyFlutterApp
