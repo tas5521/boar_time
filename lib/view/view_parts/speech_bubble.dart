@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -7,17 +8,40 @@ enum Speech {
   evening,
   night;
 
-  String get text {
+  /// 各時間帯のメッセージ候補をまとめる
+  List<String> get messages {
     switch (this) {
       case Speech.morning:
-        return 'おはようございます！\n今日も一日頑張りましょう！';
+        return [
+          'おはようございます！\n今日も一日頑張りましょう！',
+          'おはよう！\n今日はどんな予定ですか？',
+          '良い朝ですね！\n無理せずいきましょう！',
+        ];
       case Speech.afternoon:
-        return 'こんにちは！\n調子はいかがですか？';
+        return [
+          'こんにちは！\n調子はいかがですか？',
+          'こんにちは！\n休憩も忘れずに！',
+          'いい午後ですね！\n引き続き頑張りましょう！',
+        ];
       case Speech.evening:
-        return '今日もお疲れ様でした';
+        return [
+          'こんばんは！\n今日もお疲れ様でした！',
+          'こんばんは！\n無理しすぎてませんか？',
+          '一日頑張りましたね！\n少し休みましょう！',
+        ];
       case Speech.night:
-        return '夜遅くまでお疲れさまです\nそろそろ休んでくださいね！';
+        return [
+          '夜遅くまでお疲れさまです\nそろそろ休んでくださいね！',
+          '遅くまで大変ですね…\nしっかり睡眠をとってください！',
+          'もう夜ですね…\n身体をゆっくり休めてください！',
+        ];
     }
+  }
+
+  String get randomText {
+    final list = messages;
+    final random = Random();
+    return list[random.nextInt(list.length)];
   }
 
   static Speech fromNow() {

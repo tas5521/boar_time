@@ -15,6 +15,7 @@ class StampingView extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(stampingNotifierProvider).value;
     final lifecycle = useAppLifecycleState();
+    final boarSpeech = useState('');
 
     useEffect(() {
       if (lifecycle == AppLifecycleState.resumed) {
@@ -171,16 +172,21 @@ class StampingView extends HookConsumerWidget {
                     SpeechBubble(
                       color: Colors.grey.shade200,
                       child: Text(
-                        Speech.fromNow().text,
+                        Speech.fromNow().randomText,
                         style: TextStyle(fontSize: 16.w),
                       ),
                     ),
                     SizedBox(width: 10.w),
-                    Image.asset(
-                      'assets/images/contents/boar.png',
-                      width: 80.w,
-                      height: 80.w,
-                      fit: BoxFit.cover,
+                    GestureDetector(
+                      onTap: () {
+                        boarSpeech.value = Speech.fromNow().randomText;
+                      },
+                      child: Image.asset(
+                        'assets/images/contents/boar.png',
+                        width: 80.w,
+                        height: 80.w,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     SizedBox(width: 10.w),
                   ],
