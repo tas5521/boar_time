@@ -49,7 +49,7 @@ Future<Map<String, int>?> showYearMonthPicker(
                   children: years
                       .map(
                         (y) => Center(
-                          child: Text("$y年", style: TextStyle(fontSize: 20.sp)),
+                          child: Text("$y年", style: TextStyle(fontSize: 16.sp)),
                         ),
                       )
                       .toList(),
@@ -65,7 +65,7 @@ Future<Map<String, int>?> showYearMonthPicker(
                   children: months
                       .map(
                         (m) => Center(
-                          child: Text("$m月", style: TextStyle(fontSize: 20.sp)),
+                          child: Text("$m月", style: TextStyle(fontSize: 16.sp)),
                         ),
                       )
                       .toList(),
