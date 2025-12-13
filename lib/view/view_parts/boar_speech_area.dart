@@ -69,6 +69,14 @@ class BoarSpeechArea extends HookWidget {
   Widget build(BuildContext context) {
     final speechText = useState(Speech.fromNow().randomText);
     final controller = useAnimationController(duration: 300.ms);
+    final lifecycle = useAppLifecycleState();
+
+    useEffect(() {
+      if (lifecycle == AppLifecycleState.resumed) {
+        controller.value = 0;
+      }
+      return;
+    }, [lifecycle]);
 
     useEffect(() {
       controller.value = 0;
