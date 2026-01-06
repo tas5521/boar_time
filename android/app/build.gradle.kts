@@ -30,7 +30,7 @@ android {
 
     defaultConfig {
         applicationId = "com.gmail.tsbs11152.boar_time"
-        minSdk = 21
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
