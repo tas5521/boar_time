@@ -4,7 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'stamping_state.freezed.dart';
 
 @freezed
-class StampingTimeState with _$StampingTimeState {
+abstract class StampingTimeState with _$StampingTimeState {
   const StampingTimeState._();
 
   const factory StampingTimeState({

@@ -4,7 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'butchering_time_state.freezed.dart';
 
 @freezed
-class ButcheringTimeState with _$ButcheringTimeState implements TimeStateBase {
+abstract class ButcheringTimeState with _$ButcheringTimeState implements TimeStateBase {
   const ButcheringTimeState._();
 
   const factory ButcheringTimeState({
