@@ -19,7 +19,7 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     state = const AsyncValue.loading();
     try {
       final records = await _loadRecords(year, month);
-      final converted = _convertRecords(year, month, records);
+      final converted = _convertRecords(records);
       state = AsyncValue.data(converted);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -31,7 +31,7 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     try {
       await WorkRecordManager.upsertByDate(rec, upsertType: UpsertType.patrol);
       final records = await _loadRecords(year, month);
-      final converted = _convertRecords(year, month, records);
+      final converted = _convertRecords(records);
       state = AsyncValue.data(converted);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -47,7 +47,7 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
         await WorkRecordManager.update(record);
       }
       final records = await _loadRecords(year, month);
-      final converted = _convertRecords(year, month, records);
+      final converted = _convertRecords(records);
       state = AsyncValue.data(converted);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -63,7 +63,7 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
         await WorkRecordManager.update(record);
       }
       final records = await _loadRecords(year, month);
-      final converted = _convertRecords(year, month, records);
+      final converted = _convertRecords(records);
       state = AsyncValue.data(converted);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -77,42 +77,23 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
         .toList();
   }
 
-  List<PatrolTimeState> _convertRecords(
-    int year,
-    int month,
-    List<WorkRecord> records,
-  ) {
-    final lastDay = DateTime(
-      year,
-      month + 1,
-      1,
-    ).subtract(const Duration(days: 1)).day;
+  List<PatrolTimeState> _convertRecords(List<WorkRecord> records) {
+    final sorted = [...records]..sort((a, b) => a.date.compareTo(b.date));
 
     final List<PatrolTimeState> list = [];
     Duration cumulative = Duration.zero;
 
-    for (int day = 1; day <= lastDay; day++) {
-      final date = DateTime(year, month, day);
-
-      final rec = records.firstWhere(
-        (r) =>
-            r.date.year == date.year &&
-            r.date.month == date.month &&
-            r.date.day == date.day,
-        orElse: () => WorkRecord(date: date),
-      );
-
-      var state = PatrolTimeState(
-        date: date,
+    for (final rec in sorted) {
+      final stateBase = PatrolTimeState(
+        date: rec.date,
         start: rec.patrolStart,
         end: rec.patrolEnd,
         cumulativeDuration: Duration.zero,
       );
 
-      cumulative += state.totalDuration;
-      state = state.copyWith(cumulativeDuration: cumulative);
+      cumulative += stateBase.totalDuration;
 
-      list.add(state);
+      list.add(stateBase.copyWith(cumulativeDuration: cumulative));
     }
 
     return list;

@@ -1,5 +1,4 @@
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
-import 'package:boar_time/model/patrol_time_state/patrol_time_state.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:boar_time/notifier/patrol/patrol_time_notifier.dart';
 import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
@@ -21,13 +20,9 @@ class PatrolTimeView extends HookConsumerWidget {
     final now = DateTime.now();
     final year = useState(now.year);
     final month = useState(now.month);
-    final lastDay = DateTime(
-      year.value,
-      month.value + 1,
-      1,
-    ).subtract(const Duration(days: 1)).day;
 
     final patrolTimeState = ref.watch(patrolTimeNotifierProvider);
+    final patrolList = patrolTimeState.value ?? [];
 
     useEffect(() {
       Future.microtask(() async {
@@ -138,22 +133,10 @@ class PatrolTimeView extends HookConsumerWidget {
                     DataColumn(label: SizedBox()),
                     DataColumn(label: SizedBox()),
                   ],
-                  rows: List.generate(lastDay, (i) {
-                    final day = i + 1;
-                    final date = DateTime(year.value, month.value, day);
-                    final formattedDate = DateFormat('yyyy/MM/dd').format(date);
-                    final row = patrolTimeState.value?.firstWhere(
-                      (r) =>
-                          r.date.year == date.year &&
-                          r.date.month == date.month &&
-                          r.date.day == date.day,
-                      orElse: () => PatrolTimeState(
-                        date: date,
-                        start: null,
-                        end: null,
-                        cumulativeDuration: Duration.zero,
-                      ),
-                    );
+                  rows: patrolList.map((row) {
+                    final formattedDate = DateFormat(
+                      'yyyy/MM/dd',
+                    ).format(row.date);
                     return DataRow(
                       cells: [
                         DataCell(
@@ -171,7 +154,7 @@ class PatrolTimeView extends HookConsumerWidget {
                             alignment: Alignment.center,
                             width: 52.w,
                             child: Text(
-                              _fmt(row?.start),
+                              _fmt(row.start),
                               style: TextStyle(fontSize: 16.sp),
                             ),
                           ),
@@ -179,7 +162,7 @@ class PatrolTimeView extends HookConsumerWidget {
                             showEditTimeDialog(
                               context,
                               label: '見回り開始時間',
-                              date: row!.date,
+                              date: row.date,
                               initialTime: row.start != null
                                   ? TimeOfDay.fromDateTime(row.start!)
                                   : null,
@@ -221,7 +204,7 @@ class PatrolTimeView extends HookConsumerWidget {
                             alignment: Alignment.center,
                             width: 52.w,
                             child: Text(
-                              _fmt(row?.end),
+                              _fmt(row.end),
                               style: TextStyle(fontSize: 16.sp),
                             ),
                           ),
@@ -229,7 +212,7 @@ class PatrolTimeView extends HookConsumerWidget {
                             showEditTimeDialog(
                               context,
                               label: '見回り終了時間',
-                              date: row!.date,
+                              date: row.date,
                               initialTime: row.end != null
                                   ? TimeOfDay.fromDateTime(row.end!)
                                   : null,
@@ -271,16 +254,14 @@ class PatrolTimeView extends HookConsumerWidget {
                             alignment: Alignment.center,
                             width: 60.w,
                             child: Text(
-                              _fmtDuration(
-                                row?.cumulativeDuration ?? Duration.zero,
-                              ),
+                              _fmtDuration(row.cumulativeDuration),
                               style: TextStyle(fontSize: 16.sp),
                             ),
                           ),
                         ),
                       ],
                     );
-                  }),
+                  }).toList(),
                 ),
               ),
             ),
