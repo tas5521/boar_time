@@ -47,4 +47,10 @@ class PatrolRecordManager {
       await isar.patrolRecords.put(record);
     });
   }
+
+  static Future<bool> deleteIfExists(int patrolId) async {
+    return await isar.writeTxn(() async {
+      return await isar.patrolRecords.delete(patrolId);
+    });
+  }
 }

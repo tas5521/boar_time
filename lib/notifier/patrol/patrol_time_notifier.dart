@@ -58,6 +58,15 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     }
   }
 
+  Future<void> delete({
+    required int patrolId,
+    required int year,
+    required int month,
+  }) async {
+    await PatrolRecordManager.deleteIfExists(patrolId);
+    state = AsyncValue.data(_convertRecords(await _loadRecords(year, month)));
+  }
+
   Future<void> updateLabel({
     required int patrolId,
     required PatrolLabel label,

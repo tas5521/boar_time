@@ -66,6 +66,43 @@ class PatrolEditPage extends HookConsumerWidget {
       }
     }
 
+    Future<void> confirmDelete(
+      BuildContext context,
+      PatrolTimeNotifier notifier,
+    ) async {
+      final result = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: Text('削除確認', style: TextStyle(fontSize: 20.sp)),
+            content: Text(
+              'この見回り記録を削除します。\nこの操作は取り消せません。',
+              style: TextStyle(fontSize: 16.sp),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: Text('キャンセル', style: TextStyle(fontSize: 14.sp)),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: Text('削除', style: TextStyle(fontSize: 14.sp)),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (result != true) return;
+
+      await notifier.delete(patrolId: patrolId, year: year, month: month);
+
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -122,6 +159,27 @@ class PatrolEditPage extends HookConsumerWidget {
                         '保存',
                         style: TextStyle(
                           fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 64.w,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+                      ),
+                      onPressed: () => confirmDelete(context, notifier),
+                      child: Text(
+                        '削除',
+                        style: TextStyle(
+                          fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
