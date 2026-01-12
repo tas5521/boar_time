@@ -73,6 +73,33 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     state = AsyncValue.data(_convertRecords(await _loadRecords(year, month)));
   }
 
+  Future<PatrolRecord?> getDetail(int patrolId) {
+    return PatrolRecordManager.getById(patrolId);
+  }
+
+  Future<void> updateDetail({
+    required int patrolId,
+    required String location,
+    required String animal,
+    required int? count,
+    required String note,
+    required int year,
+    required int month,
+  }) async {
+    final record = await PatrolRecordManager.getById(patrolId);
+    if (record == null) return;
+
+    record
+      ..location = location
+      ..animal = animal
+      ..count = count
+      ..note = note;
+
+    await PatrolRecordManager.update(record);
+
+    state = AsyncValue.data(_convertRecords(await _loadRecords(year, month)));
+  }
+
   Future<List<PatrolRecord>> _loadRecords(int year, int month) async {
     return PatrolRecordManager.getByMonth(year, month);
   }

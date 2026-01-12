@@ -9,8 +9,14 @@ class PatrolRecord {
 
   @Index()
   late DateTime date;
+
   late DateTime start;
   DateTime? end;
+
+  String? location; // 見回り場所
+  String? animal; // 捕獲獣種
+  int? count; // 捕獲数
+  String? note; // 備考
 
   @enumerated
   late PatrolLabel label;
@@ -19,6 +25,10 @@ class PatrolRecord {
     required this.date,
     required this.start,
     this.end,
+    this.location,
+    this.animal,
+    this.count,
+    this.note,
     this.label = PatrolLabel.none,
   });
 }

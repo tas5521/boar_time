@@ -17,15 +17,23 @@ const PatrolRecordSchema = CollectionSchema(
   name: r'PatrolRecord',
   id: -9131063241243309736,
   properties: {
-    r'date': PropertySchema(id: 0, name: r'date', type: IsarType.dateTime),
-    r'end': PropertySchema(id: 1, name: r'end', type: IsarType.dateTime),
+    r'animal': PropertySchema(id: 0, name: r'animal', type: IsarType.string),
+    r'count': PropertySchema(id: 1, name: r'count', type: IsarType.long),
+    r'date': PropertySchema(id: 2, name: r'date', type: IsarType.dateTime),
+    r'end': PropertySchema(id: 3, name: r'end', type: IsarType.dateTime),
     r'label': PropertySchema(
-      id: 2,
+      id: 4,
       name: r'label',
       type: IsarType.byte,
       enumMap: _PatrolRecordlabelEnumValueMap,
     ),
-    r'start': PropertySchema(id: 3, name: r'start', type: IsarType.dateTime),
+    r'location': PropertySchema(
+      id: 5,
+      name: r'location',
+      type: IsarType.string,
+    ),
+    r'note': PropertySchema(id: 6, name: r'note', type: IsarType.string),
+    r'start': PropertySchema(id: 7, name: r'start', type: IsarType.dateTime),
   },
 
   estimateSize: _patrolRecordEstimateSize,
@@ -63,6 +71,24 @@ int _patrolRecordEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.animal;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.location;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.note;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -72,10 +98,14 @@ void _patrolRecordSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeDateTime(offsets[0], object.date);
-  writer.writeDateTime(offsets[1], object.end);
-  writer.writeByte(offsets[2], object.label.index);
-  writer.writeDateTime(offsets[3], object.start);
+  writer.writeString(offsets[0], object.animal);
+  writer.writeLong(offsets[1], object.count);
+  writer.writeDateTime(offsets[2], object.date);
+  writer.writeDateTime(offsets[3], object.end);
+  writer.writeByte(offsets[4], object.label.index);
+  writer.writeString(offsets[5], object.location);
+  writer.writeString(offsets[6], object.note);
+  writer.writeDateTime(offsets[7], object.start);
 }
 
 PatrolRecord _patrolRecordDeserialize(
@@ -85,12 +115,16 @@ PatrolRecord _patrolRecordDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = PatrolRecord(
-    date: reader.readDateTime(offsets[0]),
-    end: reader.readDateTimeOrNull(offsets[1]),
+    animal: reader.readStringOrNull(offsets[0]),
+    count: reader.readLongOrNull(offsets[1]),
+    date: reader.readDateTime(offsets[2]),
+    end: reader.readDateTimeOrNull(offsets[3]),
     label:
-        _PatrolRecordlabelValueEnumMap[reader.readByteOrNull(offsets[2])] ??
+        _PatrolRecordlabelValueEnumMap[reader.readByteOrNull(offsets[4])] ??
         PatrolLabel.none,
-    start: reader.readDateTime(offsets[3]),
+    location: reader.readStringOrNull(offsets[5]),
+    note: reader.readStringOrNull(offsets[6]),
+    start: reader.readDateTime(offsets[7]),
   );
   object.id = id;
   return object;
@@ -104,14 +138,22 @@ P _patrolRecordDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 2:
+      return (reader.readDateTime(offset)) as P;
+    case 3:
+      return (reader.readDateTimeOrNull(offset)) as P;
+    case 4:
       return (_PatrolRecordlabelValueEnumMap[reader.readByteOrNull(offset)] ??
               PatrolLabel.none)
           as P;
-    case 3:
+    case 5:
+      return (reader.readStringOrNull(offset)) as P;
+    case 6:
+      return (reader.readStringOrNull(offset)) as P;
+    case 7:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -344,6 +386,243 @@ extension PatrolRecordQueryWhere
 
 extension PatrolRecordQueryFilter
     on QueryBuilder<PatrolRecord, PatrolRecord, QFilterCondition> {
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  animalIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'animal'),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  animalIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'animal'),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> animalEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'animal',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  animalGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'animal',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  animalLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'animal',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> animalBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'animal',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  animalStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'animal',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  animalEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'animal',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  animalContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'animal',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> animalMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'animal',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  animalIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'animal', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  animalIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'animal', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  countIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'count'),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  countIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'count'),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> countEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'count', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  countGreaterThan(int? value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'count',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> countLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'count',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> countBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'count',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
   QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> dateEqualTo(
     DateTime value,
   ) {
@@ -591,6 +870,329 @@ extension PatrolRecordQueryFilter
     });
   }
 
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  locationIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'location'),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  locationIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'location'),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  locationEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'location',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  locationGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'location',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  locationLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'location',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  locationBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'location',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  locationStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'location',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  locationEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'location',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  locationContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'location',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  locationMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'location',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  locationIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'location', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  locationIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'location', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> noteIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'note'),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  noteIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'note'),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> noteEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  noteGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> noteLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> noteBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'note',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  noteStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> noteEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> noteContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> noteMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'note',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  noteIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'note', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  noteIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'note', value: ''),
+      );
+    });
+  }
+
   QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> startEqualTo(
     DateTime value,
   ) {
@@ -657,6 +1259,30 @@ extension PatrolRecordQueryLinks
 
 extension PatrolRecordQuerySortBy
     on QueryBuilder<PatrolRecord, PatrolRecord, QSortBy> {
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByAnimal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByAnimalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animal', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'count', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByCountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'count', Sort.desc);
+    });
+  }
+
   QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.asc);
@@ -693,6 +1319,30 @@ extension PatrolRecordQuerySortBy
     });
   }
 
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByLocation() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'location', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByLocationDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'location', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByNote() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'note', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByNoteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'note', Sort.desc);
+    });
+  }
+
   QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByStart() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'start', Sort.asc);
@@ -708,6 +1358,30 @@ extension PatrolRecordQuerySortBy
 
 extension PatrolRecordQuerySortThenBy
     on QueryBuilder<PatrolRecord, PatrolRecord, QSortThenBy> {
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> thenByAnimal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> thenByAnimalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animal', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> thenByCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'count', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> thenByCountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'count', Sort.desc);
+    });
+  }
+
   QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> thenByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.asc);
@@ -756,6 +1430,30 @@ extension PatrolRecordQuerySortThenBy
     });
   }
 
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> thenByLocation() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'location', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> thenByLocationDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'location', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> thenByNote() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'note', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> thenByNoteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'note', Sort.desc);
+    });
+  }
+
   QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> thenByStart() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'start', Sort.asc);
@@ -771,6 +1469,20 @@ extension PatrolRecordQuerySortThenBy
 
 extension PatrolRecordQueryWhereDistinct
     on QueryBuilder<PatrolRecord, PatrolRecord, QDistinct> {
+  QueryBuilder<PatrolRecord, PatrolRecord, QDistinct> distinctByAnimal({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'animal', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QDistinct> distinctByCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'count');
+    });
+  }
+
   QueryBuilder<PatrolRecord, PatrolRecord, QDistinct> distinctByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'date');
@@ -789,6 +1501,22 @@ extension PatrolRecordQueryWhereDistinct
     });
   }
 
+  QueryBuilder<PatrolRecord, PatrolRecord, QDistinct> distinctByLocation({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'location', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QDistinct> distinctByNote({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'note', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<PatrolRecord, PatrolRecord, QDistinct> distinctByStart() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'start');
@@ -801,6 +1529,18 @@ extension PatrolRecordQueryProperty
   QueryBuilder<PatrolRecord, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<PatrolRecord, String?, QQueryOperations> animalProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'animal');
+    });
+  }
+
+  QueryBuilder<PatrolRecord, int?, QQueryOperations> countProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'count');
     });
   }
 
@@ -819,6 +1559,18 @@ extension PatrolRecordQueryProperty
   QueryBuilder<PatrolRecord, PatrolLabel, QQueryOperations> labelProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'label');
+    });
+  }
+
+  QueryBuilder<PatrolRecord, String?, QQueryOperations> locationProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'location');
+    });
+  }
+
+  QueryBuilder<PatrolRecord, String?, QQueryOperations> noteProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'note');
     });
   }
 

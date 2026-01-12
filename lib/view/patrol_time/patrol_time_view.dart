@@ -4,6 +4,7 @@ import 'package:boar_time/model/patrol_label.dart';
 import 'package:boar_time/notifier/patrol/patrol_time_notifier.dart';
 import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/view/bottom_navigation_bar_view.dart';
+import 'package:boar_time/view/patrol_time/patrol_edit_page.dart';
 import 'package:boar_time/view/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/view/view_parts/icon_action_button.dart';
 import 'package:flutter/material.dart';
@@ -294,10 +295,18 @@ class PatrolTimeView extends HookConsumerWidget {
                             child: IconButton(
                               icon: const Icon(Icons.edit),
                               iconSize: 20.sp,
-                              onPressed: () {
-                                // TODO: 編集処理は後で実装
-                              },
                               tooltip: '編集',
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => PatrolEditPage(
+                                      patrolId: row.id,
+                                      year: year.value,
+                                      month: month.value,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ),
