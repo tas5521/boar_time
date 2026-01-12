@@ -1,5 +1,6 @@
 import 'package:boar_time/manager/export_manager.dart';
 import 'package:boar_time/manager/patrol_record_manager.dart';
+import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/patrol_record/patrol_record.dart';
 import 'package:boar_time/model/patrol_time_state/patrol_time_state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -86,7 +87,7 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
   }) async {
     final data = state.valueOrNull ?? [];
     await ExportManager.exportAndSave(
-      type: ExportType.patrol,
+      type: JobType.patrol,
       format: format,
       data: data,
       filename: filename,

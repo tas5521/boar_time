@@ -1,4 +1,5 @@
 import 'package:boar_time/manager/patrol_record_manager.dart';
+import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/patrol_record/patrol_record.dart';
 import 'package:boar_time/model/stamping_state/stamping_state.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
@@ -56,7 +57,7 @@ class StampingNotifier extends AsyncNotifier<StampingTimeState> {
     workRecord.startTime = _nowRounded();
     await WorkRecordManager.upsertByDate(
       workRecord,
-      upsertType: UpsertType.butchering,
+      type: JobType.butchering,
     );
     final patrolRecords = await _getTodayPatrolRecords();
     final stampingTimeState = StampingTimeState.fromRecord(
@@ -72,7 +73,7 @@ class StampingNotifier extends AsyncNotifier<StampingTimeState> {
     workRecord.endTime = _nowRounded();
     await WorkRecordManager.upsertByDate(
       workRecord,
-      upsertType: UpsertType.butchering,
+      type: JobType.butchering,
     );
     final patrolRecords = await _getTodayPatrolRecords();
     final stampingTimeState = StampingTimeState.fromRecord(
@@ -88,7 +89,7 @@ class StampingNotifier extends AsyncNotifier<StampingTimeState> {
     workRecord.breakStart = _nowRounded();
     await WorkRecordManager.upsertByDate(
       workRecord,
-      upsertType: UpsertType.butchering,
+      type: JobType.butchering,
     );
     final patrolRecords = await _getTodayPatrolRecords();
     final stampingTimeState = StampingTimeState.fromRecord(
@@ -104,7 +105,7 @@ class StampingNotifier extends AsyncNotifier<StampingTimeState> {
     workRecord.breakEnd = _nowRounded();
     await WorkRecordManager.upsertByDate(
       workRecord,
-      upsertType: UpsertType.butchering,
+      type: JobType.butchering,
     );
     final patrolRecords = await _getTodayPatrolRecords();
     final stampingTimeState = StampingTimeState.fromRecord(

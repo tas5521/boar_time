@@ -1,4 +1,5 @@
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
+import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/notifier/patrol/patrol_time_notifier.dart';
 import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/view/bottom_navigation_bar_view.dart';
@@ -162,6 +163,7 @@ class PatrolTimeView extends HookConsumerWidget {
                               context,
                               label: '見回り開始時間',
                               date: row.date,
+                              type: JobType.patrol,
                               initialTime: row.start != null
                                   ? TimeOfDay.fromDateTime(row.start!)
                                   : null,
@@ -206,6 +208,7 @@ class PatrolTimeView extends HookConsumerWidget {
                               context,
                               label: '見回り終了時間',
                               date: row.date,
+                              type: JobType.patrol,
                               initialTime: row.end != null
                                   ? TimeOfDay.fromDateTime(row.end!)
                                   : null,

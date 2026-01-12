@@ -1,5 +1,6 @@
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
 import 'package:boar_time/model/butchering_time_state/butchering_time_state.dart';
+import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:boar_time/notifier/butchering/butchering_time_notifier.dart';
 import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
@@ -189,6 +190,7 @@ class ButcheringTimeView extends HookConsumerWidget {
                               context,
                               label: '出勤時間',
                               date: row!.date,
+                              type: JobType.butchering,
                               initialTime: row.start != null
                                   ? TimeOfDay.fromDateTime(row.start!)
                                   : null,
@@ -245,6 +247,7 @@ class ButcheringTimeView extends HookConsumerWidget {
                               context,
                               label: '退勤時間',
                               date: row!.date,
+                              type: JobType.butchering,
                               initialTime: row.end != null
                                   ? TimeOfDay.fromDateTime(row.end!)
                                   : null,

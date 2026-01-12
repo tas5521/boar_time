@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:boar_time/model/abstract_model/time_state_base.dart';
+import 'package:boar_time/model/job_type.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -12,8 +13,6 @@ import 'package:pdf/widgets.dart' as pw;
 
 import 'package:boar_time/model/butchering_time_state/butchering_time_state.dart';
 import 'package:boar_time/model/patrol_time_state/patrol_time_state.dart';
-
-enum ExportType { butchering, patrol }
 
 enum ExportFormat { pdf, csv, xlsx }
 
@@ -40,7 +39,7 @@ class ExportManager {
 
   /// Export only
   static Future<Uint8List> export({
-    required ExportType type,
+    required JobType type,
     required ExportFormat format,
     required List<TimeStateBase> data,
   }) async {
@@ -49,12 +48,12 @@ class ExportManager {
     switch (format) {
       case ExportFormat.pdf:
         switch (type) {
-          case ExportType.butchering:
+          case JobType.butchering:
             return _exportPdf(
               headers: ["日付", "出勤", "退勤", "休憩", "累計"],
               rows: _mapButcheringRows(data.cast<ButcheringTimeState>()),
             );
-          case ExportType.patrol:
+          case JobType.patrol:
             return _exportPdf(
               headers: ["日付", "開始", "終了", "累計"],
               rows: _mapPatrolRows(data.cast<PatrolTimeState>()),
@@ -63,17 +62,17 @@ class ExportManager {
 
       case ExportFormat.csv:
         switch (type) {
-          case ExportType.butchering:
+          case JobType.butchering:
             return _exportButcheringCsv(data.cast<ButcheringTimeState>());
-          case ExportType.patrol:
+          case JobType.patrol:
             return _exportPatrolCsv(data.cast<PatrolTimeState>());
         }
 
       case ExportFormat.xlsx:
         switch (type) {
-          case ExportType.butchering:
+          case JobType.butchering:
             return _exportButcheringExcel(data.cast<ButcheringTimeState>());
-          case ExportType.patrol:
+          case JobType.patrol:
             return _exportPatrolExcel(data.cast<PatrolTimeState>());
         }
     }
@@ -81,7 +80,7 @@ class ExportManager {
 
   /// Export → Save → Open
   static Future<File> exportAndSave({
-    required ExportType type,
+    required JobType type,
     required ExportFormat format,
     required List<TimeStateBase> data,
     required String filename,
