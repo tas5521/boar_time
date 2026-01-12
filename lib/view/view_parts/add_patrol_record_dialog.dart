@@ -47,13 +47,10 @@ Future<void> showAddPatrolRecordDialog(
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('日付を選択'),
+                        Text('日付を選択', style: TextStyle(fontSize: 16.sp)),
                         Text(
                           formatDate(selectedDate),
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(fontSize: 16.sp),
                         ),
                       ],
                     ),
@@ -75,13 +72,10 @@ Future<void> showAddPatrolRecordDialog(
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('開始時刻を選択'),
+                        Text('開始時刻を選択', style: TextStyle(fontSize: 16.sp)),
                         Text(
                           formatTime(selectedStart),
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(fontSize: 16.sp),
                         ),
                       ],
                     ),
@@ -100,13 +94,10 @@ Future<void> showAddPatrolRecordDialog(
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('終了時刻を選択'),
+                        Text('終了時刻を選択', style: TextStyle(fontSize: 16.sp)),
                         Text(
                           formatTime(selectedEnd),
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(fontSize: 16.sp),
                         ),
                       ],
                     ),
@@ -125,7 +116,7 @@ Future<void> showAddPatrolRecordDialog(
                     width: 194.w,
                     child: DropdownButton<PatrolLabel>(
                       value: selectedLabel,
-                      hint: const Text('業務内容を選択'),
+                      hint: Text('業務内容を選択', style: TextStyle(fontSize: 16.sp)),
                       isExpanded: true,
                       items: PatrolLabel.values.map((label) {
                         return DropdownMenuItem(
