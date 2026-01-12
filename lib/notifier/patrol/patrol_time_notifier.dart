@@ -1,7 +1,7 @@
 import 'package:boar_time/manager/export_manager.dart';
-import 'package:boar_time/manager/work_record_manager.dart';
+import 'package:boar_time/manager/patrol_record_manager.dart';
+import 'package:boar_time/model/patrol_record/patrol_record.dart';
 import 'package:boar_time/model/patrol_time_state/patrol_time_state.dart';
-import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final patrolTimeNotifierProvider =
@@ -26,77 +26,58 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     }
   }
 
-  Future<void> upsert(int year, int month, WorkRecord rec) async {
+  Future<void> upsert({
+    int? recordId,
+    required DateTime date,
+    DateTime? start,
+    DateTime? end,
+    required int year,
+    required int month,
+  }) async {
     state = const AsyncValue.loading();
     try {
-      await WorkRecordManager.upsertByDate(rec, upsertType: UpsertType.patrol);
-      final records = await _loadRecords(year, month);
-      final converted = _convertRecords(records);
-      state = AsyncValue.data(converted);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
+      if (recordId == null) {
+        // 新規作成
+        if (start != null) {
+          await PatrolRecordManager.create(date, start);
+        }
+      } else {
+        // 更新
+        final record = PatrolRecord(date: date, start: start!, end: end);
+        record.id = recordId;
 
-  Future<void> clearPatrolStart(int year, int month, DateTime date) async {
-    state = const AsyncValue.loading();
-    try {
-      final record = await WorkRecordManager.getByDate(date);
-      if (record != null) {
-        record.patrolStart = null;
-        await WorkRecordManager.update(record);
+        await PatrolRecordManager.update(record);
       }
+
       final records = await _loadRecords(year, month);
-      final converted = _convertRecords(records);
-      state = AsyncValue.data(converted);
+      state = AsyncValue.data(_convertRecords(records));
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
   }
 
-  Future<void> clearPatrolEnd(int year, int month, DateTime date) async {
-    state = const AsyncValue.loading();
-    try {
-      final record = await WorkRecordManager.getByDate(date);
-      if (record != null) {
-        record.patrolEnd = null;
-        await WorkRecordManager.update(record);
-      }
-      final records = await _loadRecords(year, month);
-      final converted = _convertRecords(records);
-      state = AsyncValue.data(converted);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
+  Future<List<PatrolRecord>> _loadRecords(int year, int month) async {
+    return PatrolRecordManager.getByMonth(year, month);
   }
 
-  Future<List<WorkRecord>> _loadRecords(int year, int month) async {
-    final all = await WorkRecordManager.getAll();
-    return all
-        .where((e) => e.date.year == year && e.date.month == month)
-        .toList();
-  }
+  List<PatrolTimeState> _convertRecords(List<PatrolRecord> records) {
+    final sorted = [...records]..sort((a, b) => a.start.compareTo(b.start));
 
-  List<PatrolTimeState> _convertRecords(List<WorkRecord> records) {
-    final sorted = [...records]..sort((a, b) => a.date.compareTo(b.date));
-
-    final List<PatrolTimeState> list = [];
     Duration cumulative = Duration.zero;
 
-    for (final rec in sorted) {
-      final stateBase = PatrolTimeState(
+    return sorted.map((rec) {
+      final base = PatrolTimeState(
+        id: rec.id,
         date: rec.date,
-        start: rec.patrolStart,
-        end: rec.patrolEnd,
+        start: rec.start,
+        end: rec.end,
         cumulativeDuration: Duration.zero,
       );
 
-      cumulative += stateBase.totalDuration;
+      cumulative += base.totalDuration;
 
-      list.add(stateBase.copyWith(cumulativeDuration: cumulative));
-    }
-
-    return list;
+      return base.copyWith(cumulativeDuration: cumulative);
+    }).toList();
   }
 
   Future<void> exportAndSave({

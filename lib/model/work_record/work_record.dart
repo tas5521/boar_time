@@ -11,6 +11,8 @@ class WorkRecord {
   DateTime? endTime; // 退勤時間
   DateTime? breakStart; // 休憩開始
   DateTime? breakEnd; // 休憩終了
+
+  // 既存データ用（今後は使わない）
   DateTime? patrolStart; // 見回り開始
   DateTime? patrolEnd; // 見回り終了
 

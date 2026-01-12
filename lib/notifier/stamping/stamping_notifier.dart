@@ -1,3 +1,5 @@
+import 'package:boar_time/manager/patrol_record_manager.dart';
+import 'package:boar_time/model/patrol_record/patrol_record.dart';
 import 'package:boar_time/model/stamping_state/stamping_state.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:boar_time/manager/work_record_manager.dart';
@@ -11,8 +13,9 @@ final stampingNotifierProvider =
 class StampingNotifier extends AsyncNotifier<StampingTimeState> {
   @override
   Future<StampingTimeState> build() async {
-    final todayRecord = await _getOrCreateTodayRecord();
-    return StampingTimeState.fromRecord(todayRecord);
+    final workRecord = await _getOrCreateTodayRecord();
+    final patrolRecords = await _getTodayPatrolRecords();
+    return StampingTimeState.fromRecord(workRecord, patrolRecords);
   }
 
   DateTime get todayDate {
@@ -33,75 +36,108 @@ class StampingNotifier extends AsyncNotifier<StampingTimeState> {
     return WorkRecord(date: todayDate);
   }
 
+  Future<List<PatrolRecord>> _getTodayPatrolRecords() async {
+    return await PatrolRecordManager.getByDate(todayDate);
+  }
+
   Future<void> fetch() async {
-    final todayRecord = await _getOrCreateTodayRecord();
-    final stampingTimeState = StampingTimeState.fromRecord(todayRecord);
+    final workRecord = await _getOrCreateTodayRecord();
+    final patrolRecords = await _getTodayPatrolRecords();
+    final stampingTimeState = StampingTimeState.fromRecord(
+      workRecord,
+      patrolRecords,
+    );
     state = AsyncValue.data(stampingTimeState);
   }
 
   Future<void> setStartTime() async {
     state = AsyncValue.loading();
-    final record = await _getOrCreateTodayRecord();
-    record.startTime = _nowRounded();
+    final workRecord = await _getOrCreateTodayRecord();
+    workRecord.startTime = _nowRounded();
     await WorkRecordManager.upsertByDate(
-      record,
+      workRecord,
       upsertType: UpsertType.butchering,
     );
-    final stampingTimeState = StampingTimeState.fromRecord(record);
+    final patrolRecords = await _getTodayPatrolRecords();
+    final stampingTimeState = StampingTimeState.fromRecord(
+      workRecord,
+      patrolRecords,
+    );
     state = AsyncValue.data(stampingTimeState);
   }
 
   Future<void> setEndTime() async {
     state = AsyncValue.loading();
-    final record = await _getOrCreateTodayRecord();
-    record.endTime = _nowRounded();
+    final workRecord = await _getOrCreateTodayRecord();
+    workRecord.endTime = _nowRounded();
     await WorkRecordManager.upsertByDate(
-      record,
+      workRecord,
       upsertType: UpsertType.butchering,
     );
-    final stampingTimeState = StampingTimeState.fromRecord(record);
+    final patrolRecords = await _getTodayPatrolRecords();
+    final stampingTimeState = StampingTimeState.fromRecord(
+      workRecord,
+      patrolRecords,
+    );
     state = AsyncValue.data(stampingTimeState);
   }
 
   Future<void> setBreakStart() async {
     state = AsyncValue.loading();
-    final record = await _getOrCreateTodayRecord();
-    record.breakStart = _nowRounded();
+    final workRecord = await _getOrCreateTodayRecord();
+    workRecord.breakStart = _nowRounded();
     await WorkRecordManager.upsertByDate(
-      record,
+      workRecord,
       upsertType: UpsertType.butchering,
     );
-    final stampingTimeState = StampingTimeState.fromRecord(record);
+    final patrolRecords = await _getTodayPatrolRecords();
+    final stampingTimeState = StampingTimeState.fromRecord(
+      workRecord,
+      patrolRecords,
+    );
     state = AsyncValue.data(stampingTimeState);
   }
 
   Future<void> setBreakEnd() async {
     state = AsyncValue.loading();
-    final record = await _getOrCreateTodayRecord();
-    record.breakEnd = _nowRounded();
+    final workRecord = await _getOrCreateTodayRecord();
+    workRecord.breakEnd = _nowRounded();
     await WorkRecordManager.upsertByDate(
-      record,
+      workRecord,
       upsertType: UpsertType.butchering,
     );
-    final stampingTimeState = StampingTimeState.fromRecord(record);
+    final patrolRecords = await _getTodayPatrolRecords();
+    final stampingTimeState = StampingTimeState.fromRecord(
+      workRecord,
+      patrolRecords,
+    );
     state = AsyncValue.data(stampingTimeState);
   }
 
   Future<void> setPatrolStart() async {
+    final preState = state;
     state = AsyncValue.loading();
-    final record = await _getOrCreateTodayRecord();
-    record.patrolStart = _nowRounded();
-    await WorkRecordManager.upsertByDate(record, upsertType: UpsertType.patrol);
-    final stampingTimeState = StampingTimeState.fromRecord(record);
-    state = AsyncValue.data(stampingTimeState);
+    final today = todayDate;
+    final active = await PatrolRecordManager.getActive(today);
+    if (active == null) {
+      await PatrolRecordManager.create(today, _nowRounded());
+      await fetch();
+    } else {
+      state = preState;
+    }
   }
 
   Future<void> setPatrolEnd() async {
+    final preState = state;
     state = AsyncValue.loading();
-    final record = await _getOrCreateTodayRecord();
-    record.patrolEnd = _nowRounded();
-    await WorkRecordManager.upsertByDate(record, upsertType: UpsertType.patrol);
-    final stampingTimeState = StampingTimeState.fromRecord(record);
-    state = AsyncValue.data(stampingTimeState);
+    final active = await PatrolRecordManager.getActive(todayDate);
+
+    if (active != null) {
+      active.end = _nowRounded();
+      await PatrolRecordManager.update(active);
+      await fetch();
+    } else {
+      state = preState;
+    }
   }
 }

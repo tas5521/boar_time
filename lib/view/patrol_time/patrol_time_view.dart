@@ -1,5 +1,4 @@
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
-import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:boar_time/notifier/patrol/patrol_time_notifier.dart';
 import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/view/bottom_navigation_bar_view.dart';
@@ -167,31 +166,25 @@ class PatrolTimeView extends HookConsumerWidget {
                                   ? TimeOfDay.fromDateTime(row.start!)
                                   : null,
                               onPressed: (selected) async {
-                                final date = row.date;
-                                final WorkRecord rec;
-                                if (selected == null) {
-                                  rec = WorkRecord(
-                                    date: row.date,
-                                    patrolStart: null,
-                                    patrolEnd: row.end,
-                                  );
-                                } else {
-                                  final dt = DateTime(
-                                    date.year,
-                                    date.month,
-                                    date.day,
-                                    selected.hour,
-                                    selected.minute,
-                                  );
-                                  rec = WorkRecord(
-                                    date: row.date,
-                                    patrolStart: dt,
-                                    patrolEnd: row.end,
-                                  );
-                                }
+                                final dt = selected == null
+                                    ? null
+                                    : DateTime(
+                                        row.date.year,
+                                        row.date.month,
+                                        row.date.day,
+                                        selected.hour,
+                                        selected.minute,
+                                      );
                                 await ref
                                     .read(patrolTimeNotifierProvider.notifier)
-                                    .upsert(year.value, month.value, rec);
+                                    .upsert(
+                                      recordId: row.id,
+                                      date: row.date,
+                                      start: dt,
+                                      end: row.end,
+                                      year: year.value,
+                                      month: month.value,
+                                    );
                                 await ref
                                     .read(stampingNotifierProvider.notifier)
                                     .fetch();
@@ -217,31 +210,25 @@ class PatrolTimeView extends HookConsumerWidget {
                                   ? TimeOfDay.fromDateTime(row.end!)
                                   : null,
                               onPressed: (selected) async {
-                                final date = row.date;
-                                final WorkRecord rec;
-                                if (selected == null) {
-                                  rec = WorkRecord(
-                                    date: row.date,
-                                    patrolStart: row.start,
-                                    patrolEnd: null,
-                                  );
-                                } else {
-                                  final dt = DateTime(
-                                    date.year,
-                                    date.month,
-                                    date.day,
-                                    selected.hour,
-                                    selected.minute,
-                                  );
-                                  rec = WorkRecord(
-                                    date: row.date,
-                                    patrolStart: row.start,
-                                    patrolEnd: dt,
-                                  );
-                                }
+                                final dt = selected == null
+                                    ? null
+                                    : DateTime(
+                                        row.date.year,
+                                        row.date.month,
+                                        row.date.day,
+                                        selected.hour,
+                                        selected.minute,
+                                      );
                                 await ref
                                     .read(patrolTimeNotifierProvider.notifier)
-                                    .upsert(year.value, month.value, rec);
+                                    .upsert(
+                                      recordId: row.id,
+                                      date: row.date,
+                                      start: row.start,
+                                      end: dt,
+                                      year: year.value,
+                                      month: month.value,
+                                    );
                                 await ref
                                     .read(stampingNotifierProvider.notifier)
                                     .fetch();

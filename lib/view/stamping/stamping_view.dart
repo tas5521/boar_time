@@ -137,7 +137,10 @@ class StampingView extends HookConsumerWidget {
                   children: [
                     customButton(
                       '見回り 開始',
-                      enabled: state != null && state.patrolStart == null,
+                      enabled:
+                          state != null &&
+                          state.patrolStart == null &&
+                          state.patrolEnd == null,
                       onPressed: () async {
                         await ref
                             .read(stampingNotifierProvider.notifier)
@@ -151,7 +154,10 @@ class StampingView extends HookConsumerWidget {
                     ),
                     customButton(
                       '見回り 終了',
-                      enabled: state != null && state.patrolEnd == null,
+                      enabled:
+                          state != null &&
+                          state.patrolStart != null &&
+                          state.patrolEnd == null,
                       onPressed: () async {
                         await ref
                             .read(stampingNotifierProvider.notifier)

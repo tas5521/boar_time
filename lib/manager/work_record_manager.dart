@@ -1,20 +1,11 @@
+import 'package:boar_time/manager/isar_manager.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:isar_community/isar.dart';
-import 'package:path_provider/path_provider.dart';
 
 enum UpsertType { butchering, patrol }
 
 class WorkRecordManager {
-  static Isar? _isar;
-
-  static Future<void> initialize() async {
-    if (_isar != null) return;
-
-    final dir = await getApplicationDocumentsDirectory();
-    _isar = await Isar.open([WorkRecordSchema], directory: dir.path);
-  }
-
-  static Isar get isar => _isar!;
+  static Isar get isar => IsarManager.isar;
 
   static Future<WorkRecord?> getByDate(DateTime date) async {
     final targetDate = DateTime(date.year, date.month, date.day);
