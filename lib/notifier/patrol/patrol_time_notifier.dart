@@ -1,6 +1,7 @@
 import 'package:boar_time/manager/export_manager.dart';
 import 'package:boar_time/manager/patrol_record_manager.dart';
 import 'package:boar_time/model/job_type.dart';
+import 'package:boar_time/model/patrol_label.dart';
 import 'package:boar_time/model/patrol_record/patrol_record.dart';
 import 'package:boar_time/model/patrol_time_state/patrol_time_state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -57,6 +58,21 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     }
   }
 
+  Future<void> updateLabel({
+    required int patrolId,
+    required PatrolLabel label,
+    required int year,
+    required int month,
+  }) async {
+    final record = await PatrolRecordManager.getById(patrolId);
+    if (record == null) return;
+
+    record.label = label;
+    await PatrolRecordManager.update(record);
+
+    state = AsyncValue.data(_convertRecords(await _loadRecords(year, month)));
+  }
+
   Future<List<PatrolRecord>> _loadRecords(int year, int month) async {
     return PatrolRecordManager.getByMonth(year, month);
   }
@@ -64,20 +80,14 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
   List<PatrolTimeState> _convertRecords(List<PatrolRecord> records) {
     final sorted = [...records]..sort((a, b) => a.start.compareTo(b.start));
 
-    Duration cumulative = Duration.zero;
-
     return sorted.map((rec) {
-      final base = PatrolTimeState(
+      return PatrolTimeState(
         id: rec.id,
         date: rec.date,
         start: rec.start,
         end: rec.end,
-        cumulativeDuration: Duration.zero,
+        label: rec.label,
       );
-
-      cumulative += base.totalDuration;
-
-      return base.copyWith(cumulativeDuration: cumulative);
     }).toList();
   }
 

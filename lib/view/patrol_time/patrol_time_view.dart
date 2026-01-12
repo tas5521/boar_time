@@ -1,5 +1,6 @@
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
 import 'package:boar_time/model/job_type.dart';
+import 'package:boar_time/model/patrol_label.dart';
 import 'package:boar_time/notifier/patrol/patrol_time_notifier.dart';
 import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/view/bottom_navigation_bar_view.dart';
@@ -92,7 +93,7 @@ class PatrolTimeView extends HookConsumerWidget {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.fromLTRB(12.0.w, 12.0.w, 12.0.w, 12.0.w),
+              padding: EdgeInsets.fromLTRB(12.0.w, 12.0.w, 6.0.w, 12.0.w),
               color: Colors.orangeAccent,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,10 +114,14 @@ class PatrolTimeView extends HookConsumerWidget {
                     child: Text('終了', style: TextStyle(fontSize: 16.sp)),
                   ),
                   Container(
-                    margin: EdgeInsets.fromLTRB(2.w, 0.w, 0.w, 0.w),
+                    alignment: Alignment.center,
+                    width: 88.w,
+                    child: Text('業務内容', style: TextStyle(fontSize: 16.sp)),
+                  ),
+                  Container(
                     alignment: Alignment.center,
                     width: 52.w,
-                    child: Text('累計', style: TextStyle(fontSize: 16.sp)),
+                    child: Text('詳細', style: TextStyle(fontSize: 16.sp)),
                   ),
                 ],
               ),
@@ -125,9 +130,10 @@ class PatrolTimeView extends HookConsumerWidget {
               child: SingleChildScrollView(
                 child: DataTable(
                   headingRowHeight: 0,
-                  columnSpacing: 30.7.w,
+                  columnSpacing: 4.w,
                   horizontalMargin: 12.w,
                   columns: const [
+                    DataColumn(label: SizedBox()),
                     DataColumn(label: SizedBox()),
                     DataColumn(label: SizedBox()),
                     DataColumn(label: SizedBox()),
@@ -240,12 +246,58 @@ class PatrolTimeView extends HookConsumerWidget {
                           },
                         ),
                         DataCell(
-                          Container(
-                            alignment: Alignment.center,
-                            width: 60.w,
-                            child: Text(
-                              _fmtDuration(row.cumulativeDuration),
-                              style: TextStyle(fontSize: 16.sp),
+                          SizedBox(
+                            width: 88.w,
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<PatrolLabel>(
+                                value: row.label,
+                                isDense: true,
+                                isExpanded: true,
+                                icon: const SizedBox.shrink(),
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
+                                dropdownColor: Theme.of(
+                                  context,
+                                ).colorScheme.surface,
+                                items: PatrolLabel.values
+                                    .map(
+                                      (label) => DropdownMenuItem<PatrolLabel>(
+                                        value: label,
+                                        child: Center(
+                                          child: Text(label.displayName),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                                onChanged: (value) async {
+                                  if (value == null) return;
+                                  await ref
+                                      .read(patrolTimeNotifierProvider.notifier)
+                                      .updateLabel(
+                                        patrolId: row.id,
+                                        label: value,
+                                        year: year.value,
+                                        month: month.value,
+                                      );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                        DataCell(
+                          SizedBox(
+                            width: 52.w,
+                            child: IconButton(
+                              icon: const Icon(Icons.edit),
+                              iconSize: 20.sp,
+                              onPressed: () {
+                                // TODO: 編集処理は後で実装
+                              },
+                              tooltip: '編集',
                             ),
                           ),
                         ),
@@ -264,11 +316,5 @@ class PatrolTimeView extends HookConsumerWidget {
   String _fmt(DateTime? dt) {
     if (dt == null) return '--:--';
     return DateFormat('HH:mm').format(dt);
-  }
-
-  String _fmtDuration(Duration d) {
-    final h = d.inHours.toString().padLeft(2, '0');
-    final m = (d.inMinutes % 60).toString().padLeft(2, '0');
-    return '$h:$m';
   }
 }

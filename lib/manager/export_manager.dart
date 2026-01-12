@@ -55,7 +55,7 @@ class ExportManager {
             );
           case JobType.patrol:
             return _exportPdf(
-              headers: ["日付", "開始", "終了", "累計"],
+              headers: ["日付", "開始", "終了"],
               rows: _mapPatrolRows(data.cast<PatrolTimeState>()),
             );
         }
@@ -220,7 +220,7 @@ class ExportManager {
 
   static Future<Uint8List> _exportPatrolCsv(List<PatrolTimeState> list) async {
     final buffer = StringBuffer();
-    buffer.writeln("日付,開始,終了,累計");
+    buffer.writeln("日付,開始,終了");
 
     for (final e in list) {
       buffer.writeln(
@@ -228,7 +228,6 @@ class ExportManager {
           _fmtDate(e.date),
           _fmtTime(e.start),
           _fmtTime(e.end),
-          _fmtDuration(e.cumulativeDuration),
         ].join(","),
       );
     }
@@ -284,7 +283,6 @@ class ExportManager {
       TextCellValue("日付"),
       TextCellValue("開始"),
       TextCellValue("終了"),
-      TextCellValue("累計"),
     ]);
 
     for (final e in list) {
@@ -292,7 +290,6 @@ class ExportManager {
         TextCellValue(_fmtDate(e.date)),
         TextCellValue(_fmtTime(e.start)),
         TextCellValue(_fmtTime(e.end)),
-        TextCellValue(_fmtDuration(e.cumulativeDuration)),
       ]);
     }
 
@@ -321,7 +318,6 @@ class ExportManager {
         _fmtDate(e.date),
         _fmtTime(e.start),
         _fmtTime(e.end),
-        _fmtDuration(e.cumulativeDuration),
       ];
     }).toList();
   }

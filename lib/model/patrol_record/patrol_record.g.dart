@@ -19,7 +19,13 @@ const PatrolRecordSchema = CollectionSchema(
   properties: {
     r'date': PropertySchema(id: 0, name: r'date', type: IsarType.dateTime),
     r'end': PropertySchema(id: 1, name: r'end', type: IsarType.dateTime),
-    r'start': PropertySchema(id: 2, name: r'start', type: IsarType.dateTime),
+    r'label': PropertySchema(
+      id: 2,
+      name: r'label',
+      type: IsarType.byte,
+      enumMap: _PatrolRecordlabelEnumValueMap,
+    ),
+    r'start': PropertySchema(id: 3, name: r'start', type: IsarType.dateTime),
   },
 
   estimateSize: _patrolRecordEstimateSize,
@@ -68,7 +74,8 @@ void _patrolRecordSerialize(
 ) {
   writer.writeDateTime(offsets[0], object.date);
   writer.writeDateTime(offsets[1], object.end);
-  writer.writeDateTime(offsets[2], object.start);
+  writer.writeByte(offsets[2], object.label.index);
+  writer.writeDateTime(offsets[3], object.start);
 }
 
 PatrolRecord _patrolRecordDeserialize(
@@ -80,7 +87,10 @@ PatrolRecord _patrolRecordDeserialize(
   final object = PatrolRecord(
     date: reader.readDateTime(offsets[0]),
     end: reader.readDateTimeOrNull(offsets[1]),
-    start: reader.readDateTime(offsets[2]),
+    label:
+        _PatrolRecordlabelValueEnumMap[reader.readByteOrNull(offsets[2])] ??
+        PatrolLabel.none,
+    start: reader.readDateTime(offsets[3]),
   );
   object.id = id;
   return object;
@@ -98,11 +108,28 @@ P _patrolRecordDeserializeProp<P>(
     case 1:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 2:
+      return (_PatrolRecordlabelValueEnumMap[reader.readByteOrNull(offset)] ??
+              PatrolLabel.none)
+          as P;
+    case 3:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
+
+const _PatrolRecordlabelEnumValueMap = {
+  'none': 0,
+  'trap': 1,
+  'capture': 2,
+  'emergency': 3,
+};
+const _PatrolRecordlabelValueEnumMap = {
+  0: PatrolLabel.none,
+  1: PatrolLabel.trap,
+  2: PatrolLabel.capture,
+  3: PatrolLabel.emergency,
+};
 
 Id _patrolRecordGetId(PatrolRecord object) {
   return object.id;
@@ -507,6 +534,63 @@ extension PatrolRecordQueryFilter
     });
   }
 
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> labelEqualTo(
+    PatrolLabel value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'label', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  labelGreaterThan(PatrolLabel value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'label',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> labelLessThan(
+    PatrolLabel value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'label',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> labelBetween(
+    PatrolLabel lower,
+    PatrolLabel upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'label',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
   QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> startEqualTo(
     DateTime value,
   ) {
@@ -597,6 +681,18 @@ extension PatrolRecordQuerySortBy
     });
   }
 
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByLabel() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'label', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByLabelDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'label', Sort.desc);
+    });
+  }
+
   QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByStart() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'start', Sort.asc);
@@ -648,6 +744,18 @@ extension PatrolRecordQuerySortThenBy
     });
   }
 
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> thenByLabel() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'label', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> thenByLabelDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'label', Sort.desc);
+    });
+  }
+
   QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> thenByStart() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'start', Sort.asc);
@@ -675,6 +783,12 @@ extension PatrolRecordQueryWhereDistinct
     });
   }
 
+  QueryBuilder<PatrolRecord, PatrolRecord, QDistinct> distinctByLabel() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'label');
+    });
+  }
+
   QueryBuilder<PatrolRecord, PatrolRecord, QDistinct> distinctByStart() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'start');
@@ -699,6 +813,12 @@ extension PatrolRecordQueryProperty
   QueryBuilder<PatrolRecord, DateTime?, QQueryOperations> endProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'end');
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolLabel, QQueryOperations> labelProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'label');
     });
   }
 

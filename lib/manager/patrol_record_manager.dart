@@ -13,6 +13,10 @@ class PatrolRecordManager {
         .findFirst();
   }
 
+  static Future<PatrolRecord?> getById(int id) async {
+    return await isar.patrolRecords.get(id);
+  }
+
   static Future<List<PatrolRecord>> getByDate(DateTime date) async {
     return isar.patrolRecords
         .filter()
