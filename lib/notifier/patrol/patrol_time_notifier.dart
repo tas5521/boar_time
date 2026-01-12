@@ -28,6 +28,31 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     }
   }
 
+  Future<void> addNewRecord({
+    required DateTime date,
+    required DateTime start,
+    required DateTime? end,
+    required PatrolLabel label,
+  }) async {
+    state = const AsyncValue.loading();
+    try {
+      final newRecord = PatrolRecord(
+        date: date,
+        start: start,
+        end: end,
+        label: label,
+      );
+
+      await PatrolRecordManager.createWithDetails(newRecord);
+
+      // 該当年月のデータを再取得して state を更新
+      final records = await _loadRecords(date.year, date.month);
+      state = AsyncValue.data(_convertRecords(records));
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
   Future<void> upsert({
     int? recordId,
     required DateTime date,

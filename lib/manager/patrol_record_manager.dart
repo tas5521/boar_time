@@ -42,6 +42,23 @@ class PatrolRecordManager {
     });
   }
 
+  static Future<void> createWithDetails(PatrolRecord record) async {
+    await isar.writeTxn(() async {
+      await isar.patrolRecords.put(
+        PatrolRecord(
+          date: record.date,
+          start: record.start,
+          end: record.end,
+          label: record.label,
+          location: record.location,
+          animal: record.animal,
+          count: record.count,
+          note: record.note,
+        ),
+      );
+    });
+  }
+
   static Future<void> update(PatrolRecord record) async {
     await isar.writeTxn(() async {
       await isar.patrolRecords.put(record);

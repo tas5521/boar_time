@@ -5,6 +5,7 @@ import 'package:boar_time/notifier/patrol/patrol_time_notifier.dart';
 import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/view/bottom_navigation_bar_view.dart';
 import 'package:boar_time/view/patrol_time/patrol_edit_page.dart';
+import 'package:boar_time/view/view_parts/add_patrol_record_dialog.dart';
 import 'package:boar_time/view/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/view/view_parts/icon_action_button.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +50,12 @@ class PatrolTimeView extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          iconActionButton(
+            context,
+            icon: Icon(Icons.add, size: 24.w),
+            onPressed: () => showAddPatrolRecordDialog(context, ref),
+          ),
+
           iconActionButton(
             context,
             onPressed: () async {
