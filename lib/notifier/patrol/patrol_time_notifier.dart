@@ -60,6 +60,11 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     DateTime? end,
     required int year,
     required int month,
+    required PatrolLabel label,
+    String? location,
+    String? animal,
+    int? count,
+    String? note,
   }) async {
     state = const AsyncValue.loading();
     try {
@@ -70,7 +75,16 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
         }
       } else {
         // 更新
-        final record = PatrolRecord(date: date, start: start!, end: end);
+        final record = PatrolRecord(
+          date: date,
+          start: start!,
+          end: end,
+          location: location,
+          animal: animal,
+          count: count,
+          note: note,
+          label: label,
+        );
         record.id = recordId;
 
         await PatrolRecordManager.update(record);
