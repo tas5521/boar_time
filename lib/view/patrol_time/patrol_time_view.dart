@@ -286,47 +286,51 @@ class PatrolTimeView extends HookConsumerWidget {
                                 SizedBox(
                                   width: 88.w,
                                   child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<PatrolLabel>(
-                                      value: row.label,
-                                      isDense: true,
-                                      isExpanded: true,
-                                      icon: const SizedBox.shrink(),
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        color: Theme.of(
+                                    child: Baseline(
+                                      baseline: 14.w,
+                                      baselineType: TextBaseline.alphabetic,
+                                      child: DropdownButton<PatrolLabel>(
+                                        value: row.label,
+                                        isDense: true,
+                                        isExpanded: true,
+                                        icon: const SizedBox.shrink(),
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
+                                        ),
+                                        dropdownColor: Theme.of(
                                           context,
-                                        ).colorScheme.onSurface,
-                                      ),
-                                      dropdownColor: Theme.of(
-                                        context,
-                                      ).colorScheme.surface,
-                                      items: PatrolLabel.values
-                                          .map(
-                                            (label) =>
-                                                DropdownMenuItem<PatrolLabel>(
-                                                  value: label,
-                                                  child: Center(
-                                                    child: Text(
-                                                      label.displayName,
+                                        ).colorScheme.surface,
+                                        items: PatrolLabel.values
+                                            .map(
+                                              (label) =>
+                                                  DropdownMenuItem<PatrolLabel>(
+                                                    value: label,
+                                                    child: Center(
+                                                      child: Text(
+                                                        label.displayName,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                          )
-                                          .toList(),
-                                      onChanged: (value) async {
-                                        if (value == null) return;
-                                        await ref
-                                            .read(
-                                              patrolTimeNotifierProvider
-                                                  .notifier,
                                             )
-                                            .updateLabel(
-                                              patrolId: row.id,
-                                              label: value,
-                                              year: year.value,
-                                              month: month.value,
-                                            );
-                                      },
+                                            .toList(),
+                                        onChanged: (value) async {
+                                          if (value == null) return;
+                                          await ref
+                                              .read(
+                                                patrolTimeNotifierProvider
+                                                    .notifier,
+                                              )
+                                              .updateLabel(
+                                                patrolId: row.id,
+                                                label: value,
+                                                year: year.value,
+                                                month: month.value,
+                                              );
+                                        },
+                                      ),
                                     ),
                                   ),
                                 ),
