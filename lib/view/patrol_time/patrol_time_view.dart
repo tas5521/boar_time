@@ -211,6 +211,11 @@ class PatrolTimeView extends HookConsumerWidget {
                                             date: row.date,
                                             start: dt,
                                             end: row.end,
+                                            label: row.label,
+                                            location: row.location,
+                                            animal: row.animal,
+                                            count: row.count,
+                                            note: row.note,
                                             year: year.value,
                                             month: month.value,
                                           );
@@ -260,6 +265,11 @@ class PatrolTimeView extends HookConsumerWidget {
                                             date: row.date,
                                             start: row.start,
                                             end: dt,
+                                            label: row.label,
+                                            location: row.location,
+                                            animal: row.animal,
+                                            count: row.count,
+                                            note: row.note,
                                             year: year.value,
                                             month: month.value,
                                           );
