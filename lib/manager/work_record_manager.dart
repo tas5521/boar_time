@@ -1,20 +1,10 @@
+import 'package:boar_time/manager/isar_manager.dart';
+import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:isar_community/isar.dart';
-import 'package:path_provider/path_provider.dart';
-
-enum UpsertType { butchering, patrol }
 
 class WorkRecordManager {
-  static Isar? _isar;
-
-  static Future<void> initialize() async {
-    if (_isar != null) return;
-
-    final dir = await getApplicationDocumentsDirectory();
-    _isar = await Isar.open([WorkRecordSchema], directory: dir.path);
-  }
-
-  static Isar get isar => _isar!;
+  static Isar get isar => IsarManager.isar;
 
   static Future<WorkRecord?> getByDate(DateTime date) async {
     final targetDate = DateTime(date.year, date.month, date.day);
@@ -77,19 +67,19 @@ class WorkRecordManager {
 
   static Future<void> upsertByDate(
     WorkRecord newRecord, {
-    required UpsertType upsertType,
+    required JobType type,
   }) async {
     final exist = await getByDate(newRecord.date);
     if (exist == null) {
       await add(newRecord);
     } else {
-      switch (upsertType) {
-        case UpsertType.butchering:
+      switch (type) {
+        case JobType.butchering:
           exist.startTime = newRecord.startTime;
           exist.endTime = newRecord.endTime;
           exist.breakStart = newRecord.breakStart;
           exist.breakEnd = newRecord.breakEnd;
-        case UpsertType.patrol:
+        case JobType.patrol:
           exist.patrolStart = newRecord.patrolStart;
           exist.patrolEnd = newRecord.patrolEnd;
       }

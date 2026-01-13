@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:boar_time/model/job_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +10,7 @@ Future<void> showEditTimeDialog(
   required DateTime date,
   TimeOfDay? initialTime,
   required FutureOr<void> Function(TimeOfDay? selectedTime) onPressed,
+  required JobType type,
 }) {
   final formattedDate = DateFormat('yyyy/MM/dd').format(date);
 
@@ -68,18 +70,22 @@ Future<void> showEditTimeDialog(
                           style: TextStyle(fontSize: 14.sp),
                         ),
                       ),
-                      SizedBox(width: 20.w),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            selectedTime = null;
-                          });
-                        },
-                        child: Text(
-                          '削除',
-                          style: TextStyle(fontSize: 14.sp, color: Colors.red),
+                      if (type == JobType.butchering) SizedBox(width: 20.w),
+                      if (type == JobType.butchering)
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              selectedTime = null;
+                            });
+                          },
+                          child: Text(
+                            '削除',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: Colors.red,
+                            ),
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ],

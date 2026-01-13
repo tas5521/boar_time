@@ -1,7 +1,9 @@
 import 'package:boar_time/manager/export_manager.dart';
-import 'package:boar_time/manager/work_record_manager.dart';
+import 'package:boar_time/manager/patrol_record_manager.dart';
+import 'package:boar_time/model/job_type.dart';
+import 'package:boar_time/model/patrol_label.dart';
+import 'package:boar_time/model/patrol_record/patrol_record.dart';
 import 'package:boar_time/model/patrol_time_state/patrol_time_state.dart';
-import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final patrolTimeNotifierProvider =
@@ -19,103 +21,138 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     state = const AsyncValue.loading();
     try {
       final records = await _loadRecords(year, month);
-      final converted = _convertRecords(year, month, records);
+      final converted = _convertRecords(records);
       state = AsyncValue.data(converted);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
   }
 
-  Future<void> upsert(int year, int month, WorkRecord rec) async {
+  Future<void> addNewRecord({
+    required DateTime date,
+    required DateTime start,
+    required DateTime? end,
+    required PatrolLabel label,
+  }) async {
     state = const AsyncValue.loading();
     try {
-      await WorkRecordManager.upsertByDate(rec, upsertType: UpsertType.patrol);
-      final records = await _loadRecords(year, month);
-      final converted = _convertRecords(year, month, records);
-      state = AsyncValue.data(converted);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
-
-  Future<void> clearPatrolStart(int year, int month, DateTime date) async {
-    state = const AsyncValue.loading();
-    try {
-      final record = await WorkRecordManager.getByDate(date);
-      if (record != null) {
-        record.patrolStart = null;
-        await WorkRecordManager.update(record);
-      }
-      final records = await _loadRecords(year, month);
-      final converted = _convertRecords(year, month, records);
-      state = AsyncValue.data(converted);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
-
-  Future<void> clearPatrolEnd(int year, int month, DateTime date) async {
-    state = const AsyncValue.loading();
-    try {
-      final record = await WorkRecordManager.getByDate(date);
-      if (record != null) {
-        record.patrolEnd = null;
-        await WorkRecordManager.update(record);
-      }
-      final records = await _loadRecords(year, month);
-      final converted = _convertRecords(year, month, records);
-      state = AsyncValue.data(converted);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
-
-  Future<List<WorkRecord>> _loadRecords(int year, int month) async {
-    final all = await WorkRecordManager.getAll();
-    return all
-        .where((e) => e.date.year == year && e.date.month == month)
-        .toList();
-  }
-
-  List<PatrolTimeState> _convertRecords(
-    int year,
-    int month,
-    List<WorkRecord> records,
-  ) {
-    final lastDay = DateTime(
-      year,
-      month + 1,
-      1,
-    ).subtract(const Duration(days: 1)).day;
-
-    final List<PatrolTimeState> list = [];
-    Duration cumulative = Duration.zero;
-
-    for (int day = 1; day <= lastDay; day++) {
-      final date = DateTime(year, month, day);
-
-      final rec = records.firstWhere(
-        (r) =>
-            r.date.year == date.year &&
-            r.date.month == date.month &&
-            r.date.day == date.day,
-        orElse: () => WorkRecord(date: date),
-      );
-
-      var state = PatrolTimeState(
+      final newRecord = PatrolRecord(
         date: date,
-        start: rec.patrolStart,
-        end: rec.patrolEnd,
-        cumulativeDuration: Duration.zero,
+        start: start,
+        end: end,
+        label: label,
       );
 
-      cumulative += state.totalDuration;
-      state = state.copyWith(cumulativeDuration: cumulative);
+      await PatrolRecordManager.createWithDetails(newRecord);
 
-      list.add(state);
+      // 該当年月のデータを再取得して state を更新
+      final records = await _loadRecords(date.year, date.month);
+      state = AsyncValue.data(_convertRecords(records));
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
     }
+  }
 
-    return list;
+  Future<void> upsert({
+    int? recordId,
+    required DateTime date,
+    DateTime? start,
+    DateTime? end,
+    required int year,
+    required int month,
+  }) async {
+    state = const AsyncValue.loading();
+    try {
+      if (recordId == null) {
+        // 新規作成
+        if (start != null) {
+          await PatrolRecordManager.create(date, start);
+        }
+      } else {
+        // 更新
+        final record = PatrolRecord(date: date, start: start!, end: end);
+        record.id = recordId;
+
+        await PatrolRecordManager.update(record);
+      }
+
+      final records = await _loadRecords(year, month);
+      state = AsyncValue.data(_convertRecords(records));
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  Future<void> delete({
+    required int patrolId,
+    required int year,
+    required int month,
+  }) async {
+    await PatrolRecordManager.deleteIfExists(patrolId);
+    state = AsyncValue.data(_convertRecords(await _loadRecords(year, month)));
+  }
+
+  Future<void> updateLabel({
+    required int patrolId,
+    required PatrolLabel label,
+    required int year,
+    required int month,
+  }) async {
+    final record = await PatrolRecordManager.getById(patrolId);
+    if (record == null) return;
+
+    record.label = label;
+    await PatrolRecordManager.update(record);
+
+    state = AsyncValue.data(_convertRecords(await _loadRecords(year, month)));
+  }
+
+  Future<PatrolRecord?> getDetail(int patrolId) {
+    return PatrolRecordManager.getById(patrolId);
+  }
+
+  Future<void> updateDetail({
+    required int patrolId,
+    required String location,
+    required String animal,
+    required int? count,
+    required String note,
+    required int year,
+    required int month,
+  }) async {
+    final record = await PatrolRecordManager.getById(patrolId);
+    if (record == null) return;
+
+    record
+      ..location = location
+      ..animal = animal
+      ..count = count
+      ..note = note;
+
+    await PatrolRecordManager.update(record);
+
+    state = AsyncValue.data(_convertRecords(await _loadRecords(year, month)));
+  }
+
+  Future<List<PatrolRecord>> _loadRecords(int year, int month) async {
+    return PatrolRecordManager.getByMonth(year, month);
+  }
+
+  List<PatrolTimeState> _convertRecords(List<PatrolRecord> records) {
+    final sorted = [...records]..sort((a, b) => a.start.compareTo(b.start));
+    return sorted.map((rec) {
+      return PatrolTimeState(
+        id: rec.id,
+        date: rec.date,
+        start: rec.start,
+        end: rec.end,
+        label: rec.label,
+        location: rec.location,
+        animal: rec.animal,
+        count: rec.count,
+        note: rec.note,
+      );
+    }).toList();
   }
 
   Future<void> exportAndSave({
@@ -124,7 +161,7 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
   }) async {
     final data = state.valueOrNull ?? [];
     await ExportManager.exportAndSave(
-      type: ExportType.patrol,
+      type: JobType.patrol,
       format: format,
       data: data,
       filename: filename,

@@ -1,4 +1,5 @@
-import 'package:boar_time/manager/work_record_manager.dart';
+import 'package:boar_time/manager/isar_manager.dart';
+import 'package:boar_time/utils/migration/migrate_patrol_data.dart';
 import 'package:boar_time/view/bottom_navigation_bar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -7,7 +8,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await WorkRecordManager.initialize();
+  await IsarManager.initialize();
+  await migratePatrolData(IsarManager.isar);
   runApp(const ProviderScope(child: MyApp()));
 }
 

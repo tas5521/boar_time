@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PatrolTimeState {
 
- DateTime get date; DateTime? get start; DateTime? get end; Duration get cumulativeDuration;
+ int get id; DateTime get date; DateTime? get start; DateTime? get end; PatrolLabel get label; String? get location; String? get animal; int? get count; String? get note;
 /// Create a copy of PatrolTimeState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $PatrolTimeStateCopyWith<PatrolTimeState> get copyWith => _$PatrolTimeStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PatrolTimeState&&(identical(other.date, date) || other.date == date)&&(identical(other.start, start) || other.start == start)&&(identical(other.end, end) || other.end == end)&&(identical(other.cumulativeDuration, cumulativeDuration) || other.cumulativeDuration == cumulativeDuration));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PatrolTimeState&&(identical(other.id, id) || other.id == id)&&(identical(other.date, date) || other.date == date)&&(identical(other.start, start) || other.start == start)&&(identical(other.end, end) || other.end == end)&&(identical(other.label, label) || other.label == label)&&(identical(other.location, location) || other.location == location)&&(identical(other.animal, animal) || other.animal == animal)&&(identical(other.count, count) || other.count == count)&&(identical(other.note, note) || other.note == note));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,date,start,end,cumulativeDuration);
+int get hashCode => Object.hash(runtimeType,id,date,start,end,label,location,animal,count,note);
 
 @override
 String toString() {
-  return 'PatrolTimeState(date: $date, start: $start, end: $end, cumulativeDuration: $cumulativeDuration)';
+  return 'PatrolTimeState(id: $id, date: $date, start: $start, end: $end, label: $label, location: $location, animal: $animal, count: $count, note: $note)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $PatrolTimeStateCopyWith<$Res>  {
   factory $PatrolTimeStateCopyWith(PatrolTimeState value, $Res Function(PatrolTimeState) _then) = _$PatrolTimeStateCopyWithImpl;
 @useResult
 $Res call({
- DateTime date, DateTime? start, DateTime? end, Duration cumulativeDuration
+ int id, DateTime date, DateTime? start, DateTime? end, PatrolLabel label, String? location, String? animal, int? count, String? note
 });
 
 
@@ -62,13 +62,18 @@ class _$PatrolTimeStateCopyWithImpl<$Res>
 
 /// Create a copy of PatrolTimeState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? date = null,Object? start = freezed,Object? end = freezed,Object? cumulativeDuration = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? date = null,Object? start = freezed,Object? end = freezed,Object? label = null,Object? location = freezed,Object? animal = freezed,Object? count = freezed,Object? note = freezed,}) {
   return _then(_self.copyWith(
-date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as DateTime,start: freezed == start ? _self.start : start // ignore: cast_nullable_to_non_nullable
 as DateTime?,end: freezed == end ? _self.end : end // ignore: cast_nullable_to_non_nullable
-as DateTime?,cumulativeDuration: null == cumulativeDuration ? _self.cumulativeDuration : cumulativeDuration // ignore: cast_nullable_to_non_nullable
-as Duration,
+as DateTime?,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
+as PatrolLabel,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
+as String?,animal: freezed == animal ? _self.animal : animal // ignore: cast_nullable_to_non_nullable
+as String?,count: freezed == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
+as int?,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -153,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( DateTime date,  DateTime? start,  DateTime? end,  Duration cumulativeDuration)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  DateTime date,  DateTime? start,  DateTime? end,  PatrolLabel label,  String? location,  String? animal,  int? count,  String? note)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PatrolTimeState() when $default != null:
-return $default(_that.date,_that.start,_that.end,_that.cumulativeDuration);case _:
+return $default(_that.id,_that.date,_that.start,_that.end,_that.label,_that.location,_that.animal,_that.count,_that.note);case _:
   return orElse();
 
 }
@@ -174,10 +179,10 @@ return $default(_that.date,_that.start,_that.end,_that.cumulativeDuration);case 
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( DateTime date,  DateTime? start,  DateTime? end,  Duration cumulativeDuration)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  DateTime date,  DateTime? start,  DateTime? end,  PatrolLabel label,  String? location,  String? animal,  int? count,  String? note)  $default,) {final _that = this;
 switch (_that) {
 case _PatrolTimeState():
-return $default(_that.date,_that.start,_that.end,_that.cumulativeDuration);case _:
+return $default(_that.id,_that.date,_that.start,_that.end,_that.label,_that.location,_that.animal,_that.count,_that.note);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +199,10 @@ return $default(_that.date,_that.start,_that.end,_that.cumulativeDuration);case 
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( DateTime date,  DateTime? start,  DateTime? end,  Duration cumulativeDuration)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  DateTime date,  DateTime? start,  DateTime? end,  PatrolLabel label,  String? location,  String? animal,  int? count,  String? note)?  $default,) {final _that = this;
 switch (_that) {
 case _PatrolTimeState() when $default != null:
-return $default(_that.date,_that.start,_that.end,_that.cumulativeDuration);case _:
+return $default(_that.id,_that.date,_that.start,_that.end,_that.label,_that.location,_that.animal,_that.count,_that.note);case _:
   return null;
 
 }
@@ -209,13 +214,18 @@ return $default(_that.date,_that.start,_that.end,_that.cumulativeDuration);case 
 
 
 class _PatrolTimeState extends PatrolTimeState {
-  const _PatrolTimeState({required this.date, this.start, this.end, this.cumulativeDuration = Duration.zero}): super._();
+  const _PatrolTimeState({required this.id, required this.date, this.start, this.end, required this.label, this.location, this.animal, this.count, this.note}): super._();
   
 
+@override final  int id;
 @override final  DateTime date;
 @override final  DateTime? start;
 @override final  DateTime? end;
-@override@JsonKey() final  Duration cumulativeDuration;
+@override final  PatrolLabel label;
+@override final  String? location;
+@override final  String? animal;
+@override final  int? count;
+@override final  String? note;
 
 /// Create a copy of PatrolTimeState
 /// with the given fields replaced by the non-null parameter values.
@@ -227,16 +237,16 @@ _$PatrolTimeStateCopyWith<_PatrolTimeState> get copyWith => __$PatrolTimeStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PatrolTimeState&&(identical(other.date, date) || other.date == date)&&(identical(other.start, start) || other.start == start)&&(identical(other.end, end) || other.end == end)&&(identical(other.cumulativeDuration, cumulativeDuration) || other.cumulativeDuration == cumulativeDuration));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PatrolTimeState&&(identical(other.id, id) || other.id == id)&&(identical(other.date, date) || other.date == date)&&(identical(other.start, start) || other.start == start)&&(identical(other.end, end) || other.end == end)&&(identical(other.label, label) || other.label == label)&&(identical(other.location, location) || other.location == location)&&(identical(other.animal, animal) || other.animal == animal)&&(identical(other.count, count) || other.count == count)&&(identical(other.note, note) || other.note == note));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,date,start,end,cumulativeDuration);
+int get hashCode => Object.hash(runtimeType,id,date,start,end,label,location,animal,count,note);
 
 @override
 String toString() {
-  return 'PatrolTimeState(date: $date, start: $start, end: $end, cumulativeDuration: $cumulativeDuration)';
+  return 'PatrolTimeState(id: $id, date: $date, start: $start, end: $end, label: $label, location: $location, animal: $animal, count: $count, note: $note)';
 }
 
 
@@ -247,7 +257,7 @@ abstract mixin class _$PatrolTimeStateCopyWith<$Res> implements $PatrolTimeState
   factory _$PatrolTimeStateCopyWith(_PatrolTimeState value, $Res Function(_PatrolTimeState) _then) = __$PatrolTimeStateCopyWithImpl;
 @override @useResult
 $Res call({
- DateTime date, DateTime? start, DateTime? end, Duration cumulativeDuration
+ int id, DateTime date, DateTime? start, DateTime? end, PatrolLabel label, String? location, String? animal, int? count, String? note
 });
 
 
@@ -264,13 +274,18 @@ class __$PatrolTimeStateCopyWithImpl<$Res>
 
 /// Create a copy of PatrolTimeState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? date = null,Object? start = freezed,Object? end = freezed,Object? cumulativeDuration = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? date = null,Object? start = freezed,Object? end = freezed,Object? label = null,Object? location = freezed,Object? animal = freezed,Object? count = freezed,Object? note = freezed,}) {
   return _then(_PatrolTimeState(
-date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as DateTime,start: freezed == start ? _self.start : start // ignore: cast_nullable_to_non_nullable
 as DateTime?,end: freezed == end ? _self.end : end // ignore: cast_nullable_to_non_nullable
-as DateTime?,cumulativeDuration: null == cumulativeDuration ? _self.cumulativeDuration : cumulativeDuration // ignore: cast_nullable_to_non_nullable
-as Duration,
+as DateTime?,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
+as PatrolLabel,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
+as String?,animal: freezed == animal ? _self.animal : animal // ignore: cast_nullable_to_non_nullable
+as String?,count: freezed == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
+as int?,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

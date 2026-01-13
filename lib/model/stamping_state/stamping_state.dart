@@ -1,3 +1,4 @@
+import 'package:boar_time/model/patrol_record/patrol_record.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -17,15 +18,16 @@ abstract class StampingTimeState with _$StampingTimeState {
     DateTime? patrolEnd,
   }) = _StampingTimeState;
 
-  factory StampingTimeState.fromRecord(WorkRecord record) {
+  factory StampingTimeState.fromRecord(WorkRecord workRecord, List<PatrolRecord> patrolRecords) {
+    final patrolRecord = patrolRecords.where((element) => element.end == null).toList().firstOrNull;
     return StampingTimeState(
-      date: record.date,
-      startTime: record.startTime,
-      endTime: record.endTime,
-      breakStart: record.breakStart,
-      breakEnd: record.breakEnd,
-      patrolStart: record.patrolStart,
-      patrolEnd: record.patrolEnd,
+      date: workRecord.date,
+      startTime: workRecord.startTime,
+      endTime: workRecord.endTime,
+      breakStart: workRecord.breakStart,
+      breakEnd: workRecord.breakEnd,
+      patrolStart: patrolRecord?.start,
+      patrolEnd: patrolRecord?.end,
     );
   }
 }

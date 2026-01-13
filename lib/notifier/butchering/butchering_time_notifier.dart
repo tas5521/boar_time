@@ -1,6 +1,7 @@
 import 'package:boar_time/manager/export_manager.dart';
 import 'package:boar_time/manager/work_record_manager.dart';
 import 'package:boar_time/model/butchering_time_state/butchering_time_state.dart';
+import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -31,10 +32,7 @@ class ButcheringTimeNotifier
   Future<void> upsert(int year, int month, WorkRecord rec) async {
     state = const AsyncValue.loading();
     try {
-      await WorkRecordManager.upsertByDate(
-        rec,
-        upsertType: UpsertType.butchering,
-      );
+      await WorkRecordManager.upsertByDate(rec, type: JobType.butchering);
       final records = await _loadRecords(year, month);
       final converted = _convertRecords(year, month, records);
       state = AsyncValue.data(converted);
@@ -117,7 +115,7 @@ class ButcheringTimeNotifier
   }) async {
     final data = state.valueOrNull ?? [];
     await ExportManager.exportAndSave(
-      type: ExportType.butchering,
+      type: JobType.butchering,
       format: format,
       data: data,
       filename: filename,
