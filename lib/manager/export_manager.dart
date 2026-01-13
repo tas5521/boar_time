@@ -302,11 +302,11 @@ class ExportManager {
           _fmtTime(e.end),
           _fmtBreakDuration(e.breakStart, e.breakEnd, e.breakDuration),
           _fmtDuration(e.cumulativeDuration),
-        ].join(","),
+        ].map(_csvEscape).join(","),
       );
     }
 
-    return Uint8List.fromList(utf8.encode(buffer.toString()));
+    return Uint8List.fromList(utf8.encode('\uFEFF${buffer.toString()}'));
   }
 
   // ======================================================
@@ -315,7 +315,10 @@ class ExportManager {
 
   static Future<Uint8List> _exportPatrolCsv(List<PatrolTimeState> list) async {
     final buffer = StringBuffer();
-    buffer.writeln("日付,開始,終了,場所,業務内容,獣種,捕獲数,備考");
+
+    buffer.writeln(
+      ["日付", "開始", "終了", "場所", "業務内容", "獣種", "捕獲数", "備考"].join(","),
+    );
 
     for (final e in list) {
       buffer.writeln(
@@ -323,16 +326,16 @@ class ExportManager {
           _fmtDate(e.date),
           _fmtTime(e.start),
           _fmtTime(e.end),
-          e.location ?? "",
+          e.location ?? '',
           e.label.displayName,
-          e.animal ?? "",
-          e.count?.toString() ?? "",
-          e.note ?? "",
-        ].join(","),
+          e.animal ?? '',
+          e.count?.toString() ?? '',
+          e.note ?? '',
+        ].map(_csvEscape).join(","),
       );
     }
 
-    return Uint8List.fromList(utf8.encode(buffer.toString()));
+    return Uint8List.fromList(utf8.encode('\uFEFF${buffer.toString()}'));
   }
 
   // ======================================================
@@ -457,5 +460,16 @@ class ExportManager {
     final h = d.inHours;
     final m = d.inMinutes % 60;
     return "${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}";
+  }
+
+  static String _csvEscape(String value) {
+    if (value.contains(',') ||
+        value.contains('\n') ||
+        value.contains('\r') ||
+        value.contains('"')) {
+      final escaped = value.replaceAll('"', '""');
+      return '"$escaped"';
+    }
+    return value;
   }
 }
