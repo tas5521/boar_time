@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:boar_time/model/abstract_model/time_state_base.dart';
 import 'package:boar_time/model/job_type.dart';
+import 'package:boar_time/model/patrol_label.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -37,7 +38,6 @@ class ExportManager {
   //                     Public API
   // ======================================================
 
-  /// Export only
   static Future<Uint8List> export({
     required JobType type,
     required ExportFormat format,
@@ -49,36 +49,36 @@ class ExportManager {
       case ExportFormat.pdf:
         switch (type) {
           case JobType.butchering:
-            return _exportPdf(
+            return _exportPdfButchering(
               headers: ["日付", "出勤", "退勤", "休憩", "累計"],
               rows: _mapButcheringRows(data.cast<ButcheringTimeState>()),
             );
+
           case JobType.patrol:
-            return _exportPdf(
-              headers: ["日付", "開始", "終了"],
+            return _exportPdfPatrol(
+              headers: ["日付", "開始", "終了", "場所", "業務内容", "獣種", "捕獲数", "備考"],
               rows: _mapPatrolRows(data.cast<PatrolTimeState>()),
             );
         }
 
       case ExportFormat.csv:
-        switch (type) {
-          case JobType.butchering:
-            return _exportButcheringCsv(data.cast<ButcheringTimeState>());
-          case JobType.patrol:
-            return _exportPatrolCsv(data.cast<PatrolTimeState>());
-        }
+        return switch (type) {
+          JobType.butchering => _exportButcheringCsv(
+            data.cast<ButcheringTimeState>(),
+          ),
+          JobType.patrol => _exportPatrolCsv(data.cast<PatrolTimeState>()),
+        };
 
       case ExportFormat.xlsx:
-        switch (type) {
-          case JobType.butchering:
-            return _exportButcheringExcel(data.cast<ButcheringTimeState>());
-          case JobType.patrol:
-            return _exportPatrolExcel(data.cast<PatrolTimeState>());
-        }
+        return switch (type) {
+          JobType.butchering => _exportButcheringExcel(
+            data.cast<ButcheringTimeState>(),
+          ),
+          JobType.patrol => _exportPatrolExcel(data.cast<PatrolTimeState>()),
+        };
     }
   }
 
-  /// Export → Save → Open
   static Future<File> exportAndSave({
     required JobType type,
     required ExportFormat format,
@@ -112,15 +112,14 @@ class ExportManager {
     await file.writeAsBytes(bytes, flush: true);
 
     await OpenFilex.open(path);
-
     return file;
   }
 
   // ======================================================
-  //                 PDF (Unified version)
+  //                    PDF - Butchering
   // ======================================================
 
-  static Future<Uint8List> _exportPdf({
+  static Future<Uint8List> _exportPdfButchering({
     required List<String> headers,
     required List<List<String>> rows,
   }) async {
@@ -190,6 +189,102 @@ class ExportManager {
   }
 
   // ======================================================
+  //                    PDF - Patrol
+  // ======================================================
+
+  static Future<Uint8List> _exportPdfPatrol({
+    required List<String> headers,
+    required List<List<String>> rows,
+  }) async {
+    final pdf = pw.Document();
+
+    final baseStyle = pw.TextStyle(font: _jpFont, fontSize: 11);
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4.landscape,
+        margin: const pw.EdgeInsets.all(12),
+
+        /// 各ページ共通のヘッダー（任意）
+        header: (context) => pw.Padding(
+          padding: const pw.EdgeInsets.only(bottom: 6),
+          child: pw.Text(
+            '見回り記録',
+            style: baseStyle.copyWith(
+              fontSize: 14,
+              fontWeight: pw.FontWeight.bold,
+            ),
+          ),
+        ),
+
+        build: (context) {
+          return [
+            pw.Table(
+              border: pw.TableBorder.all(width: 0.3),
+              defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
+
+              columnWidths: const {
+                0: pw.FixedColumnWidth(70), // 日付
+                1: pw.FixedColumnWidth(50), // 開始
+                2: pw.FixedColumnWidth(50), // 終了
+                3: pw.FixedColumnWidth(100), // 場所
+                4: pw.FixedColumnWidth(80), // 業務内容
+                5: pw.FixedColumnWidth(80), // 獣種
+                6: pw.FixedColumnWidth(50), // 捕獲数
+                7: pw.FlexColumnWidth(), // 備考
+              },
+
+              children: [
+                /// ===== Header Row（自動で各ページに繰り返される）=====
+                pw.TableRow(
+                  decoration: const pw.BoxDecoration(color: PdfColors.grey300),
+                  children: headers.map((h) {
+                    return pw.Padding(
+                      padding: const pw.EdgeInsets.all(4),
+                      child: pw.Text(
+                        h,
+                        style: baseStyle.copyWith(
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                        textAlign: pw.TextAlign.center,
+                      ),
+                    );
+                  }).toList(),
+                ),
+
+                /// ===== Data Rows =====
+                for (final row in rows)
+                  pw.TableRow(
+                    children: List.generate(row.length, (index) {
+                      final isLeftAlign = index == 3 || index == 7;
+
+                      return pw.Padding(
+                        padding: const pw.EdgeInsets.symmetric(
+                          vertical: 3,
+                          horizontal: 4,
+                        ),
+                        child: pw.Text(
+                          row[index],
+                          style: baseStyle,
+                          textAlign: isLeftAlign
+                              ? pw.TextAlign.left
+                              : pw.TextAlign.center,
+                          softWrap: true,
+                        ),
+                      );
+                    }),
+                  ),
+              ],
+            ),
+          ];
+        },
+      ),
+    );
+
+    return pdf.save();
+  }
+
+  // ======================================================
   //              CSV - Butchering
   // ======================================================
 
@@ -220,7 +315,7 @@ class ExportManager {
 
   static Future<Uint8List> _exportPatrolCsv(List<PatrolTimeState> list) async {
     final buffer = StringBuffer();
-    buffer.writeln("日付,開始,終了");
+    buffer.writeln("日付,開始,終了,場所,業務内容,獣種,捕獲数,備考");
 
     for (final e in list) {
       buffer.writeln(
@@ -228,6 +323,11 @@ class ExportManager {
           _fmtDate(e.date),
           _fmtTime(e.start),
           _fmtTime(e.end),
+          e.location ?? "",
+          e.label.displayName,
+          e.animal ?? "",
+          e.count?.toString() ?? "",
+          e.note ?? "",
         ].join(","),
       );
     }
@@ -283,6 +383,11 @@ class ExportManager {
       TextCellValue("日付"),
       TextCellValue("開始"),
       TextCellValue("終了"),
+      TextCellValue("場所"),
+      TextCellValue("業務内容"),
+      TextCellValue("獣種"),
+      TextCellValue("捕獲数"),
+      TextCellValue("備考"),
     ]);
 
     for (final e in list) {
@@ -290,6 +395,11 @@ class ExportManager {
         TextCellValue(_fmtDate(e.date)),
         TextCellValue(_fmtTime(e.start)),
         TextCellValue(_fmtTime(e.end)),
+        TextCellValue(e.location ?? ""),
+        TextCellValue(e.label.displayName),
+        TextCellValue(e.animal ?? ""),
+        TextCellValue(e.count?.toString() ?? ""),
+        TextCellValue(e.note ?? ""),
       ]);
     }
 
@@ -297,7 +407,7 @@ class ExportManager {
   }
 
   // ======================================================
-  //                 Table Data Mapping
+  //                 Table Mapping
   // ======================================================
 
   static List<List<String>> _mapButcheringRows(List<ButcheringTimeState> list) {
@@ -318,6 +428,11 @@ class ExportManager {
         _fmtDate(e.date),
         _fmtTime(e.start),
         _fmtTime(e.end),
+        e.location ?? "-",
+        e.label.displayName,
+        e.animal ?? "-",
+        e.count?.toString() ?? "-",
+        e.note ?? "-",
       ];
     }).toList();
   }
@@ -326,23 +441,21 @@ class ExportManager {
   //                 Format Helpers
   // ======================================================
 
-  static String _fmtDate(DateTime date) =>
-      "${date.year}-${date.month.toString().padLeft(2, "0")}-${date.day.toString().padLeft(2, "0")}";
+  static String _fmtDate(DateTime d) =>
+      "${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}";
 
-  static String _fmtTime(DateTime? dt) => dt == null
+  static String _fmtTime(DateTime? t) => t == null
       ? "-"
-      : "${dt.hour.toString().padLeft(2, "0")}:${dt.minute.toString().padLeft(2, "0")}";
+      : "${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}";
 
   static String _fmtBreakDuration(DateTime? bs, DateTime? be, Duration d) {
     if (bs == null || be == null) return "-";
-    final h = d.inHours;
-    final m = d.inMinutes % 60;
-    return "${h.toString().padLeft(2, "0")}:${m.toString().padLeft(2, "0")}";
+    return _fmtDuration(d);
   }
 
   static String _fmtDuration(Duration d) {
     final h = d.inHours;
     final m = d.inMinutes % 60;
-    return "${h.toString().padLeft(2, "0")}:${m.toString().padLeft(2, "0")}";
+    return "${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}";
   }
 }

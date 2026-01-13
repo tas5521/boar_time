@@ -140,7 +140,6 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
 
   List<PatrolTimeState> _convertRecords(List<PatrolRecord> records) {
     final sorted = [...records]..sort((a, b) => a.start.compareTo(b.start));
-
     return sorted.map((rec) {
       return PatrolTimeState(
         id: rec.id,
@@ -148,6 +147,10 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
         start: rec.start,
         end: rec.end,
         label: rec.label,
+        location: rec.location,
+        animal: rec.animal,
+        count: rec.count,
+        note: rec.note,
       );
     }).toList();
   }
