@@ -94,7 +94,7 @@ class PatrolTimeView extends HookConsumerWidget {
         ],
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(
-          '見回り時間',
+          '見回り記録',
           style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.bold),
         ),
       ),
