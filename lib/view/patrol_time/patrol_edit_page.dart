@@ -189,7 +189,7 @@ class PatrolEditPage extends HookConsumerWidget {
                       child: Text(
                         '削除',
                         style: TextStyle(
-                          fontSize: 18.sp,
+                          fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
