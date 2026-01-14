@@ -8,6 +8,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 Future<void> showAddPatrolRecordDialog(
   BuildContext context,
   WidgetRef ref,
+  ValueNotifier<int> year,
+  ValueNotifier<int> month,
 ) async {
   DateTime? selectedDate;
   TimeOfDay? selectedStart;
@@ -166,6 +168,9 @@ Future<void> showAddPatrolRecordDialog(
                               end: newEnd,
                               label: selectedLabel!,
                             );
+
+                        year.value = selectedDate!.year;
+                        month.value = selectedDate!.month;
 
                         await ref
                             .read(stampingNotifierProvider.notifier)
