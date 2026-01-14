@@ -61,6 +61,7 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     required int year,
     required int month,
     required PatrolLabel label,
+    String? worker,
     String? location,
     String? animal,
     int? count,
@@ -79,6 +80,7 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
           date: date,
           start: start!,
           end: end,
+          worker: worker,
           location: location,
           animal: animal,
           count: count,
@@ -127,6 +129,7 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
 
   Future<void> updateDetail({
     required int patrolId,
+    required String worker,
     required String location,
     required String animal,
     required int? count,
@@ -138,6 +141,7 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     if (record == null) return;
 
     record
+      ..worker = worker
       ..location = location
       ..animal = animal
       ..count = count
@@ -161,6 +165,7 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
         start: rec.start,
         end: rec.end,
         label: rec.label,
+        worker: rec.worker,
         location: rec.location,
         animal: rec.animal,
         count: rec.count,

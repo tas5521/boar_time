@@ -22,6 +22,7 @@ class PatrolEditPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final workerController = useTextEditingController();
     final locationController = useTextEditingController();
     final animalController = useTextEditingController();
     final countController = useTextEditingController();
@@ -38,6 +39,7 @@ class PatrolEditPage extends HookConsumerWidget {
         final record = await notifier.getDetail(patrolId);
         if (record != null) {
           recordState.value = record;
+          workerController.text = record.worker ?? '';
           locationController.text = record.location ?? '';
           animalController.text = record.animal ?? '';
           countController.text = record.count != null
@@ -55,6 +57,7 @@ class PatrolEditPage extends HookConsumerWidget {
     Future<void> save() async {
       await notifier.updateDetail(
         patrolId: patrolId,
+        worker: workerController.text.trim(),
         location: locationController.text.trim(),
         animal: animalController.text.trim(),
         count: int.tryParse(countController.text),
@@ -123,6 +126,11 @@ class PatrolEditPage extends HookConsumerWidget {
                 children: [
                   if (recordState.value != null)
                     _summaryBlock(context, recordState.value!),
+                  _inputBlock(
+                    label: '従事者名',
+                    controller: workerController,
+                    hint: '例）山田 太郎',
+                  ),
                   _inputBlock(
                     label: '見回り場所',
                     controller: locationController,

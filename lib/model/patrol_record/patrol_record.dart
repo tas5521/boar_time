@@ -13,6 +13,7 @@ class PatrolRecord {
   late DateTime start;
   DateTime? end;
 
+  String? worker; // 従事者名
   String? location; // 見回り場所
   String? animal; // 捕獲獣種
   int? count; // 捕獲数
@@ -25,6 +26,7 @@ class PatrolRecord {
     required this.date,
     required this.start,
     this.end,
+    this.worker,
     this.location,
     this.animal,
     this.count,

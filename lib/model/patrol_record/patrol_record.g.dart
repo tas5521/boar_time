@@ -34,6 +34,7 @@ const PatrolRecordSchema = CollectionSchema(
     ),
     r'note': PropertySchema(id: 6, name: r'note', type: IsarType.string),
     r'start': PropertySchema(id: 7, name: r'start', type: IsarType.dateTime),
+    r'worker': PropertySchema(id: 8, name: r'worker', type: IsarType.string),
   },
 
   estimateSize: _patrolRecordEstimateSize,
@@ -89,6 +90,12 @@ int _patrolRecordEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  {
+    final value = object.worker;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -106,6 +113,7 @@ void _patrolRecordSerialize(
   writer.writeString(offsets[5], object.location);
   writer.writeString(offsets[6], object.note);
   writer.writeDateTime(offsets[7], object.start);
+  writer.writeString(offsets[8], object.worker);
 }
 
 PatrolRecord _patrolRecordDeserialize(
@@ -125,6 +133,7 @@ PatrolRecord _patrolRecordDeserialize(
     location: reader.readStringOrNull(offsets[5]),
     note: reader.readStringOrNull(offsets[6]),
     start: reader.readDateTime(offsets[7]),
+    worker: reader.readStringOrNull(offsets[8]),
   );
   object.id = id;
   return object;
@@ -155,6 +164,8 @@ P _patrolRecordDeserializeProp<P>(
       return (reader.readStringOrNull(offset)) as P;
     case 7:
       return (reader.readDateTime(offset)) as P;
+    case 8:
+      return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1249,6 +1260,168 @@ extension PatrolRecordQueryFilter
       );
     });
   }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  workerIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'worker'),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  workerIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'worker'),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> workerEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'worker',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  workerGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'worker',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  workerLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'worker',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> workerBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'worker',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  workerStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'worker',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  workerEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'worker',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  workerContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'worker',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition> workerMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'worker',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  workerIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'worker', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterFilterCondition>
+  workerIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'worker', value: ''),
+      );
+    });
+  }
 }
 
 extension PatrolRecordQueryObject
@@ -1352,6 +1525,18 @@ extension PatrolRecordQuerySortBy
   QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByStartDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'start', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByWorker() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'worker', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> sortByWorkerDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'worker', Sort.desc);
     });
   }
 }
@@ -1465,6 +1650,18 @@ extension PatrolRecordQuerySortThenBy
       return query.addSortBy(r'start', Sort.desc);
     });
   }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> thenByWorker() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'worker', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QAfterSortBy> thenByWorkerDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'worker', Sort.desc);
+    });
+  }
 }
 
 extension PatrolRecordQueryWhereDistinct
@@ -1522,6 +1719,14 @@ extension PatrolRecordQueryWhereDistinct
       return query.addDistinctBy(r'start');
     });
   }
+
+  QueryBuilder<PatrolRecord, PatrolRecord, QDistinct> distinctByWorker({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'worker', caseSensitive: caseSensitive);
+    });
+  }
 }
 
 extension PatrolRecordQueryProperty
@@ -1577,6 +1782,12 @@ extension PatrolRecordQueryProperty
   QueryBuilder<PatrolRecord, DateTime, QQueryOperations> startProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'start');
+    });
+  }
+
+  QueryBuilder<PatrolRecord, String?, QQueryOperations> workerProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'worker');
     });
   }
 }

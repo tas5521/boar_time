@@ -14,6 +14,7 @@ abstract class PatrolTimeState with _$PatrolTimeState implements TimeStateBase {
     DateTime? start,
     DateTime? end,
     required PatrolLabel label,
+    String? worker,
     String? location,
     String? animal,
     int? count,
