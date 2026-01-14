@@ -53,7 +53,8 @@ class PatrolTimeView extends HookConsumerWidget {
           iconActionButton(
             context,
             icon: Icon(Icons.add, size: 24.w),
-            onPressed: () => showAddPatrolRecordDialog(context, ref),
+            onPressed: () =>
+                showAddPatrolRecordDialog(context, ref, year, month),
           ),
 
           iconActionButton(
