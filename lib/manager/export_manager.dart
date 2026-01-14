@@ -56,7 +56,17 @@ class ExportManager {
 
           case JobType.patrol:
             return _exportPdfPatrol(
-              headers: ["日付", "開始", "終了", "場所", "業務内容", "獣種", "捕獲数", "備考"],
+              headers: [
+                "日付",
+                "開始",
+                "終了",
+                "従事者名",
+                "場所",
+                "業務内容",
+                "獣種",
+                "捕獲数",
+                "備考",
+              ],
               rows: _mapPatrolRows(data.cast<PatrolTimeState>()),
             );
         }
@@ -227,11 +237,12 @@ class ExportManager {
                 0: pw.FixedColumnWidth(70), // 日付
                 1: pw.FixedColumnWidth(50), // 開始
                 2: pw.FixedColumnWidth(50), // 終了
-                3: pw.FixedColumnWidth(100), // 場所
-                4: pw.FixedColumnWidth(80), // 業務内容
-                5: pw.FixedColumnWidth(80), // 獣種
-                6: pw.FixedColumnWidth(50), // 捕獲数
-                7: pw.FlexColumnWidth(), // 備考
+                3: pw.FixedColumnWidth(80), // 従事者名
+                4: pw.FixedColumnWidth(100), // 場所
+                5: pw.FixedColumnWidth(80), // 業務内容
+                6: pw.FixedColumnWidth(80), // 獣種
+                7: pw.FixedColumnWidth(50), // 捕獲数
+                8: pw.FlexColumnWidth(), // 備考
               },
 
               children: [
@@ -256,7 +267,7 @@ class ExportManager {
                 for (final row in rows)
                   pw.TableRow(
                     children: List.generate(row.length, (index) {
-                      final isLeftAlign = index == 3 || index == 7;
+                      final isLeftAlign = index == 8; // 備考列のみ左寄せ
 
                       return pw.Padding(
                         padding: const pw.EdgeInsets.symmetric(
@@ -317,7 +328,7 @@ class ExportManager {
     final buffer = StringBuffer();
 
     buffer.writeln(
-      ["日付", "開始", "終了", "場所", "業務内容", "獣種", "捕獲数", "備考"].join(","),
+      ["日付", "開始", "終了", "従事者名", "場所", "業務内容", "獣種", "捕獲数", "備考"].join(","),
     );
 
     for (final e in list) {
@@ -326,6 +337,7 @@ class ExportManager {
           _fmtDate(e.date),
           _fmtTime(e.start),
           _fmtTime(e.end),
+          e.worker ?? '',
           e.location ?? '',
           e.label.displayName,
           e.animal ?? '',
@@ -386,6 +398,7 @@ class ExportManager {
       TextCellValue("日付"),
       TextCellValue("開始"),
       TextCellValue("終了"),
+      TextCellValue("従事者名"),
       TextCellValue("場所"),
       TextCellValue("業務内容"),
       TextCellValue("獣種"),
@@ -398,6 +411,7 @@ class ExportManager {
         TextCellValue(_fmtDate(e.date)),
         TextCellValue(_fmtTime(e.start)),
         TextCellValue(_fmtTime(e.end)),
+        TextCellValue(e.worker ?? ""),
         TextCellValue(e.location ?? ""),
         TextCellValue(e.label.displayName),
         TextCellValue(e.animal ?? ""),
@@ -431,6 +445,7 @@ class ExportManager {
         _fmtDate(e.date),
         _fmtTime(e.start),
         _fmtTime(e.end),
+        e.worker ?? "-",
         e.location ?? "-",
         e.label.displayName,
         e.animal ?? "-",
