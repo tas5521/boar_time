@@ -118,7 +118,7 @@ flutter run
 
 [MIT License](LICENSE)
 
-## 今後の改善例
+## 今後の改善案
 
 - 自動テストの拡充（ユニット / ウィジェット）
 - CIによる`analyze`とビルドの自動化
