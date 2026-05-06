@@ -1,6 +1,6 @@
 import 'package:boar_time/manager/isar_manager.dart';
+import 'package:boar_time/presentation/navigation/auto_route/app_router.dart';
 import 'package:boar_time/utils/migration/migrate_patrol_data.dart';
-import 'package:boar_time/view/bottom_navigation_bar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,11 +10,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await IsarManager.initialize();
   await migratePatrolData(IsarManager.isar);
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final _appRouter = AppRouter();
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class MyApp extends StatelessWidget {
           data: MediaQuery.of(
             context,
           ).copyWith(textScaler: TextScaler.linear(1.0), boldText: false),
-          child: MaterialApp(
+          child: MaterialApp.router(
             debugShowCheckedModeBanner: false,
             locale: const Locale('ja'),
             supportedLocales: const [Locale('ja')],
@@ -40,7 +42,7 @@ class MyApp extends StatelessWidget {
                 seedColor: Colors.deepOrangeAccent,
               ),
             ),
-            home: const BottomNavigationBarView(),
+            routerConfig: _appRouter.config(),
           ),
         );
       },

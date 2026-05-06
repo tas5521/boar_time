@@ -76,7 +76,7 @@ const WorkRecordSchema = CollectionSchema(
   getId: _workRecordGetId,
   getLinks: _workRecordGetLinks,
   attach: _workRecordAttach,
-  version: '3.3.0',
+  version: '3.3.2',
 );
 
 int _workRecordEstimateSize(

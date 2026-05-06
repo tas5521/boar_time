@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:boar_time/view/view_parts/speech_bubble.dart';
+import 'package:boar_time/presentation/page/view_parts/speech_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

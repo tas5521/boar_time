@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:boar_time/model/patrol_label.dart';
 import 'package:boar_time/model/patrol_record/patrol_record.dart';
 import 'package:boar_time/notifier/patrol/patrol_time_notifier.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+@RoutePage()
 class PatrolEditPage extends HookConsumerWidget {
   final int patrolId;
   final int year;

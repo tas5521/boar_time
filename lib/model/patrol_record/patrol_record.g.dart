@@ -63,7 +63,7 @@ const PatrolRecordSchema = CollectionSchema(
   getId: _patrolRecordGetId,
   getLinks: _patrolRecordGetLinks,
   attach: _patrolRecordAttach,
-  version: '3.3.0',
+  version: '3.3.2',
 );
 
 int _patrolRecordEstimateSize(
