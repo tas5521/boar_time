@@ -4,6 +4,7 @@ import 'package:boar_time/utils/migration/app_meta.dart';
 import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
+//TODO: 後で消す
 class IsarManager {
   static Isar? _isar;
 

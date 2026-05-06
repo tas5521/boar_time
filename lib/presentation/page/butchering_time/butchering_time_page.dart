@@ -3,8 +3,8 @@ import 'package:boar_time/icons/my_flutter_app_icons.dart';
 import 'package:boar_time/model/butchering_time_state/butchering_time_state.dart';
 import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
-import 'package:boar_time/notifier/butchering/butchering_time_notifier.dart';
-import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
+import 'package:boar_time/presentation/notifier/butchering/butchering_time_notifier.dart';
+import 'package:boar_time/presentation/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/presentation/page/view_parts/edit_break_dalog.dart';
 import 'package:boar_time/presentation/page/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/presentation/page/view_parts/icon_action_button.dart';
@@ -229,9 +229,10 @@ class ButcheringTimePage extends HookConsumerWidget {
                                       butcheringTimeNotifierProvider.notifier,
                                     )
                                     .upsert(year.value, month.value, rec);
-                                await ref
-                                    .read(stampingNotifierProvider.notifier)
-                                    .fetch();
+                                    // TODO: 後で消す
+                                // await ref
+                                //     .read(stampingNotifierProvider.notifier)
+                                //     .fetch();
                               },
                             );
                           },
@@ -286,9 +287,10 @@ class ButcheringTimePage extends HookConsumerWidget {
                                       butcheringTimeNotifierProvider.notifier,
                                     )
                                     .upsert(year.value, month.value, rec);
-                                await ref
-                                    .read(stampingNotifierProvider.notifier)
-                                    .fetch();
+                                    // TODO: 後で消す
+                                // await ref
+                                //     .read(stampingNotifierProvider.notifier)
+                                //     .fetch();
                               },
                             );
                           },
@@ -348,11 +350,12 @@ class ButcheringTimePage extends HookConsumerWidget {
                                             start,
                                             end,
                                           );
-                                      await ref
-                                          .read(
-                                            stampingNotifierProvider.notifier,
-                                          )
-                                          .fetch();
+                                          // TODO: 後で消す
+                                      // await ref
+                                      //     .read(
+                                      //       stampingNotifierProvider.notifier,
+                                      //     )
+                                      //     .fetch();
                                     },
                                   );
                                 },

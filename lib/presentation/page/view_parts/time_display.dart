@@ -12,7 +12,7 @@ class TimeDisplay extends HookWidget {
   });
 
   final int fontSize;
-  final Future<void> Function() onDateChanged;
+  final FutureOr<void> Function() onDateChanged;
 
   @override
   Widget build(BuildContext context) {

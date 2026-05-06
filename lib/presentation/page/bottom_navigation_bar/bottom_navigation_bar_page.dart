@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
 import 'package:boar_time/presentation/navigation/auto_route/app_router.gr.dart';
+import 'package:boar_time/presentation/notifier/stamping/stamping_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -52,7 +53,12 @@ class BottomNavigationBarPage extends HookConsumerWidget {
       bottomNavigationBuilder: (_, tabsRouter) {
         return BottomNavigationBar(
           currentIndex: tabsRouter.activeIndex,
-          onTap: tabsRouter.setActiveIndex,
+          onTap: (index) {
+            tabsRouter.setActiveIndex(index);
+            if (index == 0) {
+              ref.invalidate(stampingTimeProvider);
+            }
+          },
           items: const [
             BottomNavigationBarItem(
               icon: Icon(MyFlutterApp.clock),

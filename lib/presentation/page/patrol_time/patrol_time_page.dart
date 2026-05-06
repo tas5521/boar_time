@@ -2,8 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
 import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/patrol_label.dart';
-import 'package:boar_time/notifier/patrol/patrol_time_notifier.dart';
-import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
+import 'package:boar_time/presentation/notifier/patrol/patrol_time_notifier.dart';
+import 'package:boar_time/presentation/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/presentation/page/patrol_time/patrol_edit_page.dart';
 import 'package:boar_time/presentation/page/view_parts/add_patrol_record_dialog.dart';
 import 'package:boar_time/presentation/page/view_parts/edit_time_dialog.dart';
@@ -224,11 +224,12 @@ class PatrolTimePage extends HookConsumerWidget {
                                             year: year.value,
                                             month: month.value,
                                           );
-                                      await ref
-                                          .read(
-                                            stampingNotifierProvider.notifier,
-                                          )
-                                          .fetch();
+                                          // TODO: 後で消す
+                                      // await ref
+                                      //     .read(
+                                      //       stampingNotifierProvider.notifier,
+                                      //     )
+                                      //     .fetch();
                                     },
                                   );
                                 },
@@ -279,11 +280,12 @@ class PatrolTimePage extends HookConsumerWidget {
                                             year: year.value,
                                             month: month.value,
                                           );
-                                      await ref
-                                          .read(
-                                            stampingNotifierProvider.notifier,
-                                          )
-                                          .fetch();
+                                          // TODO: 後で消す
+                                      // await ref
+                                      //     .read(
+                                      //       stampingNotifierProvider.notifier,
+                                      //     )
+                                      //     .fetch();
                                     },
                                   );
                                 },

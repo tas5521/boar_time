@@ -1,6 +1,6 @@
 import 'package:boar_time/model/patrol_label.dart';
-import 'package:boar_time/notifier/patrol/patrol_time_notifier.dart';
-import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
+import 'package:boar_time/presentation/notifier/patrol/patrol_time_notifier.dart';
+import 'package:boar_time/presentation/notifier/stamping/stamping_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -172,10 +172,11 @@ Future<void> showAddPatrolRecordDialog(
                         year.value = selectedDate!.year;
                         month.value = selectedDate!.month;
 
-                        await ref
-                            .read(stampingNotifierProvider.notifier)
-                            .fetch();
-
+                        // TODO: 後で消す
+                        // await ref
+                        //     .read(stampingNotifierProvider.notifier)
+                        //     .fetch();
+                        // TODO: 後で修正（popの方法）
                         if (!addContext.mounted) return;
                         Navigator.of(addContext).pop();
                       }

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:boar_time/notifier/stamping/stamping_notifier.dart';
+import 'package:boar_time/presentation/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/presentation/page/view_parts/boar_speech_area.dart';
 import 'package:boar_time/presentation/page/view_parts/time_display.dart';
 import 'package:flutter/material.dart';
@@ -15,12 +15,12 @@ class StampingPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(stampingNotifierProvider).value;
+    final state = ref.watch(stampingTimeProvider).value;
     final lifecycle = useAppLifecycleState();
 
     useEffect(() {
       if (lifecycle == AppLifecycleState.resumed) {
-        ref.read(stampingNotifierProvider.notifier).fetch();
+        ref.invalidate(stampingTimeProvider);
       }
       return;
     }, [lifecycle]);
@@ -57,8 +57,8 @@ class StampingPage extends HookConsumerWidget {
               margin: EdgeInsets.only(left: 4.w),
               width: 340.w,
               child: TimeDisplay(
-                onDateChanged: () async {
-                  await ref.read(stampingNotifierProvider.notifier).fetch();
+                onDateChanged: () {
+                  ref.invalidate(stampingTimeProvider);
                 },
               ),
             ),
@@ -73,10 +73,10 @@ class StampingPage extends HookConsumerWidget {
                       '解体 出勤',
                       enabled: state != null && state.startTime == null,
                       onPressed: () async {
-                        await ref
-                            .read(stampingNotifierProvider.notifier)
+                        final isSuccess = await ref
+                            .read(stampingTimeProvider.notifier)
                             .setStartTime();
-                        if (!context.mounted) return;
+                        if (!isSuccess || !context.mounted) return;
                         await showStampCompletedDialog(
                           context,
                           message: '解体の出勤を記録しました。',
@@ -87,10 +87,10 @@ class StampingPage extends HookConsumerWidget {
                       '解体 退勤',
                       enabled: state != null && state.endTime == null,
                       onPressed: () async {
-                        await ref
-                            .read(stampingNotifierProvider.notifier)
+                        final isSuccess = await ref
+                            .read(stampingTimeProvider.notifier)
                             .setEndTime();
-                        if (!context.mounted) return;
+                        if (!isSuccess || !context.mounted) return;
                         await showStampCompletedDialog(
                           context,
                           message: '解体の退勤を記録しました。',
@@ -107,10 +107,10 @@ class StampingPage extends HookConsumerWidget {
                       '休憩 開始',
                       enabled: state != null && state.breakStart == null,
                       onPressed: () async {
-                        await ref
-                            .read(stampingNotifierProvider.notifier)
+                        final isSuccess = await ref
+                            .read(stampingTimeProvider.notifier)
                             .setBreakStart();
-                        if (!context.mounted) return;
+                        if (!isSuccess || !context.mounted) return;
                         await showStampCompletedDialog(
                           context,
                           message: '休憩開始を記録しました。',
@@ -121,10 +121,10 @@ class StampingPage extends HookConsumerWidget {
                       '休憩 終了',
                       enabled: state != null && state.breakEnd == null,
                       onPressed: () async {
-                        await ref
-                            .read(stampingNotifierProvider.notifier)
+                        final isSuccess = await ref
+                            .read(stampingTimeProvider.notifier)
                             .setBreakEnd();
-                        if (!context.mounted) return;
+                        if (!isSuccess || !context.mounted) return;
                         await showStampCompletedDialog(
                           context,
                           message: '休憩終了を記録しました。',
@@ -144,10 +144,10 @@ class StampingPage extends HookConsumerWidget {
                           state.patrolStart == null &&
                           state.patrolEnd == null,
                       onPressed: () async {
-                        await ref
-                            .read(stampingNotifierProvider.notifier)
+                        final isSuccess = await ref
+                            .read(stampingTimeProvider.notifier)
                             .setPatrolStart();
-                        if (!context.mounted) return;
+                        if (!isSuccess || !context.mounted) return;
                         await showStampCompletedDialog(
                           context,
                           message: '見回り開始を記録しました。',
@@ -161,10 +161,10 @@ class StampingPage extends HookConsumerWidget {
                           state.patrolStart != null &&
                           state.patrolEnd == null,
                       onPressed: () async {
-                        await ref
-                            .read(stampingNotifierProvider.notifier)
+                        final isSuccess = await ref
+                            .read(stampingTimeProvider.notifier)
                             .setPatrolEnd();
-                        if (!context.mounted) return;
+                        if (!isSuccess || !context.mounted) return;
                         await showStampCompletedDialog(
                           context,
                           message: '見回り終了を記録しました。',
