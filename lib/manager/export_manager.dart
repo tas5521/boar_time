@@ -13,7 +13,7 @@ import 'package:open_filex/open_filex.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-import 'package:boar_time/model/patrol_time_state/patrol_time_state.dart';
+import 'package:boar_time/presentation/state/patrol_time_state/patrol_time_state.dart';
 
 enum ExportFormat { pdf, csv, xlsx }
 

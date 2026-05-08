@@ -31,7 +31,7 @@ class ButcheringTimePage extends HookConsumerWidget {
     final butcheringTimeState = ref.watch(
       butcheringTimeProvider((year: year.value, month: month.value)),
     );
-
+// TODO: これいる？
     useEffect(() {
       ref.invalidate(
         butcheringTimeProvider((year: year.value, month: month.value)),

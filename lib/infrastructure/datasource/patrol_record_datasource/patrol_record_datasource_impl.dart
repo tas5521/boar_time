@@ -68,10 +68,25 @@ class PatrolRecordDatasourceImpl implements PatrolRecordDatasource {
   }
 
   @override
-  Future<void> update(PatrolRecord record) async {
-    await isar.writeTxn(() async {
-      await isar.patrolRecords.put(record);
-    });
+  Future<void> update(PatrolRecord record) =>
+      isar.writeTxn(() => isar.patrolRecords.put(record));
+
+  @override
+  Future<void> upsertById(PatrolRecord record) async {
+    final exist = await getById(record.id);
+    if (exist == null) {
+      await update(record);
+    } else {
+      exist.date = record.date;
+      exist.start = record.start;
+      exist.end = record.end;
+      exist.label = record.label;
+      exist.location = record.location;
+      exist.animal = record.animal;
+      exist.count = record.count;
+      exist.note = record.note;
+      await update(exist);
+    }
   }
 
   @override

@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:boar_time/model/patrol_label.dart';
 import 'package:boar_time/model/patrol_record/patrol_record.dart';
 import 'package:boar_time/presentation/notifier/patrol/patrol_time_notifier.dart';
-import 'package:boar_time/presentation/notifier/stamping/stamping_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -34,7 +33,9 @@ class PatrolEditPage extends HookConsumerWidget {
 
     final loading = useState(true);
 
-    final notifier = ref.read(patrolTimeNotifierProvider.notifier);
+    final notifier = ref.read(
+      patrolTimeProvider((year: year, month: month)).notifier,
+    );
 
     useEffect(() {
       Future<void> load() async {
@@ -103,8 +104,6 @@ class PatrolEditPage extends HookConsumerWidget {
       if (result != true) return;
 
       await notifier.delete(patrolId: patrolId, year: year, month: month);
-      // TODO: 後で消す
-      // await ref.read(stampingNotifierProvider.notifier).fetch();
 
       if (context.mounted) {
         Navigator.of(context).pop();

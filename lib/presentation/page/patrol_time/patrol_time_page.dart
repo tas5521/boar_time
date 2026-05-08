@@ -2,8 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
 import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/patrol_label.dart';
+import 'package:boar_time/presentation/notifier/active_tab/active_tab_notifier.dart';
 import 'package:boar_time/presentation/notifier/patrol/patrol_time_notifier.dart';
-import 'package:boar_time/presentation/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/presentation/page/patrol_time/patrol_edit_page.dart';
 import 'package:boar_time/presentation/page/view_parts/add_patrol_record_dialog.dart';
 import 'package:boar_time/presentation/page/view_parts/edit_time_dialog.dart';
@@ -20,35 +20,30 @@ class PatrolTimePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // TODO: 後で対応
-    // final activeTab = ref.watch(activeTabProvider);
     final now = DateTime.now();
     final year = useState(now.year);
     final month = useState(now.month);
 
-    final patrolTimeState = ref.watch(patrolTimeNotifierProvider);
+    final patrolTimeState = ref.watch(
+      patrolTimeProvider((year: year.value, month: month.value)),
+    );
     final patrolList = patrolTimeState.value ?? [];
 
+    // TODO: これいる？
     useEffect(() {
-      Future.microtask(() async {
-        await ref
-            .read(patrolTimeNotifierProvider.notifier)
-            .loadMonth(year.value, month.value);
-      });
+      ref.invalidate(
+        patrolTimeProvider((year: year.value, month: month.value)),
+      );
       return null;
     }, [year.value, month.value]);
 
-    // TODO: 後で対応
-    // useEffect(() {
-    //   if (activeTab == 2) {
-    //     Future.microtask(() async {
-    //       await ref
-    //           .read(patrolTimeNotifierProvider.notifier)
-    //           .loadMonth(year.value, month.value);
-    //     });
-    //   }
-    //   return null;
-    // }, [activeTab]);
+    ref.listen(activeTabProvider, (_, next) {
+      if (next == 2) {
+        ref.invalidate(
+          patrolTimeProvider((year: year.value, month: month.value)),
+        );
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -67,8 +62,14 @@ class PatrolTimePage extends HookConsumerWidget {
                 context,
                 title: '見回りの勤務表の出力',
                 onExport: (format) async {
+                  // TODO: 後で対応
                   await ref
-                      .read(patrolTimeNotifierProvider.notifier)
+                      .read(
+                        patrolTimeProvider((
+                          year: year.value,
+                          month: month.value,
+                        )).notifier,
+                      )
                       .exportAndSave(
                         format: format,
                         filename: '見回り_${year.value}_${month.value}',
@@ -193,43 +194,29 @@ class PatrolTimePage extends HookConsumerWidget {
                                     label: '見回り開始時間',
                                     date: row.date,
                                     type: JobType.patrol,
-                                    initialTime: row.start != null
-                                        ? TimeOfDay.fromDateTime(row.start!)
-                                        : null,
+                                    initialTime: TimeOfDay.fromDateTime(
+                                      row.start,
+                                    ),
                                     onPressed: (selected) async {
-                                      final dt = selected == null
-                                          ? null
-                                          : DateTime(
-                                              row.date.year,
-                                              row.date.month,
-                                              row.date.day,
-                                              selected.hour,
-                                              selected.minute,
-                                            );
+                                      if (selected == null) return;
+                                      final newStartDate = DateTime(
+                                        row.date.year,
+                                        row.date.month,
+                                        row.date.day,
+                                        selected.hour,
+                                        selected.minute,
+                                      );
+                                      final targetData = row.copyWith(
+                                        start: newStartDate,
+                                      );
                                       await ref
                                           .read(
-                                            patrolTimeNotifierProvider.notifier,
+                                            patrolTimeProvider((
+                                              year: year.value,
+                                              month: month.value,
+                                            )).notifier,
                                           )
-                                          .upsert(
-                                            recordId: row.id,
-                                            date: row.date,
-                                            start: dt,
-                                            end: row.end,
-                                            label: row.label,
-                                            worker: row.worker,
-                                            location: row.location,
-                                            animal: row.animal,
-                                            count: row.count,
-                                            note: row.note,
-                                            year: year.value,
-                                            month: month.value,
-                                          );
-                                          // TODO: 後で消す
-                                      // await ref
-                                      //     .read(
-                                      //       stampingNotifierProvider.notifier,
-                                      //     )
-                                      //     .fetch();
+                                          .updateData(targetData);
                                     },
                                   );
                                 },
@@ -253,39 +240,29 @@ class PatrolTimePage extends HookConsumerWidget {
                                         ? TimeOfDay.fromDateTime(row.end!)
                                         : null,
                                     onPressed: (selected) async {
-                                      final dt = selected == null
-                                          ? null
-                                          : DateTime(
-                                              row.date.year,
-                                              row.date.month,
-                                              row.date.day,
-                                              selected.hour,
-                                              selected.minute,
-                                            );
+                                      final DateTime? newEndDate;
+                                      if (selected != null) {
+                                        newEndDate = DateTime(
+                                          row.date.year,
+                                          row.date.month,
+                                          row.date.day,
+                                          selected.hour,
+                                          selected.minute,
+                                        );
+                                      } else {
+                                        newEndDate = null;
+                                      }
+                                      final targetData = row.copyWith(
+                                        end: newEndDate,
+                                      );
                                       await ref
                                           .read(
-                                            patrolTimeNotifierProvider.notifier,
+                                            patrolTimeProvider((
+                                              year: year.value,
+                                              month: month.value,
+                                            )).notifier,
                                           )
-                                          .upsert(
-                                            recordId: row.id,
-                                            date: row.date,
-                                            start: row.start,
-                                            end: dt,
-                                            label: row.label,
-                                            location: row.location,
-                                            worker: row.worker,
-                                            animal: row.animal,
-                                            count: row.count,
-                                            note: row.note,
-                                            year: year.value,
-                                            month: month.value,
-                                          );
-                                          // TODO: 後で消す
-                                      // await ref
-                                      //     .read(
-                                      //       stampingNotifierProvider.notifier,
-                                      //     )
-                                      //     .fetch();
+                                          .updateData(targetData);
                                     },
                                   );
                                 },
@@ -326,17 +303,15 @@ class PatrolTimePage extends HookConsumerWidget {
                                             .toList(),
                                         onChanged: (value) async {
                                           if (value == null) return;
+                                          final newLabelData = row.copyWith(label: value);
                                           await ref
                                               .read(
-                                                patrolTimeNotifierProvider
-                                                    .notifier,
+                                                patrolTimeProvider((
+                                                  year: year.value,
+                                                  month: month.value,
+                                                )).notifier,
                                               )
-                                              .updateLabel(
-                                                patrolId: row.id,
-                                                label: value,
-                                                year: year.value,
-                                                month: month.value,
-                                              );
+                                              .updateData(newLabelData);
                                         },
                                       ),
                                     ),

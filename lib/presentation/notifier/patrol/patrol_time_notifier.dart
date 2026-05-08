@@ -1,32 +1,56 @@
+import 'dart:async';
+
+import 'package:boar_time/di/patrol_time_provider.dart';
 import 'package:boar_time/manager/export_manager.dart';
 import 'package:boar_time/manager/patrol_record_manager.dart';
 import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/patrol_label.dart';
 import 'package:boar_time/model/patrol_record/patrol_record.dart';
-import 'package:boar_time/model/patrol_time_state/patrol_time_state.dart';
+import 'package:boar_time/presentation/state/patrol_time_state/patrol_time_state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final patrolTimeNotifierProvider =
-    NotifierProvider<PatrolTimeNotifier, AsyncValue<List<PatrolTimeState>>>(
-      PatrolTimeNotifier.new,
-    );
+final patrolTimeProvider =
+    AsyncNotifierProvider.family<
+      PatrolTimeNotifier,
+      List<PatrolTimeState>,
+      ({int year, int month})
+    >(PatrolTimeNotifier.new);
 
-class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
+class PatrolTimeNotifier
+    extends
+        FamilyAsyncNotifier<List<PatrolTimeState>, ({int year, int month})> {
   @override
-  AsyncValue<List<PatrolTimeState>> build() {
-    return const AsyncValue.loading();
+  FutureOr<List<PatrolTimeState>> build(arg) =>
+      _createPatrolTimeState(arg.year, arg.month);
+
+  Future<List<PatrolTimeState>> _createPatrolTimeState(
+    int year,
+    int month,
+  ) async {
+    final usecase = ref.read(patrolTimeUsecaseProvider);
+    final patrolTimeList = await usecase.getPatrolTimeList(year, month);
+    final sorted = [...patrolTimeList]
+      ..sort((a, b) => a.start.compareTo(b.start));
+    return sorted.map((entity) => PatrolTimeState.fromEntity(entity)).toList();
   }
 
-  Future<void> loadMonth(int year, int month) async {
-    state = const AsyncValue.loading();
+  Future<void> updateData(PatrolTimeState target) async {
     try {
-      final records = await _loadRecords(year, month);
-      final converted = _convertRecords(records);
-      state = AsyncValue.data(converted);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
+      state = const AsyncValue.loading();
+      final entity = target.toEntity();
+      final usecase = ref.read(patrolTimeUsecaseProvider);
+      await usecase.upsert(entity);
+      final butcheringTimeStateList = await _createPatrolTimeState(
+        arg.year,
+        arg.month,
+      );
+      state = AsyncValue.data(butcheringTimeStateList);
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
     }
   }
+
+
 
   Future<void> addNewRecord({
     required DateTime date,
@@ -46,54 +70,11 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
       await PatrolRecordManager.createWithDetails(newRecord);
 
       // 該当年月のデータを再取得して state を更新
-      final records = await _loadRecords(date.year, date.month);
-      state = AsyncValue.data(_convertRecords(records));
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
-
-  Future<void> upsert({
-    int? recordId,
-    required DateTime date,
-    DateTime? start,
-    DateTime? end,
-    required int year,
-    required int month,
-    required PatrolLabel label,
-    String? worker,
-    String? location,
-    String? animal,
-    int? count,
-    String? note,
-  }) async {
-    state = const AsyncValue.loading();
-    try {
-      if (recordId == null) {
-        // 新規作成
-        if (start != null) {
-          await PatrolRecordManager.create(date, start);
-        }
-      } else {
-        // 更新
-        final record = PatrolRecord(
-          date: date,
-          start: start!,
-          end: end,
-          worker: worker,
-          location: location,
-          animal: animal,
-          count: count,
-          note: note,
-          label: label,
-        );
-        record.id = recordId;
-
-        await PatrolRecordManager.update(record);
-      }
-
-      final records = await _loadRecords(year, month);
-      state = AsyncValue.data(_convertRecords(records));
+      final patrolTimeStateList = await _createPatrolTimeState(
+        date.year,
+        date.month,
+      );
+      state = AsyncValue.data(patrolTimeStateList);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -105,22 +86,8 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
     required int month,
   }) async {
     await PatrolRecordManager.deleteIfExists(patrolId);
-    state = AsyncValue.data(_convertRecords(await _loadRecords(year, month)));
-  }
-
-  Future<void> updateLabel({
-    required int patrolId,
-    required PatrolLabel label,
-    required int year,
-    required int month,
-  }) async {
-    final record = await PatrolRecordManager.getById(patrolId);
-    if (record == null) return;
-
-    record.label = label;
-    await PatrolRecordManager.update(record);
-
-    state = AsyncValue.data(_convertRecords(await _loadRecords(year, month)));
+    final patrolTimeStateList = await _createPatrolTimeState(year, month);
+    state = AsyncValue.data(patrolTimeStateList);
   }
 
   Future<PatrolRecord?> getDetail(int patrolId) {
@@ -149,31 +116,11 @@ class PatrolTimeNotifier extends Notifier<AsyncValue<List<PatrolTimeState>>> {
 
     await PatrolRecordManager.update(record);
 
-    state = AsyncValue.data(_convertRecords(await _loadRecords(year, month)));
+    final patrolTimeStateList = await _createPatrolTimeState(year, month);
+    state = AsyncValue.data(patrolTimeStateList);
   }
 
-  Future<List<PatrolRecord>> _loadRecords(int year, int month) async {
-    return PatrolRecordManager.getByMonth(year, month);
-  }
-
-  List<PatrolTimeState> _convertRecords(List<PatrolRecord> records) {
-    final sorted = [...records]..sort((a, b) => a.start.compareTo(b.start));
-    return sorted.map((rec) {
-      return PatrolTimeState(
-        id: rec.id,
-        date: rec.date,
-        start: rec.start,
-        end: rec.end,
-        label: rec.label,
-        worker: rec.worker,
-        location: rec.location,
-        animal: rec.animal,
-        count: rec.count,
-        note: rec.note,
-      );
-    }).toList();
-  }
-
+  //TODO: 後で対応
   Future<void> exportAndSave({
     required ExportFormat format,
     required String filename,
