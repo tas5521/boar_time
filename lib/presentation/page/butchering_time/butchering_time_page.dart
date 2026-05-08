@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
 import 'package:boar_time/model/job_type.dart';
+import 'package:boar_time/presentation/notifier/active_tab/active_tab_notifier.dart';
 import 'package:boar_time/presentation/notifier/butchering/butchering_time_notifier.dart';
 import 'package:boar_time/presentation/page/view_parts/edit_break_dalog.dart';
 import 'package:boar_time/presentation/page/view_parts/edit_time_dialog.dart';
@@ -18,8 +19,6 @@ class ButcheringTimePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // TODO: 後で対応
-    // final activeTab = ref.watch(activeTabProvider);
     final now = DateTime.now();
     final year = useState(now.year);
     final month = useState(now.month);
@@ -40,17 +39,11 @@ class ButcheringTimePage extends HookConsumerWidget {
       return null;
     }, [year.value, month.value]);
 
-    // TODO: 後で対応
-    // useEffect(() {
-    //   if (activeTab == 1) {
-    //     Future.microtask(() async {
-    //       await ref
-    //           .read(butcheringTimeNotifierProvider.notifier)
-    //           .loadMonth(year.value, month.value);
-    //     });
-    //   }
-    //   return null;
-    // }, [activeTab]);
+    ref.listen(activeTabProvider, (_, next) {
+      if (next == 1) {
+        ref.invalidate(butcheringTimeProvider);
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -225,10 +218,6 @@ class ButcheringTimePage extends HookConsumerWidget {
                                       row.date,
                                       newDate: newStartDate,
                                     );
-                                // TODO: 後で消す
-                                // await ref
-                                //     .read(stampingNotifierProvider.notifier)
-                                //     .fetch();
                               },
                             );
                           },

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:boar_time/presentation/notifier/active_tab/active_tab_notifier.dart';
 import 'package:boar_time/presentation/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/presentation/page/view_parts/boar_speech_area.dart';
 import 'package:boar_time/presentation/page/view_parts/time_display.dart';
@@ -24,6 +25,12 @@ class StampingPage extends HookConsumerWidget {
       }
       return;
     }, [lifecycle]);
+
+    ref.listen(activeTabProvider, (_, next) {
+      if (next == 0) {
+        ref.invalidate(stampingTimeProvider);
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
