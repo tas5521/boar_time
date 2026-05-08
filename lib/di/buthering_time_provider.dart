@@ -11,7 +11,7 @@ final butcheringTimeFactoryProvider = Provider<ButcheringTimeFactory>(
   (ref) => ButcheringTimeFactoryImpl(),
 );
 
-final butheringTimeRepositoryProvider = Provider<ButcheringTimeRepository>((
+final butcheringTimeRepositoryProvider = Provider<ButcheringTimeRepository>((
   ref,
 ) {
   final workRecordDatasource = ref.watch(workRecordDatasourceProvider);
@@ -23,8 +23,8 @@ final butheringTimeRepositoryProvider = Provider<ButcheringTimeRepository>((
 });
 
 final butcheringTimeUsecaseProvider = Provider<ButcheringTimeUsecase>((ref) {
-  final butheringTimeRepository = ref.watch(butheringTimeRepositoryProvider);
+  final butcheringTimeRepository = ref.watch(butcheringTimeRepositoryProvider);
   return ButcheringTimeUsecaseImpl(
-    butheringTimeRepository: butheringTimeRepository,
+    butheringTimeRepository: butcheringTimeRepository,
   );
 });
