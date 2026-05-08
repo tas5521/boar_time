@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:boar_time/model/abstract_model/time_state_base.dart';
 import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/patrol_label.dart';
+import 'package:boar_time/presentation/state/abstract_model/time_state_base.dart';
+import 'package:boar_time/presentation/state/butchering_time_state/butchering_time_state.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -12,7 +13,6 @@ import 'package:open_filex/open_filex.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-import 'package:boar_time/model/butchering_time_state/butchering_time_state.dart';
 import 'package:boar_time/model/patrol_time_state/patrol_time_state.dart';
 
 enum ExportFormat { pdf, csv, xlsx }

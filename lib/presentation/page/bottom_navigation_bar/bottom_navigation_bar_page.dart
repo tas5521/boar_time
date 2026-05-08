@@ -145,7 +145,6 @@ class BottomNavigationBarPage extends HookConsumerWidget {
 //   }
 // }
 
-// final activeTabProvider = StateProvider<int>((ref) => 0);
 
 
 

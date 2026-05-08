@@ -1,3 +1,4 @@
+import 'package:boar_time/domain/entities/butchering_time.dart';
 import 'package:isar_community/isar.dart';
 
 part 'work_record.g.dart';
@@ -25,4 +26,14 @@ class WorkRecord {
     this.patrolStart,
     this.patrolEnd,
   });
+
+  factory WorkRecord.fromEntity(ButcheringTime butcheringTime) {
+    return WorkRecord(
+      date: butcheringTime.date,
+      startTime: butcheringTime.startTime,
+      endTime: butcheringTime.endTime,
+      breakStart: butcheringTime.breakStart,
+      breakEnd: butcheringTime.breakEnd,
+    );
+  }
 }

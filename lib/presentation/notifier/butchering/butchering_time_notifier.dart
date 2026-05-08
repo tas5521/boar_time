@@ -1,76 +1,35 @@
+import 'dart:async';
+
+import 'package:boar_time/di/buthering_time_provider.dart';
+import 'package:boar_time/domain/entities/butchering_time.dart';
 import 'package:boar_time/manager/export_manager.dart';
-import 'package:boar_time/manager/work_record_manager.dart';
-import 'package:boar_time/model/butchering_time_state/butchering_time_state.dart';
+import 'package:boar_time/presentation/state/butchering_time_state/butchering_time_state.dart';
 import 'package:boar_time/model/job_type.dart';
-import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final butcheringTimeNotifierProvider =
-    NotifierProvider<
+final butcheringTimeProvider =
+    AsyncNotifierProvider.family<
       ButcheringTimeNotifier,
-      AsyncValue<List<ButcheringTimeState>>
+      List<ButcheringTimeState>,
+      ({int year, int month})
     >(ButcheringTimeNotifier.new);
 
 class ButcheringTimeNotifier
-    extends Notifier<AsyncValue<List<ButcheringTimeState>>> {
+    extends
+        FamilyAsyncNotifier<
+          List<ButcheringTimeState>,
+          ({int year, int month})
+        > {
   @override
-  AsyncValue<List<ButcheringTimeState>> build() {
-    return const AsyncValue.loading();
-  }
+  FutureOr<List<ButcheringTimeState>> build(arg) =>
+      _createButcheringTimeState(arg.year, arg.month);
 
-  Future<void> loadMonth(int year, int month) async {
-    state = const AsyncValue.loading();
-    try {
-      final records = await _loadRecords(year, month);
-      final converted = _convertRecords(year, month, records);
-      state = AsyncValue.data(converted);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
-
-  Future<void> upsert(int year, int month, WorkRecord rec) async {
-    state = const AsyncValue.loading();
-    try {
-      await WorkRecordManager.upsertByDate(rec, type: JobType.butchering);
-      final records = await _loadRecords(year, month);
-      final converted = _convertRecords(year, month, records);
-      state = AsyncValue.data(converted);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
-
-  Future<void> updateBreak(
+  Future<List<ButcheringTimeState>> _createButcheringTimeState(
     int year,
     int month,
-    DateTime date,
-    DateTime? breakStart,
-    DateTime? breakEnd,
   ) async {
-    state = const AsyncValue.loading();
-    try {
-      await WorkRecordManager.updateBreak(date, breakStart, breakEnd);
-      final records = await _loadRecords(year, month);
-      final converted = _convertRecords(year, month, records);
-      state = AsyncValue.data(converted);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
-
-  Future<List<WorkRecord>> _loadRecords(int year, int month) async {
-    final all = await WorkRecordManager.getAll();
-    return all
-        .where((e) => e.date.year == year && e.date.month == month)
-        .toList();
-  }
-
-  List<ButcheringTimeState> _convertRecords(
-    int year,
-    int month,
-    List<WorkRecord> records,
-  ) {
+    final usecase = ref.read(butcheringTimeUsecaseProvider);
+    final butcheringTimeList = await usecase.getButcheringTimeList(year, month);
     final lastDay = DateTime(
       year,
       month + 1,
@@ -83,20 +42,20 @@ class ButcheringTimeNotifier
     for (int day = 1; day <= lastDay; day++) {
       final date = DateTime(year, month, day);
 
-      final rec = records.firstWhere(
-        (r) =>
-            r.date.year == date.year &&
-            r.date.month == date.month &&
-            r.date.day == date.day,
-        orElse: () => WorkRecord(date: date),
+      final targetButcheringTime = butcheringTimeList.firstWhere(
+        (butcheringTime) =>
+            butcheringTime.date.year == date.year &&
+            butcheringTime.date.month == date.month &&
+            butcheringTime.date.day == date.day,
+        orElse: () => ButcheringTime(date: date),
       );
 
       var state = ButcheringTimeState(
         date: date,
-        start: rec.startTime,
-        end: rec.endTime,
-        breakStart: rec.breakStart,
-        breakEnd: rec.breakEnd,
+        start: targetButcheringTime.startTime,
+        end: targetButcheringTime.endTime,
+        breakStart: targetButcheringTime.breakStart,
+        breakEnd: targetButcheringTime.breakEnd,
         cumulativeDuration: Duration.zero,
       );
 
@@ -107,6 +66,63 @@ class ButcheringTimeNotifier
     }
 
     return list;
+  }
+
+  Future<void> updateStartTime(DateTime date, {DateTime? newDate}) async {
+    try {
+      state = const AsyncValue.loading();
+      final targetData = state.value!.firstWhere((e) => e.date == date);
+      final entity = targetData.copyWith(start: newDate).toEntity();
+      final usecase = ref.read(butcheringTimeUsecaseProvider);
+      await usecase.upsert(entity);
+      final butcheringTimeStateList = await _createButcheringTimeState(
+        arg.year,
+        arg.month,
+      );
+      state = AsyncValue.data(butcheringTimeStateList);
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
+  }
+
+  Future<void> updateEndTime(DateTime date, {DateTime? newDate}) async {
+    try {
+      state = const AsyncValue.loading();
+      final targetData = state.value!.firstWhere((e) => e.date == date);
+      final entity = targetData.copyWith(end: newDate).toEntity();
+      final usecase = ref.read(butcheringTimeUsecaseProvider);
+      await usecase.upsert(entity);
+      final butcheringTimeStateList = await _createButcheringTimeState(
+        arg.year,
+        arg.month,
+      );
+      state = AsyncValue.data(butcheringTimeStateList);
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
+  }
+
+  Future<void> updateBreak(
+    DateTime date,
+    DateTime? breakStart,
+    DateTime? breakEnd,
+  ) async {
+    try {
+      state = const AsyncValue.loading();
+      final targetData = state.value!.firstWhere((e) => e.date == date);
+      final entity = targetData
+          .copyWith(breakStart: breakStart, breakEnd: breakStart)
+          .toEntity();
+      final usecase = ref.read(butcheringTimeUsecaseProvider);
+      await usecase.updateBreak(entity);
+      final butcheringTimeStateList = await _createButcheringTimeState(
+        arg.year,
+        arg.month,
+      );
+      state = AsyncValue.data(butcheringTimeStateList);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
   }
 
   Future<void> exportAndSave({

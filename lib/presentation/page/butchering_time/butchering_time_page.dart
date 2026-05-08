@@ -1,13 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
-import 'package:boar_time/model/butchering_time_state/butchering_time_state.dart';
 import 'package:boar_time/model/job_type.dart';
-import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:boar_time/presentation/notifier/butchering/butchering_time_notifier.dart';
-import 'package:boar_time/presentation/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/presentation/page/view_parts/edit_break_dalog.dart';
 import 'package:boar_time/presentation/page/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/presentation/page/view_parts/icon_action_button.dart';
+import 'package:boar_time/presentation/state/butchering_time_state/butchering_time_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -31,14 +29,14 @@ class ButcheringTimePage extends HookConsumerWidget {
       1,
     ).subtract(const Duration(days: 1)).day;
 
-    final butcheringTimeState = ref.watch(butcheringTimeNotifierProvider);
+    final butcheringTimeState = ref.watch(
+      butcheringTimeProvider((year: year.value, month: month.value)),
+    );
 
     useEffect(() {
-      Future.microtask(() async {
-        await ref
-            .read(butcheringTimeNotifierProvider.notifier)
-            .loadMonth(year.value, month.value);
-      });
+      ref.invalidate(
+        butcheringTimeProvider((year: year.value, month: month.value)),
+      );
       return null;
     }, [year.value, month.value]);
 
@@ -64,8 +62,14 @@ class ButcheringTimePage extends HookConsumerWidget {
                 context,
                 title: '解体の勤務表の出力',
                 onExport: (format) async {
+                  //TODO: 仮置き。exportAndSaveは別のnotifierで行うことにする
                   await ref
-                      .read(butcheringTimeNotifierProvider.notifier)
+                      .read(
+                        butcheringTimeProvider((
+                          year: year.value,
+                          month: month.value,
+                        )).notifier,
+                      )
                       .exportAndSave(
                         format: format,
                         filename: '解体_${year.value}_${month.value}',
@@ -198,38 +202,30 @@ class ButcheringTimePage extends HookConsumerWidget {
                                   ? TimeOfDay.fromDateTime(row.start!)
                                   : null,
                               onPressed: (selected) async {
-                                final date = row.date;
-                                final WorkRecord rec;
-                                if (selected == null) {
-                                  rec = WorkRecord(
-                                    date: row.date,
-                                    startTime: null,
-                                    endTime: row.end,
-                                    breakStart: row.breakStart,
-                                    breakEnd: row.breakEnd,
-                                  );
-                                } else {
-                                  final dt = DateTime(
+                                final DateTime? newStartDate;
+                                if (selected != null) {
+                                  newStartDate = DateTime(
                                     date.year,
                                     date.month,
                                     date.day,
                                     selected.hour,
                                     selected.minute,
                                   );
-                                  rec = WorkRecord(
-                                    date: row.date,
-                                    startTime: dt,
-                                    endTime: row.end,
-                                    breakStart: row.breakStart,
-                                    breakEnd: row.breakEnd,
-                                  );
+                                } else {
+                                  newStartDate = null;
                                 }
                                 await ref
                                     .read(
-                                      butcheringTimeNotifierProvider.notifier,
+                                      butcheringTimeProvider((
+                                        year: year.value,
+                                        month: month.value,
+                                      )).notifier,
                                     )
-                                    .upsert(year.value, month.value, rec);
-                                    // TODO: 後で消す
+                                    .updateStartTime(
+                                      row.date,
+                                      newDate: newStartDate,
+                                    );
+                                // TODO: 後で消す
                                 // await ref
                                 //     .read(stampingNotifierProvider.notifier)
                                 //     .fetch();
@@ -256,41 +252,29 @@ class ButcheringTimePage extends HookConsumerWidget {
                                   ? TimeOfDay.fromDateTime(row.end!)
                                   : null,
                               onPressed: (selected) async {
-                                final date = row.date;
-                                final WorkRecord rec;
-                                if (selected == null) {
-                                  rec = WorkRecord(
-                                    date: row.date,
-                                    startTime: row.start,
-                                    endTime: null,
-                                    breakStart: row.breakStart,
-                                    breakEnd: row.breakEnd,
-                                  );
-                                } else {
-                                  final dt = DateTime(
+                                final DateTime? newEndDate;
+                                if (selected != null) {
+                                  newEndDate = DateTime(
                                     date.year,
                                     date.month,
                                     date.day,
                                     selected.hour,
                                     selected.minute,
                                   );
-                                  rec = WorkRecord(
-                                    date: row.date,
-                                    startTime: row.start,
-                                    endTime: dt,
-                                    breakStart: row.breakStart,
-                                    breakEnd: row.breakEnd,
-                                  );
+                                } else {
+                                  newEndDate = null;
                                 }
                                 await ref
                                     .read(
-                                      butcheringTimeNotifierProvider.notifier,
+                                      butcheringTimeProvider((
+                                        year: year.value,
+                                        month: month.value,
+                                      )).notifier,
                                     )
-                                    .upsert(year.value, month.value, rec);
-                                    // TODO: 後で消す
-                                // await ref
-                                //     .read(stampingNotifierProvider.notifier)
-                                //     .fetch();
+                                    .updateEndTime(
+                                      row.date,
+                                      newDate: newEndDate,
+                                    );
                               },
                             );
                           },
@@ -340,22 +324,12 @@ class ButcheringTimePage extends HookConsumerWidget {
                                           : null;
                                       await ref
                                           .read(
-                                            butcheringTimeNotifierProvider
-                                                .notifier,
+                                            butcheringTimeProvider((
+                                              year: year.value,
+                                              month: month.value,
+                                            )).notifier,
                                           )
-                                          .updateBreak(
-                                            year.value,
-                                            month.value,
-                                            row.date,
-                                            start,
-                                            end,
-                                          );
-                                          // TODO: 後で消す
-                                      // await ref
-                                      //     .read(
-                                      //       stampingNotifierProvider.notifier,
-                                      //     )
-                                      //     .fetch();
+                                          .updateBreak(row.date, start, end);
                                     },
                                   );
                                 },

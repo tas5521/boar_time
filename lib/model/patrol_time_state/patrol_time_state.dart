@@ -1,5 +1,5 @@
-import 'package:boar_time/model/abstract_model/time_state_base.dart';
 import 'package:boar_time/model/patrol_label.dart';
+import 'package:boar_time/presentation/state/abstract_model/time_state_base.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'patrol_time_state.freezed.dart';

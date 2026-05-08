@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:boar_time/di/stamping_time_provider.dart';
-import 'package:boar_time/presentation/state/stamping_time_state/stamping_state.dart';
+import 'package:boar_time/presentation/state/stamping_time_state/stamping_time_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

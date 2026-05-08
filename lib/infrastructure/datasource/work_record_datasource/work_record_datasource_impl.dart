@@ -99,27 +99,4 @@ class WorkRecordDatasourceImpl implements WorkRecordDatasource {
       await update(exist);
     }
   }
-
-  @override
-  Future<void> updateBreak(
-    DateTime date,
-    DateTime? breakStart,
-    DateTime? breakEnd,
-  ) async {
-    final targetDate = DateTime(date.year, date.month, date.day);
-    final record = await getByDate(targetDate);
-    if (record == null) {
-      await add(
-        WorkRecord(
-          date: targetDate,
-          breakStart: breakStart,
-          breakEnd: breakEnd,
-        ),
-      );
-    } else {
-      record.breakStart = breakStart;
-      record.breakEnd = breakEnd;
-      await update(record);
-    }
-  }
 }
