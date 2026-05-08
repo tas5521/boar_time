@@ -3,16 +3,16 @@ import 'package:boar_time/domain/repositories/butchering_time_repository.dart';
 import 'package:boar_time/domain/usecase/butchering_time_usecase.dart';
 
 class ButcheringTimeUsecaseImpl implements ButcheringTimeUsecase {
-  ButcheringTimeUsecaseImpl({required this.butheringTimeRepository});
+  ButcheringTimeUsecaseImpl({required this.butcheringTimeRepository});
 
-  final ButcheringTimeRepository butheringTimeRepository;
+  final ButcheringTimeRepository butcheringTimeRepository;
 
   @override
   Future<List<ButcheringTime>> getButcheringTimeList(
     int year,
     int month,
   ) async {
-    final allButcheringTimeList = await butheringTimeRepository
+    final allButcheringTimeList = await butcheringTimeRepository
         .getButcheringTimeList();
     return allButcheringTimeList
         .where((e) => e.date.year == year && e.date.month == month)
@@ -21,7 +21,7 @@ class ButcheringTimeUsecaseImpl implements ButcheringTimeUsecase {
 
   @override
   Future<void> upsert(ButcheringTime butcheringTime) =>
-      butheringTimeRepository.upsert(butcheringTime);
+      butcheringTimeRepository.upsert(butcheringTime);
 }
 
 // Future<void> exportAndSave({
