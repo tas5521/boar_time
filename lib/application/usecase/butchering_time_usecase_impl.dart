@@ -22,10 +22,6 @@ class ButcheringTimeUsecaseImpl implements ButcheringTimeUsecase {
   @override
   Future<void> upsert(ButcheringTime butcheringTime) =>
       butheringTimeRepository.upsert(butcheringTime);
-
-  @override
-  Future<void> updateBreak(ButcheringTime butcheringTime) =>
-      butheringTimeRepository.update(butcheringTime);
 }
 
 // Future<void> exportAndSave({

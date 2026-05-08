@@ -4,8 +4,6 @@ import 'package:boar_time/model/work_record/work_record.dart';
 abstract class WorkRecordDatasource {
   Future<WorkRecord?> getByDate(DateTime date);
   Future<List<WorkRecord>> getAll();
-  Future<int> add(WorkRecord record);
-  Future<void> update(WorkRecord record);
   Future<void> clearBreakStart(DateTime date);
   Future<void> clearBreakEnd(DateTime date);
   Future<void> clearPatrolStart(DateTime date);

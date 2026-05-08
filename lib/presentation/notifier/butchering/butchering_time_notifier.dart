@@ -68,11 +68,10 @@ class ButcheringTimeNotifier
     return list;
   }
 
-  Future<void> updateStartTime(DateTime date, {DateTime? newDate}) async {
+  Future<void> updateData(ButcheringTimeState target) async {
     try {
       state = const AsyncValue.loading();
-      final targetData = state.value!.firstWhere((e) => e.date == date);
-      final entity = targetData.copyWith(start: newDate).toEntity();
+      final entity = target.toEntity();
       final usecase = ref.read(butcheringTimeUsecaseProvider);
       await usecase.upsert(entity);
       final butcheringTimeStateList = await _createButcheringTimeState(
@@ -82,46 +81,6 @@ class ButcheringTimeNotifier
       state = AsyncValue.data(butcheringTimeStateList);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
-    }
-  }
-
-  Future<void> updateEndTime(DateTime date, {DateTime? newDate}) async {
-    try {
-      state = const AsyncValue.loading();
-      final targetData = state.value!.firstWhere((e) => e.date == date);
-      final entity = targetData.copyWith(end: newDate).toEntity();
-      final usecase = ref.read(butcheringTimeUsecaseProvider);
-      await usecase.upsert(entity);
-      final butcheringTimeStateList = await _createButcheringTimeState(
-        arg.year,
-        arg.month,
-      );
-      state = AsyncValue.data(butcheringTimeStateList);
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
-    }
-  }
-
-  Future<void> updateBreak(
-    DateTime date,
-    DateTime? breakStart,
-    DateTime? breakEnd,
-  ) async {
-    try {
-      state = const AsyncValue.loading();
-      final targetData = state.value!.firstWhere((e) => e.date == date);
-      final entity = targetData
-          .copyWith(breakStart: breakStart, breakEnd: breakStart)
-          .toEntity();
-      final usecase = ref.read(butcheringTimeUsecaseProvider);
-      await usecase.updateBreak(entity);
-      final butcheringTimeStateList = await _createButcheringTimeState(
-        arg.year,
-        arg.month,
-      );
-      state = AsyncValue.data(butcheringTimeStateList);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
     }
   }
 

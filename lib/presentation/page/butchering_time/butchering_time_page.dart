@@ -207,6 +207,9 @@ class ButcheringTimePage extends HookConsumerWidget {
                                 } else {
                                   newStartDate = null;
                                 }
+                                final targetData = row.copyWith(
+                                  start: newStartDate,
+                                );
                                 await ref
                                     .read(
                                       butcheringTimeProvider((
@@ -214,10 +217,7 @@ class ButcheringTimePage extends HookConsumerWidget {
                                         month: month.value,
                                       )).notifier,
                                     )
-                                    .updateStartTime(
-                                      row.date,
-                                      newDate: newStartDate,
-                                    );
+                                    .updateData(targetData);
                               },
                             );
                           },
@@ -253,6 +253,9 @@ class ButcheringTimePage extends HookConsumerWidget {
                                 } else {
                                   newEndDate = null;
                                 }
+                                final targetData = row.copyWith(
+                                  end: newEndDate,
+                                );
                                 await ref
                                     .read(
                                       butcheringTimeProvider((
@@ -260,10 +263,7 @@ class ButcheringTimePage extends HookConsumerWidget {
                                         month: month.value,
                                       )).notifier,
                                     )
-                                    .updateEndTime(
-                                      row.date,
-                                      newDate: newEndDate,
-                                    );
+                                    .updateData(targetData);
                               },
                             );
                           },
@@ -311,6 +311,10 @@ class ButcheringTimePage extends HookConsumerWidget {
                                               breakEnd.minute,
                                             )
                                           : null;
+                                      final targetData = row.copyWith(
+                                        breakStart: start,
+                                        breakEnd: end,
+                                      );
                                       await ref
                                           .read(
                                             butcheringTimeProvider((
@@ -318,7 +322,7 @@ class ButcheringTimePage extends HookConsumerWidget {
                                               month: month.value,
                                             )).notifier,
                                           )
-                                          .updateBreak(row.date, start, end);
+                                          .updateData(targetData);
                                     },
                                   );
                                 },

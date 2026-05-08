@@ -20,13 +20,26 @@ class WorkRecordDatasourceImpl implements WorkRecordDatasource {
   }
 
   @override
-  Future<int> add(WorkRecord record) async {
-    return await isar.writeTxn(() => isar.workRecords.put(record));
-  }
-
-  @override
-  Future<void> update(WorkRecord record) async {
-    await isar.writeTxn(() => isar.workRecords.put(record));
+  Future<void> upsertByDate(
+    WorkRecord newRecord, {
+    required JobType type,
+  }) async {
+    final exist = await getByDate(newRecord.date);
+    if (exist == null) {
+      await _update(newRecord);
+    } else {
+      switch (type) {
+        case JobType.butchering:
+          exist.startTime = newRecord.startTime;
+          exist.endTime = newRecord.endTime;
+          exist.breakStart = newRecord.breakStart;
+          exist.breakEnd = newRecord.breakEnd;
+        case JobType.patrol:
+          exist.patrolStart = newRecord.patrolStart;
+          exist.patrolEnd = newRecord.patrolEnd;
+      }
+      await _update(exist);
+    }
   }
 
   @override
@@ -35,7 +48,7 @@ class WorkRecordDatasourceImpl implements WorkRecordDatasource {
     final record = await getByDate(targetDate);
     if (record != null) {
       record.breakStart = null;
-      await update(record);
+      await _update(record);
     }
   }
 
@@ -45,7 +58,7 @@ class WorkRecordDatasourceImpl implements WorkRecordDatasource {
     final record = await getByDate(targetDate);
     if (record != null) {
       record.breakEnd = null;
-      await update(record);
+      await _update(record);
     }
   }
 
@@ -54,7 +67,7 @@ class WorkRecordDatasourceImpl implements WorkRecordDatasource {
     final record = await getByDate(date);
     if (record != null) {
       record.patrolStart = null;
-      await update(record);
+      await _update(record);
     }
   }
 
@@ -63,7 +76,7 @@ class WorkRecordDatasourceImpl implements WorkRecordDatasource {
     final record = await getByDate(date);
     if (record != null) {
       record.patrolEnd = null;
-      await update(record);
+      await _update(record);
     }
   }
 
@@ -77,26 +90,7 @@ class WorkRecordDatasourceImpl implements WorkRecordDatasource {
     await isar.writeTxn(() => isar.workRecords.clear());
   }
 
-  @override
-  Future<void> upsertByDate(
-    WorkRecord newRecord, {
-    required JobType type,
-  }) async {
-    final exist = await getByDate(newRecord.date);
-    if (exist == null) {
-      await add(newRecord);
-    } else {
-      switch (type) {
-        case JobType.butchering:
-          exist.startTime = newRecord.startTime;
-          exist.endTime = newRecord.endTime;
-          exist.breakStart = newRecord.breakStart;
-          exist.breakEnd = newRecord.breakEnd;
-        case JobType.patrol:
-          exist.patrolStart = newRecord.patrolStart;
-          exist.patrolEnd = newRecord.patrolEnd;
-      }
-      await update(exist);
-    }
+  Future<void> _update(WorkRecord record) async {
+    await isar.writeTxn(() => isar.workRecords.put(record));
   }
 }

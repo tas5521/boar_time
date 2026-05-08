@@ -35,10 +35,4 @@ class ButcheringTimeRepositoryImpl implements ButcheringTimeRepository {
       type: JobType.butchering,
     );
   }
-
-  @override
-  Future<void> update(ButcheringTime butcheringTime) async {
-    final targetRecord = WorkRecord.fromEntity(butcheringTime);
-    await workRecordDatasource.update(targetRecord);
-  }
 }
