@@ -29,7 +29,6 @@ class PatrolTimePage extends HookConsumerWidget {
     );
     final patrolList = patrolTimeState.value ?? [];
 
-    // TODO: これいる？
     useEffect(() {
       ref.invalidate(
         patrolTimeProvider((year: year.value, month: month.value)),

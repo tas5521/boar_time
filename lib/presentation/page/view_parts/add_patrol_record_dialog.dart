@@ -176,7 +176,6 @@ Future<void> showAddPatrolRecordDialog(
                         year.value = selectedDate!.year;
                         month.value = selectedDate!.month;
 
-                        // TODO: 後で修正（popの方法）
                         if (!addContext.mounted) return;
                         Navigator.of(addContext).pop();
                       }
