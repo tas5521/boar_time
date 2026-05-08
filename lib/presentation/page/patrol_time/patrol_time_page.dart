@@ -325,6 +325,7 @@ class PatrolTimePage extends HookConsumerWidget {
                                     iconSize: 20.sp,
                                     tooltip: '編集',
                                     onPressed: () {
+                                      // AutoRouteの方法に変更
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (_) => PatrolEditPage(
