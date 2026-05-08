@@ -25,6 +25,6 @@ final butcheringTimeRepositoryProvider = Provider<ButcheringTimeRepository>((
 final butcheringTimeUsecaseProvider = Provider<ButcheringTimeUsecase>((ref) {
   final butcheringTimeRepository = ref.watch(butcheringTimeRepositoryProvider);
   return ButcheringTimeUsecaseImpl(
-    butheringTimeRepository: butcheringTimeRepository,
+    butcheringTimeRepository: butcheringTimeRepository,
   );
 });
