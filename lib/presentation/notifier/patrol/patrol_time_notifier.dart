@@ -2,10 +2,8 @@ import 'dart:async';
 
 import 'package:boar_time/di/patrol_time_provider.dart';
 import 'package:boar_time/manager/export_manager.dart';
-import 'package:boar_time/manager/patrol_record_manager.dart';
 import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/patrol_label.dart';
-import 'package:boar_time/model/patrol_record/patrol_record.dart';
 import 'package:boar_time/presentation/state/patrol_time_state/patrol_time_state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -95,30 +93,6 @@ class PatrolTimeNotifier
       return false;
     }
   }
-
-  Future<PatrolRecord?> getDetail(int patrolId) {
-    return PatrolRecordManager.getById(patrolId);
-  }
-
-  // Future<void> updateDetail({
-  //   PatrolTimeState patrolTimeState,
-  // }) async {
-
-  //   final record = await PatrolRecordManager.getById(patrolId);
-  //   if (record == null) return;
-
-  //   record
-  //     ..worker = worker
-  //     ..location = location
-  //     ..animal = animal
-  //     ..count = count
-  //     ..note = note;
-
-  //   await PatrolRecordManager.update(record);
-
-  //   final patrolTimeStateList = await _createPatrolTimeState(year, month);
-  //   state = AsyncValue.data(patrolTimeStateList);
-  // }
 
   //TODO: 後で対応
   Future<void> exportAndSave({
