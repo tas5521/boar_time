@@ -3,7 +3,7 @@ import 'package:boar_time/model/patrol_record/patrol_record.dart';
 
 class PatrolTimeModel {
   PatrolTimeModel({
-    required this.id,
+    this.id,
     required this.date,
     required this.start,
     this.end,
@@ -30,7 +30,7 @@ class PatrolTimeModel {
     );
   }
 
-  final int id;
+  final int? id;
   final DateTime date;
   final DateTime start;
   final DateTime? end;

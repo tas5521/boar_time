@@ -10,7 +10,7 @@ abstract class PatrolTimeState with _$PatrolTimeState implements TimeStateBase {
   const PatrolTimeState._();
 
   const factory PatrolTimeState({
-    required int id,
+    int? id,
     required DateTime date,
     required DateTime start,
     DateTime? end,

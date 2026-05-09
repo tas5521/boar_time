@@ -329,7 +329,7 @@ class PatrolTimePage extends HookConsumerWidget {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (_) => PatrolEditPage(
-                                            patrolId: row.id,
+                                            patrolId: row.id!,
                                             year: year.value,
                                             month: month.value,
                                           ),

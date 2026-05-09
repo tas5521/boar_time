@@ -10,16 +10,16 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 @RoutePage()
 class PatrolEditPage extends HookConsumerWidget {
-  final int patrolId;
-  final int year;
-  final int month;
-
-  const PatrolEditPage({
+    const PatrolEditPage({
     super.key,
     required this.patrolId,
     required this.year,
     required this.month,
   });
+
+  final int patrolId;
+  final int year;
+  final int month;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

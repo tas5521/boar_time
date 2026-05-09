@@ -50,7 +50,7 @@ class PatrolRecordDatasourceImpl implements PatrolRecordDatasource {
   }
 
   @override
-  Future<void> createWithDetails(PatrolRecord record) async {
+  Future<void> createByRecord(PatrolRecord record) async {
     await isar.writeTxn(() async {
       await isar.patrolRecords.put(
         PatrolRecord(

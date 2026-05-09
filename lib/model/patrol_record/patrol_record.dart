@@ -1,4 +1,4 @@
-import 'package:boar_time/domain/entities/patrol_time.dart';
+import 'package:boar_time/infrastructure/model/patrol_time_model.dart';
 import 'package:boar_time/model/patrol_label.dart';
 import 'package:isar_community/isar.dart';
 
@@ -35,19 +35,21 @@ class PatrolRecord {
     this.label = PatrolLabel.none,
   });
 
-  factory PatrolRecord.fromEntity(PatrolTime patrolTime) {
+  factory PatrolRecord.fromModel(PatrolTimeModel patrolTimeModel) {
     final record = PatrolRecord(
-      date: patrolTime.date,
-      start: patrolTime.start,
-      end: patrolTime.end,
-      label: patrolTime.label,
-      worker: patrolTime.worker,
-      location: patrolTime.location,
-      animal: patrolTime.animal,
-      count: patrolTime.count,
-      note: patrolTime.note,
+      date: patrolTimeModel.date,
+      start: patrolTimeModel.start,
+      end: patrolTimeModel.end,
+      label: patrolTimeModel.label,
+      worker: patrolTimeModel.worker,
+      location: patrolTimeModel.location,
+      animal: patrolTimeModel.animal,
+      count: patrolTimeModel.count,
+      note: patrolTimeModel.note,
     );
-    record.id = patrolTime.id;
+    if (patrolTimeModel.id != null) {
+      record.id = patrolTimeModel.id!;
+    }
     return record;
   }
 }

@@ -4,7 +4,7 @@ import 'package:boar_time/model/patrol_label.dart';
 
 class PatrolTime {
   const PatrolTime({
-    required this.id,
+    this.id,
     required this.date,
     required this.start,
     this.end,
@@ -16,7 +16,7 @@ class PatrolTime {
     this.note,
   });
 
-  final int id;
+  final int? id;
   final DateTime date;
   final DateTime start;
   final DateTime? end;

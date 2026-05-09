@@ -166,7 +166,7 @@ Future<void> showAddPatrolRecordDialog(
                                 month: month.value,
                               )).notifier,
                             )
-                            .addNewRecord(
+                            .addNewData(
                               date: selectedDate!,
                               start: newStart,
                               end: newEnd,

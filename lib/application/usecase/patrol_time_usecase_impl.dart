@@ -14,6 +14,10 @@ class PatrolTimeUsecaseImpl implements PatrolTimeUsecase {
   @override
   Future<void> upsert(PatrolTime patrolTime) =>
       patrolTimeRepository.upsert(patrolTime);
+
+  @override
+  Future<void> createByEntity(PatrolTime patrolTime) =>
+      patrolTimeRepository.createByEntity(patrolTime);
 }
 
 // TODO: 後でチェック。いらなかったら消す

@@ -50,33 +50,29 @@ class PatrolTimeNotifier
     }
   }
 
-
-
-  Future<void> addNewRecord({
+  Future<void> addNewData({
     required DateTime date,
     required DateTime start,
-    required DateTime? end,
+    required DateTime end,
     required PatrolLabel label,
   }) async {
-    state = const AsyncValue.loading();
     try {
-      final newRecord = PatrolRecord(
+      state = const AsyncValue.loading();
+      final newEntity = PatrolTimeState(
         date: date,
         start: start,
         end: end,
         label: label,
-      );
-
-      await PatrolRecordManager.createWithDetails(newRecord);
-
-      // 該当年月のデータを再取得して state を更新
+      ).toEntity();
+      final usecase = ref.read(patrolTimeUsecaseProvider);
+      await usecase.createByEntity(newEntity);
       final patrolTimeStateList = await _createPatrolTimeState(
         date.year,
         date.month,
       );
       state = AsyncValue.data(patrolTimeStateList);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
     }
   }
 

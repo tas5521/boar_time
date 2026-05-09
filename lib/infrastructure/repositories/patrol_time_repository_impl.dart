@@ -1,4 +1,5 @@
 import 'package:boar_time/domain/entities/patrol_time.dart';
+import 'package:boar_time/domain/factory/patrol_time_model_factory.dart';
 import 'package:boar_time/domain/factory/patrol_time_factory.dart';
 import 'package:boar_time/domain/repositories/patrol_time_repository.dart';
 import 'package:boar_time/infrastructure/datasource/patrol_record_datasource/patrol_record_datasource.dart';
@@ -9,10 +10,12 @@ class PatrolTimeRepositoryImpl implements PatrolTimeRepository {
   PatrolTimeRepositoryImpl({
     required this.patrolRecordDatasource,
     required this.patrolTimeFactory,
+    required this.patrolTimeModelFactory,
   });
 
   final PatrolRecordDatasource patrolRecordDatasource;
   final PatrolTimeFactory patrolTimeFactory;
+  final PatrolTimeModelFactory patrolTimeModelFactory;
 
   @override
   Future<List<PatrolTime>> getPatrolTimeList(int year, int month) async {
@@ -29,7 +32,16 @@ class PatrolTimeRepositoryImpl implements PatrolTimeRepository {
 
   @override
   Future<void> upsert(PatrolTime patrolTime) async {
-    final targetRecord = PatrolRecord.fromEntity(patrolTime);
+    // Model挟む
+    final patrolTimeModel = patrolTimeModelFactory.createFromEntity(patrolTime);
+    final targetRecord = PatrolRecord.fromModel(patrolTimeModel);
     await patrolRecordDatasource.upsertById(targetRecord);
+  }
+
+  @override
+  Future<void> createByEntity(PatrolTime patrolTime) async {
+    final patrolTimeModel = patrolTimeModelFactory.createFromEntity(patrolTime);
+    final targetRecord = PatrolRecord.fromModel(patrolTimeModel);
+    await patrolRecordDatasource.createByRecord(targetRecord);
   }
 }
