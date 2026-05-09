@@ -1,5 +1,6 @@
 import 'package:boar_time/domain/entities/butchering_time.dart';
 import 'package:boar_time/domain/factory/batchering_time_factory.dart';
+import 'package:boar_time/domain/factory/batchering_time_model_factory.dart';
 import 'package:boar_time/domain/repositories/butchering_time_repository.dart';
 import 'package:boar_time/infrastructure/datasource/work_record_datasource/work_record_datasource.dart';
 import 'package:boar_time/infrastructure/model/butchering_time_model.dart';
@@ -10,10 +11,12 @@ class ButcheringTimeRepositoryImpl implements ButcheringTimeRepository {
   ButcheringTimeRepositoryImpl({
     required this.workRecordDatasource,
     required this.butcheringTimeFactory,
+    required this.butcheringTimeModelFactory,
   });
 
   final WorkRecordDatasource workRecordDatasource;
   final ButcheringTimeFactory butcheringTimeFactory;
+  final ButcheringTimeModelFactory butcheringTimeModelFactory;
 
   @override
   Future<List<ButcheringTime>> getButcheringTimeList() async {
@@ -29,7 +32,10 @@ class ButcheringTimeRepositoryImpl implements ButcheringTimeRepository {
 
   @override
   Future<void> upsert(ButcheringTime butcheringTime) async {
-    final targetRecord = WorkRecord.fromEntity(butcheringTime);
+    final butcheringTimeModel = butcheringTimeModelFactory.createFromEntity(
+      butcheringTime,
+    );
+    final targetRecord = WorkRecord.fromModel(butcheringTimeModel);
     await workRecordDatasource.upsertByDate(
       targetRecord,
       type: JobType.butchering,

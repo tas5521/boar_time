@@ -32,7 +32,6 @@ class PatrolTimeRepositoryImpl implements PatrolTimeRepository {
 
   @override
   Future<void> upsert(PatrolTime patrolTime) async {
-    // Model挟む
     final patrolTimeModel = patrolTimeModelFactory.createFromEntity(patrolTime);
     final targetRecord = PatrolRecord.fromModel(patrolTimeModel);
     await patrolRecordDatasource.upsertById(targetRecord);
