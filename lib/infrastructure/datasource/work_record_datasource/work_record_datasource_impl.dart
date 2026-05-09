@@ -1,6 +1,5 @@
 import 'package:boar_time/infrastructure/datasource/work_record_datasource/work_record_datasource.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
-import 'package:boar_time/model/job_type.dart';
 import 'package:isar_community/isar.dart';
 
 class WorkRecordDatasourceImpl implements WorkRecordDatasource {
@@ -20,24 +19,15 @@ class WorkRecordDatasourceImpl implements WorkRecordDatasource {
   }
 
   @override
-  Future<void> upsertByDate(
-    WorkRecord newRecord, {
-    required JobType type,
-  }) async {
+  Future<void> upsertByDate(WorkRecord newRecord) async {
     final exist = await getByDate(newRecord.date);
     if (exist == null) {
       await _update(newRecord);
     } else {
-      switch (type) {
-        case JobType.butchering:
-          exist.startTime = newRecord.startTime;
-          exist.endTime = newRecord.endTime;
-          exist.breakStart = newRecord.breakStart;
-          exist.breakEnd = newRecord.breakEnd;
-        case JobType.patrol:
-          exist.patrolStart = newRecord.patrolStart;
-          exist.patrolEnd = newRecord.patrolEnd;
-      }
+      exist.startTime = newRecord.startTime;
+      exist.endTime = newRecord.endTime;
+      exist.breakStart = newRecord.breakStart;
+      exist.breakEnd = newRecord.breakEnd;
       await _update(exist);
     }
   }

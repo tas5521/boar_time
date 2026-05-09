@@ -4,7 +4,6 @@ import 'package:boar_time/domain/factory/batchering_time_model_factory.dart';
 import 'package:boar_time/domain/repositories/butchering_time_repository.dart';
 import 'package:boar_time/infrastructure/datasource/work_record_datasource/work_record_datasource.dart';
 import 'package:boar_time/infrastructure/model/butchering_time_model.dart';
-import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 
 class ButcheringTimeRepositoryImpl implements ButcheringTimeRepository {
@@ -36,9 +35,6 @@ class ButcheringTimeRepositoryImpl implements ButcheringTimeRepository {
       butcheringTime,
     );
     final targetRecord = WorkRecord.fromModel(butcheringTimeModel);
-    await workRecordDatasource.upsertByDate(
-      targetRecord,
-      type: JobType.butchering,
-    );
+    await workRecordDatasource.upsertByDate(targetRecord);
   }
 }

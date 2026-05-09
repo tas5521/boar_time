@@ -3,7 +3,6 @@ import 'package:boar_time/domain/repositories/patrol_record_repository.dart';
 import 'package:boar_time/domain/repositories/stamping_time_repository.dart';
 import 'package:boar_time/domain/repositories/work_record_repository.dart';
 import 'package:boar_time/domain/usecase/stamping_time_usecase.dart';
-import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/patrol_record/patrol_record.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 
@@ -29,10 +28,7 @@ class StampingTimeUsecaseImpl implements StampingTimeUsecase {
     final existing = await _workRecordRepository.getByDate(today);
     final workRecord = existing ?? WorkRecord(date: today);
     workRecord.startTime = now;
-    await _workRecordRepository.upsertByDate(
-      workRecord,
-      type: JobType.butchering,
-    );
+    await _workRecordRepository.upsertByDate(workRecord);
     return _stampingTimeRepository.getStampingTime(today);
   }
 
@@ -43,10 +39,7 @@ class StampingTimeUsecaseImpl implements StampingTimeUsecase {
     final existing = await _workRecordRepository.getByDate(today);
     final workRecord = existing ?? WorkRecord(date: today);
     workRecord.endTime = now;
-    await _workRecordRepository.upsertByDate(
-      workRecord,
-      type: JobType.butchering,
-    );
+    await _workRecordRepository.upsertByDate(workRecord);
     return _stampingTimeRepository.getStampingTime(today);
   }
 
@@ -57,10 +50,7 @@ class StampingTimeUsecaseImpl implements StampingTimeUsecase {
     final existing = await _workRecordRepository.getByDate(today);
     final workRecord = existing ?? WorkRecord(date: today);
     workRecord.breakStart = now;
-    await _workRecordRepository.upsertByDate(
-      workRecord,
-      type: JobType.butchering,
-    );
+    await _workRecordRepository.upsertByDate(workRecord);
     return _stampingTimeRepository.getStampingTime(today);
   }
 
@@ -71,10 +61,7 @@ class StampingTimeUsecaseImpl implements StampingTimeUsecase {
     final existing = await _workRecordRepository.getByDate(today);
     final workRecord = existing ?? WorkRecord(date: today);
     workRecord.breakEnd = now;
-    await _workRecordRepository.upsertByDate(
-      workRecord,
-      type: JobType.butchering,
-    );
+    await _workRecordRepository.upsertByDate(workRecord);
     return _stampingTimeRepository.getStampingTime(today);
   }
 

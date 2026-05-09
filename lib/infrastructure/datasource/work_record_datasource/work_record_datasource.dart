@@ -1,4 +1,3 @@
-import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 
 abstract class WorkRecordDatasource {
@@ -10,5 +9,5 @@ abstract class WorkRecordDatasource {
   Future<void> clearPatrolEnd(DateTime date);
   Future<void> delete(int id);
   Future<void> deleteAll();
-  Future<void> upsertByDate(WorkRecord newRecord, {required JobType type});
+  Future<void> upsertByDate(WorkRecord newRecord);
 }
