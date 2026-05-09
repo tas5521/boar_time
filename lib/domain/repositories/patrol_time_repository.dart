@@ -4,4 +4,5 @@ abstract class PatrolTimeRepository {
   Future<List<PatrolTime>> getPatrolTimeList(int year, int month);
   Future<void> upsert(PatrolTime patrolTime);
   Future<void> createByEntity(PatrolTime patrolTime);
+  Future<void> delete(PatrolTime patrolTime);
 }

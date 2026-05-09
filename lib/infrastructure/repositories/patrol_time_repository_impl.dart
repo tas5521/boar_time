@@ -43,4 +43,11 @@ class PatrolTimeRepositoryImpl implements PatrolTimeRepository {
     final targetRecord = PatrolRecord.fromModel(patrolTimeModel);
     await patrolRecordDatasource.createByRecord(targetRecord);
   }
+
+  @override
+  Future<void> delete(PatrolTime patrolTime) async {
+    final patrolTimeModel = patrolTimeModelFactory.createFromEntity(patrolTime);
+    final targetRecord = PatrolRecord.fromModel(patrolTimeModel);
+    await patrolRecordDatasource.deleteIfExists(targetRecord);
+  }
 }

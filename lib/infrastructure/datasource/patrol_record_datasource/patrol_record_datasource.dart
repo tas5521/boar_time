@@ -9,5 +9,5 @@ abstract class PatrolRecordDatasource {
   Future<void> createByRecord(PatrolRecord record);
   Future<void> update(PatrolRecord record);
   Future<void> upsertById(PatrolRecord record);
-  Future<bool> deleteIfExists(int patrolId);
+  Future<bool> deleteIfExists(PatrolRecord record);
 }

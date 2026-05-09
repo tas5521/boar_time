@@ -302,7 +302,9 @@ class PatrolTimePage extends HookConsumerWidget {
                                             .toList(),
                                         onChanged: (value) async {
                                           if (value == null) return;
-                                          final newLabelData = row.copyWith(label: value);
+                                          final newLabelData = row.copyWith(
+                                            label: value,
+                                          );
                                           await ref
                                               .read(
                                                 patrolTimeProvider((
@@ -329,9 +331,13 @@ class PatrolTimePage extends HookConsumerWidget {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (_) => PatrolEditPage(
-                                            patrolId: row.id!,
-                                            year: year.value,
-                                            month: month.value,
+                                            patrolTimeState: row,
+                                            patrolTimeNotifier: ref.read(
+                                              patrolTimeProvider((
+                                                year: year.value,
+                                                month: month.value,
+                                              )).notifier,
+                                            ),
                                           ),
                                         ),
                                       );

@@ -1,77 +1,41 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:boar_time/model/patrol_label.dart';
-import 'package:boar_time/model/patrol_record/patrol_record.dart';
 import 'package:boar_time/presentation/notifier/patrol/patrol_time_notifier.dart';
+import 'package:boar_time/presentation/state/patrol_time_state/patrol_time_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 @RoutePage()
-class PatrolEditPage extends HookConsumerWidget {
-    const PatrolEditPage({
+class PatrolEditPage extends HookWidget {
+  const PatrolEditPage({
     super.key,
-    required this.patrolId,
-    required this.year,
-    required this.month,
+    required this.patrolTimeState,
+    required this.patrolTimeNotifier,
   });
 
-  final int patrolId;
-  final int year;
-  final int month;
+  final PatrolTimeState patrolTimeState;
+  final PatrolTimeNotifier patrolTimeNotifier;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final workerController = useTextEditingController();
     final locationController = useTextEditingController();
     final animalController = useTextEditingController();
     final countController = useTextEditingController();
     final noteController = useTextEditingController();
 
-    final recordState = useState<PatrolRecord?>(null);
-
-    final loading = useState(true);
-
-    final notifier = ref.read(
-      patrolTimeProvider((year: year, month: month)).notifier,
-    );
-
     useEffect(() {
-      Future<void> load() async {
-        final record = await notifier.getDetail(patrolId);
-        if (record != null) {
-          recordState.value = record;
-          workerController.text = record.worker ?? '';
-          locationController.text = record.location ?? '';
-          animalController.text = record.animal ?? '';
-          countController.text = record.count != null
-              ? record.count.toString()
-              : '';
-          noteController.text = record.note ?? '';
-        }
-        loading.value = false;
-      }
-
-      load();
+      workerController.text = patrolTimeState.worker ?? '';
+      locationController.text = patrolTimeState.location ?? '';
+      animalController.text = patrolTimeState.animal ?? '';
+      countController.text = patrolTimeState.count != null
+          ? patrolTimeState.count.toString()
+          : '';
+      noteController.text = patrolTimeState.note ?? '';
       return null;
     }, const []);
-
-    Future<void> save() async {
-      await notifier.updateDetail(
-        patrolId: patrolId,
-        worker: workerController.text.trim(),
-        location: locationController.text.trim(),
-        animal: animalController.text.trim(),
-        count: int.tryParse(countController.text),
-        note: noteController.text.trim(),
-        year: year,
-        month: month,
-      );
-      if (context.mounted) {
-        Navigator.of(context).pop();
-      }
-    }
 
     Future<void> confirmDelete(
       BuildContext context,
@@ -100,12 +64,9 @@ class PatrolEditPage extends HookConsumerWidget {
           );
         },
       );
-
       if (result != true) return;
-
-      await notifier.delete(patrolId: patrolId, year: year, month: month);
-
-      if (context.mounted) {
+      final isSuccess = await notifier.delete(patrolTimeState);
+      if (isSuccess && context.mounted) {
         Navigator.of(context).pop();
       }
     }
@@ -118,93 +79,104 @@ class PatrolEditPage extends HookConsumerWidget {
           style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.bold),
         ),
       ),
-      body: loading.value
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: EdgeInsets.all(16.w),
-              child: Column(
-                spacing: 24.w,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (recordState.value != null)
-                    _summaryBlock(context, recordState.value!),
-                  _inputBlock(
-                    label: '従事者名',
-                    controller: workerController,
-                    hint: '例）山田 太郎',
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          spacing: 24.w,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _summaryBlock(context, patrolTimeState),
+            _inputBlock(
+              label: '従事者名',
+              controller: workerController,
+              hint: '例）山田 太郎',
+            ),
+            _inputBlock(
+              label: '見回り場所',
+              controller: locationController,
+              hint: '例）○○地区、△△付近など',
+            ),
+            _inputBlock(
+              label: '捕獲した獣種',
+              controller: animalController,
+              hint: '例）イノシシ',
+            ),
+            _inputBlock(
+              label: '捕獲数',
+              controller: countController,
+              hint: '例）1',
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            ),
+            _inputBlock(
+              label: '備考',
+              controller: noteController,
+              hint: '特記事項があれば記載',
+              maxLines: 5,
+            ),
+            SizedBox(height: 4.w),
+            SizedBox(
+              width: double.infinity,
+              height: 64.w,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
                   ),
-                  _inputBlock(
-                    label: '見回り場所',
-                    controller: locationController,
-                    hint: '例）○○地区、△△付近など',
+                ),
+                onPressed: () async {
+                  final newPatrolState = patrolTimeState.copyWith(
+                    worker: workerController.text.trim(),
+                    location: locationController.text.trim(),
+                    animal: animalController.text.trim(),
+                    count: int.tryParse(countController.text),
+                    note: noteController.text.trim(),
+                  );
+                  final isSuccess = await patrolTimeNotifier.updateData(
+                    newPatrolState,
+                  );
+                  if (isSuccess && context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Text(
+                  '保存',
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
                   ),
-                  _inputBlock(
-                    label: '捕獲した獣種',
-                    controller: animalController,
-                    hint: '例）イノシシ',
-                  ),
-                  _inputBlock(
-                    label: '捕獲数',
-                    controller: countController,
-                    hint: '例）1',
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  ),
-                  _inputBlock(
-                    label: '備考',
-                    controller: noteController,
-                    hint: '特記事項があれば記載',
-                    maxLines: 5,
-                  ),
-                  SizedBox(height: 4.w),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 64.w,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                      ),
-                      onPressed: save,
-                      child: Text(
-                        '保存',
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 64.w,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                      ),
-                      onPressed: () => confirmDelete(context, notifier),
-                      child: Text(
-                        '削除',
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16.w),
-                ],
+                ),
               ),
             ),
+            SizedBox(
+              width: double.infinity,
+              height: 64.w,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                ),
+                onPressed: () => confirmDelete(context, patrolTimeNotifier),
+                child: Text(
+                  '削除',
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 16.w),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _summaryBlock(BuildContext context, PatrolRecord record) {
+  Widget _summaryBlock(BuildContext context, PatrolTimeState record) {
     String fmtDate(DateTime d) =>
         '${d.year}/${d.month.toString().padLeft(2, '0')}/${d.day.toString().padLeft(2, '0')}';
 

@@ -34,7 +34,7 @@ class PatrolTimeNotifier
     return sorted.map((entity) => PatrolTimeState.fromEntity(entity)).toList();
   }
 
-  Future<void> updateData(PatrolTimeState target) async {
+  Future<bool> updateData(PatrolTimeState target) async {
     try {
       state = const AsyncValue.loading();
       final entity = target.toEntity();
@@ -45,8 +45,10 @@ class PatrolTimeNotifier
         arg.month,
       );
       state = AsyncValue.data(butcheringTimeStateList);
+      return true;
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
+      return false;
     }
   }
 
@@ -76,45 +78,47 @@ class PatrolTimeNotifier
     }
   }
 
-  Future<void> delete({
-    required int patrolId,
-    required int year,
-    required int month,
-  }) async {
-    await PatrolRecordManager.deleteIfExists(patrolId);
-    final patrolTimeStateList = await _createPatrolTimeState(year, month);
-    state = AsyncValue.data(patrolTimeStateList);
+  Future<bool> delete(PatrolTimeState patrolTimeState) async {
+    try {
+      state = const AsyncValue.loading();
+      final entity = patrolTimeState.toEntity();
+      final usecase = ref.read(patrolTimeUsecaseProvider);
+      await usecase.delete(entity);
+      final patrolTimeStateList = await _createPatrolTimeState(
+        arg.year,
+        arg.month,
+      );
+      state = AsyncValue.data(patrolTimeStateList);
+      return true;
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+      return false;
+    }
   }
 
   Future<PatrolRecord?> getDetail(int patrolId) {
     return PatrolRecordManager.getById(patrolId);
   }
 
-  Future<void> updateDetail({
-    required int patrolId,
-    required String worker,
-    required String location,
-    required String animal,
-    required int? count,
-    required String note,
-    required int year,
-    required int month,
-  }) async {
-    final record = await PatrolRecordManager.getById(patrolId);
-    if (record == null) return;
+  // Future<void> updateDetail({
+  //   PatrolTimeState patrolTimeState,
+  // }) async {
 
-    record
-      ..worker = worker
-      ..location = location
-      ..animal = animal
-      ..count = count
-      ..note = note;
+  //   final record = await PatrolRecordManager.getById(patrolId);
+  //   if (record == null) return;
 
-    await PatrolRecordManager.update(record);
+  //   record
+  //     ..worker = worker
+  //     ..location = location
+  //     ..animal = animal
+  //     ..count = count
+  //     ..note = note;
 
-    final patrolTimeStateList = await _createPatrolTimeState(year, month);
-    state = AsyncValue.data(patrolTimeStateList);
-  }
+  //   await PatrolRecordManager.update(record);
+
+  //   final patrolTimeStateList = await _createPatrolTimeState(year, month);
+  //   state = AsyncValue.data(patrolTimeStateList);
+  // }
 
   //TODO: 後で対応
   Future<void> exportAndSave({

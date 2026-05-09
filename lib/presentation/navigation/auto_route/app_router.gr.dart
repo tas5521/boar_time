@@ -10,6 +10,8 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i6;
+import 'package:boar_time/presentation/notifier/patrol/patrol_time_notifier.dart'
+    as _i9;
 import 'package:boar_time/presentation/page/bottom_navigation_bar/bottom_navigation_bar_page.dart'
     as _i1;
 import 'package:boar_time/presentation/page/butchering_time/butchering_time_page.dart'
@@ -19,6 +21,8 @@ import 'package:boar_time/presentation/page/patrol_time/patrol_edit_page.dart'
 import 'package:boar_time/presentation/page/patrol_time/patrol_time_page.dart'
     as _i4;
 import 'package:boar_time/presentation/page/stamping/stamping_page.dart' as _i5;
+import 'package:boar_time/presentation/state/patrol_time_state/patrol_time_state.dart'
+    as _i8;
 import 'package:flutter/material.dart' as _i7;
 
 /// generated route for
@@ -58,17 +62,15 @@ class ButcheringTimeRoute extends _i6.PageRouteInfo<void> {
 class PatrolEditRoute extends _i6.PageRouteInfo<PatrolEditRouteArgs> {
   PatrolEditRoute({
     _i7.Key? key,
-    required int patrolId,
-    required int year,
-    required int month,
+    required _i8.PatrolTimeState patrolTimeState,
+    required _i9.PatrolTimeNotifier patrolTimeNotifier,
     List<_i6.PageRouteInfo>? children,
   }) : super(
          PatrolEditRoute.name,
          args: PatrolEditRouteArgs(
            key: key,
-           patrolId: patrolId,
-           year: year,
-           month: month,
+           patrolTimeState: patrolTimeState,
+           patrolTimeNotifier: patrolTimeNotifier,
          ),
          initialChildren: children,
        );
@@ -81,9 +83,8 @@ class PatrolEditRoute extends _i6.PageRouteInfo<PatrolEditRouteArgs> {
       final args = data.argsAs<PatrolEditRouteArgs>();
       return _i3.PatrolEditPage(
         key: args.key,
-        patrolId: args.patrolId,
-        year: args.year,
-        month: args.month,
+        patrolTimeState: args.patrolTimeState,
+        patrolTimeNotifier: args.patrolTimeNotifier,
       );
     },
   );
@@ -92,22 +93,19 @@ class PatrolEditRoute extends _i6.PageRouteInfo<PatrolEditRouteArgs> {
 class PatrolEditRouteArgs {
   const PatrolEditRouteArgs({
     this.key,
-    required this.patrolId,
-    required this.year,
-    required this.month,
+    required this.patrolTimeState,
+    required this.patrolTimeNotifier,
   });
 
   final _i7.Key? key;
 
-  final int patrolId;
+  final _i8.PatrolTimeState patrolTimeState;
 
-  final int year;
-
-  final int month;
+  final _i9.PatrolTimeNotifier patrolTimeNotifier;
 
   @override
   String toString() {
-    return 'PatrolEditRouteArgs{key: $key, patrolId: $patrolId, year: $year, month: $month}';
+    return 'PatrolEditRouteArgs{key: $key, patrolTimeState: $patrolTimeState, patrolTimeNotifier: $patrolTimeNotifier}';
   }
 
   @override
@@ -115,14 +113,13 @@ class PatrolEditRouteArgs {
     if (identical(this, other)) return true;
     if (other is! PatrolEditRouteArgs) return false;
     return key == other.key &&
-        patrolId == other.patrolId &&
-        year == other.year &&
-        month == other.month;
+        patrolTimeState == other.patrolTimeState &&
+        patrolTimeNotifier == other.patrolTimeNotifier;
   }
 
   @override
   int get hashCode =>
-      key.hashCode ^ patrolId.hashCode ^ year.hashCode ^ month.hashCode;
+      key.hashCode ^ patrolTimeState.hashCode ^ patrolTimeNotifier.hashCode;
 }
 
 /// generated route for

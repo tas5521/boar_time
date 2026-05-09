@@ -81,6 +81,7 @@ class PatrolRecordDatasourceImpl implements PatrolRecordDatasource {
       exist.start = record.start;
       exist.end = record.end;
       exist.label = record.label;
+      exist.worker = record.worker;
       exist.location = record.location;
       exist.animal = record.animal;
       exist.count = record.count;
@@ -90,9 +91,6 @@ class PatrolRecordDatasourceImpl implements PatrolRecordDatasource {
   }
 
   @override
-  Future<bool> deleteIfExists(int patrolId) async {
-    return await isar.writeTxn(() async {
-      return await isar.patrolRecords.delete(patrolId);
-    });
-  }
+  Future<bool> deleteIfExists(PatrolRecord record) =>
+      isar.writeTxn(() => isar.patrolRecords.delete(record.id));
 }
