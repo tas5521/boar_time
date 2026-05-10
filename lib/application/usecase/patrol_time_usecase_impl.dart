@@ -1,6 +1,8 @@
+import 'package:boar_time/core/enums/export_format.dart';
 import 'package:boar_time/domain/entities/patrol_time.dart';
 import 'package:boar_time/domain/repositories/patrol_time_repository.dart';
 import 'package:boar_time/domain/usecase/patrol_time_usecase.dart';
+import 'package:boar_time/presentation/state/patrol_time_state/patrol_time_state.dart';
 
 class PatrolTimeUsecaseImpl implements PatrolTimeUsecase {
   PatrolTimeUsecaseImpl({required this.patrolTimeRepository});
@@ -21,19 +23,15 @@ class PatrolTimeUsecaseImpl implements PatrolTimeUsecase {
 
   @override
   Future<void> delete(PatrolTime patrolTime) =>
-      patrolTimeRepository.delete(patrolTime);  
-}
+      patrolTimeRepository.delete(patrolTime);
 
-// TODO: 後でチェック。いらなかったら消す
-// Future<void> exportAndSave({
-//   required ExportFormat format,
-//   required String filename,
-// }) async {
-//   final data = state.valueOrNull ?? [];
-//   await ExportManager.exportAndSave(
-//     type: JobType.patrol,
-//     format: format,
-//     data: data,
-//     filename: filename,
-//   );
-// }
+  @override
+  Future<void> export(
+    List<PatrolTimeState> stateList,
+    ExportFormat format,
+    String filename,
+  ) async {
+    final entityList = stateList.map((state) => state.toEntity()).toList();
+    patrolTimeRepository.export(entityList, format, filename);
+  }
+}

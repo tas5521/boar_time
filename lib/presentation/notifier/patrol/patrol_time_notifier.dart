@@ -1,8 +1,7 @@
 import 'dart:async';
 
+import 'package:boar_time/core/enums/export_format.dart';
 import 'package:boar_time/di/patrol_time_provider.dart';
-import 'package:boar_time/manager/export_manager.dart';
-import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/patrol_label.dart';
 import 'package:boar_time/presentation/state/patrol_time_state/patrol_time_state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -94,17 +93,19 @@ class PatrolTimeNotifier
     }
   }
 
-  //TODO: 後で対応
-  Future<void> exportAndSave({
+  Future<void> export({
     required ExportFormat format,
     required String filename,
   }) async {
-    final data = state.valueOrNull ?? [];
-    await ExportManager.exportAndSave(
-      type: JobType.patrol,
-      format: format,
-      data: data,
-      filename: filename,
-    );
+    try {
+      final prevState = state;
+      state = const AsyncValue.loading();
+      final data = state.value!;
+      final usecase = ref.read(patrolTimeUsecaseProvider);
+      await usecase.export(data, format, filename);
+      state = prevState;
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
   }
 }

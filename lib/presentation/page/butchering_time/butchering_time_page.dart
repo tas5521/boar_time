@@ -6,6 +6,7 @@ import 'package:boar_time/presentation/notifier/butchering/butchering_time_notif
 import 'package:boar_time/presentation/page/view_parts/edit_break_dalog.dart';
 import 'package:boar_time/presentation/page/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/presentation/page/view_parts/icon_action_button.dart';
+import 'package:boar_time/presentation/page/view_parts/show_export_dialog.dart';
 import 'package:boar_time/presentation/state/butchering_time_state/butchering_time_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -31,7 +32,7 @@ class ButcheringTimePage extends HookConsumerWidget {
     final butcheringTimeState = ref.watch(
       butcheringTimeProvider((year: year.value, month: month.value)),
     );
-    
+
     useEffect(() {
       ref.invalidate(
         butcheringTimeProvider((year: year.value, month: month.value)),
@@ -55,7 +56,6 @@ class ButcheringTimePage extends HookConsumerWidget {
                 context,
                 title: '解体の勤務表の出力',
                 onExport: (format) async {
-                  //TODO: 仮置き。exportAndSaveは別のnotifierで行うことにする
                   await ref
                       .read(
                         butcheringTimeProvider((
@@ -63,7 +63,7 @@ class ButcheringTimePage extends HookConsumerWidget {
                           month: month.value,
                         )).notifier,
                       )
-                      .exportAndSave(
+                      .export(
                         format: format,
                         filename: '解体_${year.value}_${month.value}',
                       );

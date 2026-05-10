@@ -1,6 +1,8 @@
+import 'package:boar_time/core/enums/export_format.dart';
 import 'package:boar_time/domain/entities/butchering_time.dart';
 import 'package:boar_time/domain/repositories/butchering_time_repository.dart';
 import 'package:boar_time/domain/usecase/butchering_time_usecase.dart';
+import 'package:boar_time/presentation/state/butchering_time_state/butchering_time_state.dart';
 
 class ButcheringTimeUsecaseImpl implements ButcheringTimeUsecase {
   ButcheringTimeUsecaseImpl({required this.butcheringTimeRepository});
@@ -22,17 +24,14 @@ class ButcheringTimeUsecaseImpl implements ButcheringTimeUsecase {
   @override
   Future<void> upsert(ButcheringTime butcheringTime) =>
       butcheringTimeRepository.upsert(butcheringTime);
-}
 
-// Future<void> exportAndSave({
-//   required ExportFormat format,
-//   required String filename,
-// }) async {
-//   final data = state.valueOrNull ?? [];
-//   await ExportManager.exportAndSave(
-//     type: JobType.butchering,
-//     format: format,
-//     data: data,
-//     filename: filename,
-//   );
-// }
+  @override
+  Future<void> export(
+    List<ButcheringTimeState> stateList,
+    ExportFormat format,
+    String filename,
+  ) async {
+    final entityList = stateList.map((state) => state.toEntity()).toList();
+    butcheringTimeRepository.export(entityList, format, filename);
+  }
+}

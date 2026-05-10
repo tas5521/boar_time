@@ -1,10 +1,9 @@
 import 'dart:async';
 
+import 'package:boar_time/core/enums/export_format.dart';
 import 'package:boar_time/di/buthering_time_provider.dart';
 import 'package:boar_time/domain/entities/butchering_time.dart';
-import 'package:boar_time/manager/export_manager.dart';
 import 'package:boar_time/presentation/state/butchering_time_state/butchering_time_state.dart';
-import 'package:boar_time/model/job_type.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final butcheringTimeProvider =
@@ -84,16 +83,19 @@ class ButcheringTimeNotifier
     }
   }
 
-  Future<void> exportAndSave({
+  Future<void> export({
     required ExportFormat format,
     required String filename,
   }) async {
-    final data = state.valueOrNull ?? [];
-    await ExportManager.exportAndSave(
-      type: JobType.butchering,
-      format: format,
-      data: data,
-      filename: filename,
-    );
+    try {
+      final prevState = state;
+      state = const AsyncValue.loading();
+      final data = state.value!;
+      final usecase = ref.read(butcheringTimeUsecaseProvider);
+      await usecase.export(data, format, filename);
+      state = prevState;
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
   }
 }

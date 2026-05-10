@@ -8,6 +8,7 @@ import 'package:boar_time/presentation/page/patrol_time/patrol_edit_page.dart';
 import 'package:boar_time/presentation/page/view_parts/add_patrol_record_dialog.dart';
 import 'package:boar_time/presentation/page/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/presentation/page/view_parts/icon_action_button.dart';
+import 'package:boar_time/presentation/page/view_parts/show_export_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -61,7 +62,6 @@ class PatrolTimePage extends HookConsumerWidget {
                 context,
                 title: '見回りの勤務表の出力',
                 onExport: (format) async {
-                  // TODO: 後で対応
                   await ref
                       .read(
                         patrolTimeProvider((
@@ -69,7 +69,7 @@ class PatrolTimePage extends HookConsumerWidget {
                           month: month.value,
                         )).notifier,
                       )
-                      .exportAndSave(
+                      .export(
                         format: format,
                         filename: '見回り_${year.value}_${month.value}',
                       );

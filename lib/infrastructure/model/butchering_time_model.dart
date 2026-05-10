@@ -1,6 +1,7 @@
+import 'package:boar_time/infrastructure/model/job_time_model_base.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 
-class ButcheringTimeModel {
+class ButcheringTimeModel implements JobTimeModelBase {
   ButcheringTimeModel({
     required this.date,
     this.startTime,

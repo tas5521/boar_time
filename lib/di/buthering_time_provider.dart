@@ -1,4 +1,5 @@
 import 'package:boar_time/application/usecase/butchering_time_usecase_impl.dart';
+import 'package:boar_time/di/export_datasource_provider.dart';
 import 'package:boar_time/di/stamping_time_provider.dart';
 import 'package:boar_time/domain/factory/batchering_time_factory.dart';
 import 'package:boar_time/domain/factory/batchering_time_model_factory.dart';
@@ -25,10 +26,12 @@ final butcheringTimeRepositoryProvider = Provider<ButcheringTimeRepository>((
   final butcheringTimeModelFactory = ref.watch(
     butcheringTimeModelFactoryProvider,
   );
+  final exportDatasource = ref.watch(exportDatasourceProvider);
   return ButcheringTimeRepositoryImpl(
     workRecordDatasource: workRecordDatasource,
     butcheringTimeFactory: butcheringTimeFactory,
     butcheringTimeModelFactory: butcheringTimeModelFactory,
+    exportDatasource: exportDatasource,
   );
 });
 
