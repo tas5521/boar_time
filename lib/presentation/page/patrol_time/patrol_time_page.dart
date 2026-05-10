@@ -58,6 +58,7 @@ class PatrolTimePage extends HookConsumerWidget {
 
           iconActionButton(
             context,
+            enabled: patrolList.isNotEmpty,
             onPressed: () async {
               await showExportDialog(
                 context,

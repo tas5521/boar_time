@@ -4,6 +4,10 @@ Widget iconActionButton(
   BuildContext context, {
   required Future<void> Function() onPressed,
   required Icon icon,
+  bool enabled = true,
 }) {
-  return IconButton(onPressed: onPressed, icon: icon);
+  return IconButton(
+    onPressed: enabled ? () => onPressed() : null,
+    icon: icon,
+  );
 }
