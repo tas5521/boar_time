@@ -32,6 +32,6 @@ class PatrolTimeUsecaseImpl implements PatrolTimeUsecase {
     String filename,
   ) async {
     final entityList = stateList.map((state) => state.toEntity()).toList();
-    patrolTimeRepository.export(entityList, format, filename);
+    await patrolTimeRepository.export(entityList, format, filename);
   }
 }

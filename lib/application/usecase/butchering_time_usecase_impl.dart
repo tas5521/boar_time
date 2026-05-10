@@ -32,6 +32,6 @@ class ButcheringTimeUsecaseImpl implements ButcheringTimeUsecase {
     String filename,
   ) async {
     final entityList = stateList.map((state) => state.toEntity()).toList();
-    butcheringTimeRepository.export(entityList, format, filename);
+    await butcheringTimeRepository.export(entityList, format, filename);
   }
 }

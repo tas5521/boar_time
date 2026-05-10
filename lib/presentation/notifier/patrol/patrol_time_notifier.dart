@@ -99,8 +99,9 @@ class PatrolTimeNotifier
   }) async {
     try {
       final prevState = state;
+      final data = prevState.valueOrNull;
+      if (data == null) return;
       state = const AsyncValue.loading();
-      final data = state.value!;
       final usecase = ref.read(patrolTimeUsecaseProvider);
       await usecase.export(data, format, filename);
       state = prevState;

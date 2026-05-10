@@ -3,9 +3,10 @@ import 'dart:io';
 
 import 'package:boar_time/core/enums/export_format.dart';
 import 'package:boar_time/infrastructure/datasource/export_datasource/export_datasource.dart';
+import 'package:boar_time/infrastructure/model/butchering_time_model.dart';
 import 'package:boar_time/infrastructure/model/job_time_model_base.dart';
+import 'package:boar_time/infrastructure/model/patrol_time_model.dart';
 import 'package:boar_time/model/patrol_label.dart';
-import 'package:boar_time/presentation/state/butchering_time_state/butchering_time_state.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,8 +14,6 @@ import 'package:open_filex/open_filex.dart';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-
-import 'package:boar_time/presentation/state/patrol_time_state/patrol_time_state.dart';
 
 class ExportDatasourceImpl extends ExportDatasource {
   pw.Font? _jpFont;
@@ -73,9 +72,9 @@ class ExportDatasourceImpl extends ExportDatasource {
 
   Future<Uint8List> _exportPdf(List<JobTimeModelBase> data) async {
     switch (data.first) {
-      case ButcheringTimeState():
+      case ButcheringTimeModel():
         final headers = ["日付", "出勤", "退勤", "休憩", "累計"];
-        final rows = _mapButcheringRows(data.cast<ButcheringTimeState>());
+        final rows = _mapButcheringRows(data.cast<ButcheringTimeModel>());
         final pdf = pw.Document();
         final baseStyle = pw.TextStyle(font: _jpFont, fontSize: 16);
         pdf.addPage(
@@ -136,7 +135,7 @@ class ExportDatasourceImpl extends ExportDatasource {
         );
         return pdf.save();
 
-      case PatrolTimeState():
+      case PatrolTimeModel():
         final headers = [
           "日付",
           "開始",
@@ -148,7 +147,7 @@ class ExportDatasourceImpl extends ExportDatasource {
           "捕獲数",
           "備考",
         ];
-        final rows = _mapPatrolRows(data.cast<PatrolTimeState>());
+        final rows = _mapPatrolRows(data.cast<PatrolTimeModel>());
         final pdf = pw.Document();
         final baseStyle = pw.TextStyle(font: _jpFont, fontSize: 11);
         pdf.addPage(
@@ -230,35 +229,41 @@ class ExportDatasourceImpl extends ExportDatasource {
 
       default:
         throw ArgumentError(
-          'ButcheringTimeModelまたはPatrolTimeModelのリストのみ出力できます。',
+          'ButcheringTimeModel または PatrolTimeModel のリストのみ出力できます。',
         );
     }
   }
 
   Future<Uint8List> _exportCsv(List<JobTimeModelBase> data) async {
     switch (data.first) {
-      case ButcheringTimeState():
+      case ButcheringTimeModel():
         final buffer = StringBuffer();
         buffer.writeln("日付,出勤,退勤,休憩,累計");
-        for (final e in data.cast<ButcheringTimeState>()) {
+        var cumulative = Duration.zero;
+        for (final e in data.cast<ButcheringTimeModel>()) {
+          cumulative += _actualDuration(e);
           buffer.writeln(
             [
               _fmtDate(e.date),
-              _fmtTime(e.start),
-              _fmtTime(e.end),
-              _fmtBreakDuration(e.breakStart, e.breakEnd, e.breakDuration),
-              _fmtDuration(e.cumulativeDuration),
+              _fmtTime(e.startTime),
+              _fmtTime(e.endTime),
+              _fmtBreakDuration(
+                e.breakStart,
+                e.breakEnd,
+                _breakDuration(e),
+              ),
+              _fmtDuration(cumulative),
             ].map(_csvEscape).join(","),
           );
         }
         return Uint8List.fromList(utf8.encode('\uFEFF${buffer.toString()}'));
 
-      case PatrolTimeState():
+      case PatrolTimeModel():
         final buffer = StringBuffer();
         buffer.writeln(
           ["日付", "開始", "終了", "従事者名", "場所", "業務内容", "獣種", "捕獲数", "備考"].join(","),
         );
-        for (final e in data.cast<PatrolTimeState>()) {
+        for (final e in data.cast<PatrolTimeModel>()) {
           buffer.writeln(
             [
               _fmtDate(e.date),
@@ -277,14 +282,14 @@ class ExportDatasourceImpl extends ExportDatasource {
 
       default:
         throw ArgumentError(
-          'ButcheringTimeModelまたはPatrolTimeModelのリストのみ出力できます。',
+          'ButcheringTimeModel または PatrolTimeModel のリストのみ出力できます。',
         );
     }
   }
 
   Future<Uint8List> _exportExcel(List<JobTimeModelBase> data) async {
     switch (data.first) {
-      case ButcheringTimeState():
+      case ButcheringTimeModel():
         final excel = Excel.createExcel();
         final sheet = excel['Sheet1'];
         sheet.appendRow([
@@ -294,20 +299,26 @@ class ExportDatasourceImpl extends ExportDatasource {
           TextCellValue("休憩"),
           TextCellValue("累計"),
         ]);
-        for (final e in data.cast<ButcheringTimeState>()) {
+        var cumulative = Duration.zero;
+        for (final e in data.cast<ButcheringTimeModel>()) {
+          cumulative += _actualDuration(e);
           sheet.appendRow([
             TextCellValue(_fmtDate(e.date)),
-            TextCellValue(_fmtTime(e.start)),
-            TextCellValue(_fmtTime(e.end)),
+            TextCellValue(_fmtTime(e.startTime)),
+            TextCellValue(_fmtTime(e.endTime)),
             TextCellValue(
-              _fmtBreakDuration(e.breakStart, e.breakEnd, e.breakDuration),
+              _fmtBreakDuration(
+                e.breakStart,
+                e.breakEnd,
+                _breakDuration(e),
+              ),
             ),
-            TextCellValue(_fmtDuration(e.cumulativeDuration)),
+            TextCellValue(_fmtDuration(cumulative)),
           ]);
         }
         return Uint8List.fromList(excel.encode()!);
 
-      case PatrolTimeState():
+      case PatrolTimeModel():
         final excel = Excel.createExcel();
         final sheet = excel['Sheet1'];
         sheet.appendRow([
@@ -321,7 +332,7 @@ class ExportDatasourceImpl extends ExportDatasource {
           TextCellValue("捕獲数"),
           TextCellValue("備考"),
         ]);
-        for (final e in data.cast<PatrolTimeState>()) {
+        for (final e in data.cast<PatrolTimeModel>()) {
           sheet.appendRow([
             TextCellValue(_fmtDate(e.date)),
             TextCellValue(_fmtTime(e.start)),
@@ -338,24 +349,46 @@ class ExportDatasourceImpl extends ExportDatasource {
 
       default:
         throw ArgumentError(
-          'ButcheringTimeModelまたはPatrolTimeModelのリストのみ出力できます。',
+          'ButcheringTimeModel または PatrolTimeModel のリストのみ出力できます。',
         );
     }
   }
 
-  List<List<String>> _mapButcheringRows(List<ButcheringTimeState> list) {
+  static Duration _breakDuration(ButcheringTimeModel e) {
+    if (e.breakStart == null || e.breakEnd == null) return Duration.zero;
+    if (e.breakEnd!.isBefore(e.breakStart!)) return Duration.zero;
+    return e.breakEnd!.difference(e.breakStart!);
+  }
+
+  static Duration _totalDuration(ButcheringTimeModel e) {
+    if (e.startTime == null || e.endTime == null) return Duration.zero;
+    if (e.endTime!.isBefore(e.startTime!)) return Duration.zero;
+    return e.endTime!.difference(e.startTime!);
+  }
+
+  static Duration _actualDuration(ButcheringTimeModel e) {
+    if (e.startTime == null || e.endTime == null) return Duration.zero;
+    final bd = _breakDuration(e);
+    final td = _totalDuration(e);
+    if (td < bd) return Duration.zero;
+    return td - bd;
+  }
+
+  List<List<String>> _mapButcheringRows(List<ButcheringTimeModel> list) {
+    var cumulative = Duration.zero;
     return list.map((e) {
+      cumulative += _actualDuration(e);
       return [
         _fmtDate(e.date),
-        _fmtTime(e.start),
-        _fmtTime(e.end),
-        _fmtBreakDuration(e.breakStart, e.breakEnd, e.breakDuration),
-        _fmtDuration(e.cumulativeDuration),
+        _fmtTime(e.startTime),
+        _fmtTime(e.endTime),
+        _fmtBreakDuration(e.breakStart, e.breakEnd, _breakDuration(e)),
+        _fmtDuration(cumulative),
       ];
     }).toList();
   }
 
-  List<List<String>> _mapPatrolRows(List<PatrolTimeState> list) {
+  List<List<String>> _mapPatrolRows(List<PatrolTimeModel> list) {
     return list.map((e) {
       return [
         _fmtDate(e.date),
