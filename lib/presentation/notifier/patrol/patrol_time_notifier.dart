@@ -103,7 +103,8 @@ class PatrolTimeNotifier
       if (data == null) return;
       state = const AsyncValue.loading();
       final usecase = ref.read(patrolTimeUsecaseProvider);
-      await usecase.export(data, format, filename);
+      final entityList = data.map((state) => state.toEntity()).toList();
+      await usecase.export(entityList, format, filename);
       state = prevState;
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
