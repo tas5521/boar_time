@@ -8,7 +8,7 @@ import 'package:boar_time/infrastructure/datasource/patrol_record_datasource/pat
 import 'package:boar_time/infrastructure/datasource/patrol_record_datasource/patrol_record_datasource_impl.dart';
 import 'package:boar_time/infrastructure/datasource/work_record_datasource/work_record_datasource.dart';
 import 'package:boar_time/infrastructure/datasource/work_record_datasource/work_record_datasource_impl.dart';
-import 'package:boar_time/infrastructure/factory/stamping_time/stamping_time_factory_impl.dart';
+import 'package:boar_time/infrastructure/factory/stamping_time/stamping_time_factory.dart';
 import 'package:boar_time/infrastructure/repositories/patrol_record_repository_impl.dart';
 import 'package:boar_time/infrastructure/repositories/stamping_time_repository_impl.dart';
 import 'package:boar_time/infrastructure/repositories/work_record_repository_impl.dart';
