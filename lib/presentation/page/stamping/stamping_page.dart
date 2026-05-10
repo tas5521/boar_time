@@ -32,6 +32,40 @@ class StampingPage extends HookConsumerWidget {
       }
     });
 
+    useEffect(() {
+      final isFirstLaunch = ref
+          .read(stampingTimeProvider.notifier)
+          .checkFirstLaunch();
+      if (isFirstLaunch) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showDialog(
+            context: context,
+            builder: (dialogContext) => AlertDialog(
+              title: Text('ご注意', style: TextStyle(fontSize: 20.w)),
+              content: Text(
+                '本アプリでは、打刻時間のデータを端末内に保存しています。\nアプリを削除するとデータは消去されますので、ご注意ください。',
+                style: TextStyle(fontSize: 16.w),
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () async {
+                    final isSuccess = await ref
+                        .read(stampingTimeProvider.notifier)
+                        .setFirstLaunch();
+                    if (isSuccess && dialogContext.mounted) {
+                      Navigator.pop(dialogContext);
+                    }
+                  },
+                  child: Text('OK', style: TextStyle(fontSize: 14.w)),
+                ),
+              ],
+            ),
+          );
+        });
+      }
+      return null;
+    }, const []);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,

@@ -1,4 +1,5 @@
 import 'package:boar_time/di/isar_provider.dart';
+import 'package:boar_time/di/shared_preferences_provider.dart';
 import 'package:boar_time/model/patrol_record/patrol_record.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 import 'package:boar_time/presentation/navigation/auto_route/app_router.dart';
@@ -10,14 +11,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final isar = await initializeIsar();
   await migratePatrolData(isar);
+  final prefs = await SharedPreferences.getInstance();
   runApp(
     ProviderScope(
-      overrides: [isarProvider.overrideWithValue(isar)],
+      overrides: [
+        isarProvider.overrideWithValue(isar),
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
       child: MyApp(),
     ),
   );

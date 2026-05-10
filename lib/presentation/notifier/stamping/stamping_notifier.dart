@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:boar_time/di/first_launch_provider.dart';
 import 'package:boar_time/di/stamping_time_provider.dart';
 import 'package:boar_time/presentation/state/stamping_time_state/stamping_time_state.dart';
 import 'package:flutter/foundation.dart';
@@ -128,5 +129,15 @@ class StampingTimeNotifier extends AsyncNotifier<StampingTimeState> {
       state = AsyncValue.error(error, stackTrace);
       return false;
     }
+  }
+
+  bool checkFirstLaunch() {
+    final usecase = ref.read(firstLaunchUsecaseProvider);
+    return usecase.checkFirstLaunch();
+  }
+
+  Future<bool> setFirstLaunch() {
+    final usecase = ref.read(firstLaunchUsecaseProvider);
+    return usecase.setFirstLaunch();
   }
 }
