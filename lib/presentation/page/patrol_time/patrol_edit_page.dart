@@ -67,7 +67,7 @@ class PatrolEditPage extends HookWidget {
       if (result != true) return;
       final isSuccess = await notifier.delete(patrolTimeState);
       if (isSuccess && context.mounted) {
-        Navigator.of(context).pop();
+        context.router.maybePop();
       }
     }
 
@@ -136,7 +136,7 @@ class PatrolEditPage extends HookWidget {
                     newPatrolState,
                   );
                   if (isSuccess && context.mounted) {
-                    Navigator.of(context).pop();
+                    context.router.maybePop();
                   }
                 },
                 child: Text(

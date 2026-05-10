@@ -2,9 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
 import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/model/patrol_label.dart';
+import 'package:boar_time/presentation/navigation/auto_route/app_router.gr.dart';
 import 'package:boar_time/presentation/notifier/active_tab/active_tab_notifier.dart';
 import 'package:boar_time/presentation/notifier/patrol/patrol_time_notifier.dart';
-import 'package:boar_time/presentation/page/patrol_time/patrol_edit_page.dart';
 import 'package:boar_time/presentation/page/view_parts/add_patrol_record_dialog.dart';
 import 'package:boar_time/presentation/page/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/presentation/page/view_parts/icon_action_button.dart';
@@ -327,17 +327,14 @@ class PatrolTimePage extends HookConsumerWidget {
                                     iconSize: 20.sp,
                                     tooltip: '編集',
                                     onPressed: () {
-                                      // TODO: AutoRouteの方法に変更
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => PatrolEditPage(
-                                            patrolTimeState: row,
-                                            patrolTimeNotifier: ref.read(
-                                              patrolTimeProvider((
-                                                year: year.value,
-                                                month: month.value,
-                                              )).notifier,
-                                            ),
+                                      context.router.root.push(
+                                        PatrolEditRoute(
+                                          patrolTimeState: row,
+                                          patrolTimeNotifier: ref.read(
+                                            patrolTimeProvider((
+                                              year: year.value,
+                                              month: month.value,
+                                            )).notifier,
                                           ),
                                         ),
                                       );

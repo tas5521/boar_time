@@ -11,11 +11,9 @@ class AppRouter extends RootStackRouter {
       children: [
         AutoRoute(page: StampingRoute.page),
         AutoRoute(page: ButcheringTimeRoute.page),
-        AutoRoute(
-          page: PatrolTimeRoute.page,
-          children: [AutoRoute(page: PatrolEditRoute.page)],
-        ),
+        AutoRoute(page: PatrolTimeRoute.page),
       ],
     ),
+    AutoRoute(page: PatrolEditRoute.page),
   ];
 }
