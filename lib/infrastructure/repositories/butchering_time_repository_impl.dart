@@ -1,7 +1,7 @@
 import 'package:boar_time/core/enums/export_format.dart';
 import 'package:boar_time/domain/entities/butchering_time.dart';
-import 'package:boar_time/domain/factory/batchering_time_factory.dart';
-import 'package:boar_time/domain/factory/batchering_time_model_factory.dart';
+import 'package:boar_time/domain/factory/butchering_time_factory.dart';
+import 'package:boar_time/domain/factory/butchering_time_model_factory.dart';
 import 'package:boar_time/domain/repositories/butchering_time_repository.dart';
 import 'package:boar_time/infrastructure/datasource/export_datasource/export_datasource.dart';
 import 'package:boar_time/infrastructure/datasource/work_record_datasource/work_record_datasource.dart';

@@ -1,5 +1,5 @@
 import 'package:boar_time/domain/entities/butchering_time.dart';
-import 'package:boar_time/domain/factory/batchering_time_model_factory.dart';
+import 'package:boar_time/domain/factory/butchering_time_model_factory.dart';
 import 'package:boar_time/infrastructure/model/butchering_time_model.dart';
 
 class ButcheringTimeModelFactoryImpl implements ButcheringTimeModelFactory {

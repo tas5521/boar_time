@@ -1,8 +1,8 @@
 import 'package:boar_time/application/usecase/butchering_time_usecase_impl.dart';
 import 'package:boar_time/di/export_datasource_provider.dart';
 import 'package:boar_time/di/stamping_time_provider.dart';
-import 'package:boar_time/domain/factory/batchering_time_factory.dart';
-import 'package:boar_time/domain/factory/batchering_time_model_factory.dart';
+import 'package:boar_time/domain/factory/butchering_time_factory.dart';
+import 'package:boar_time/domain/factory/butchering_time_model_factory.dart';
 import 'package:boar_time/domain/repositories/butchering_time_repository.dart';
 import 'package:boar_time/domain/usecase/butchering_time_usecase.dart';
 import 'package:boar_time/infrastructure/factory/butchering_time_factory_impl.dart';

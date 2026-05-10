@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:boar_time/core/enums/export_format.dart';
-import 'package:boar_time/di/buthering_time_provider.dart';
+import 'package:boar_time/di/butchering_time_provider.dart';
 import 'package:boar_time/domain/entities/butchering_time.dart';
 import 'package:boar_time/presentation/state/butchering_time_state/butchering_time_state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
