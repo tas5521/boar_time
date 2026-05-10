@@ -3,8 +3,8 @@ import 'package:boar_time/domain/entities/butchering_time.dart';
 import 'package:boar_time/domain/repositories/butchering_time_repository.dart';
 import 'package:boar_time/infrastructure/datasource/export_datasource/export_datasource.dart';
 import 'package:boar_time/infrastructure/datasource/work_record_datasource/work_record_datasource.dart';
-import 'package:boar_time/infrastructure/factory/buthcering_time/butchering_time_factory_impl.dart';
-import 'package:boar_time/infrastructure/factory/buthcering_time/butchering_time_model_factory_impl.dart';
+import 'package:boar_time/infrastructure/factory/butchering_time/butchering_time_factory_impl.dart';
+import 'package:boar_time/infrastructure/factory/butchering_time/butchering_time_model_factory_impl.dart';
 import 'package:boar_time/infrastructure/model/butchering_time_model.dart';
 import 'package:boar_time/model/work_record/work_record.dart';
 
