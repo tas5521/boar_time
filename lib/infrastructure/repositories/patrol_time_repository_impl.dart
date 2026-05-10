@@ -1,10 +1,10 @@
 import 'package:boar_time/core/enums/export_format.dart';
 import 'package:boar_time/domain/entities/patrol_time.dart';
-import 'package:boar_time/domain/factory/patrol_time_model_factory.dart';
-import 'package:boar_time/domain/factory/patrol_time_factory.dart';
 import 'package:boar_time/domain/repositories/patrol_time_repository.dart';
 import 'package:boar_time/infrastructure/datasource/export_datasource/export_datasource.dart';
 import 'package:boar_time/infrastructure/datasource/patrol_record_datasource/patrol_record_datasource.dart';
+import 'package:boar_time/infrastructure/factory/patrol_time/patrol_time_factory_impl.dart';
+import 'package:boar_time/infrastructure/factory/patrol_time/patrol_time_model_factory_impl.dart';
 import 'package:boar_time/infrastructure/model/patrol_time_model.dart';
 import 'package:boar_time/model/patrol_record/patrol_record.dart';
 

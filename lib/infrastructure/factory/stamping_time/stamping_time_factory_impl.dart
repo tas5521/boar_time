@@ -1,9 +1,7 @@
 import 'package:boar_time/domain/entities/stamping_time.dart';
-import 'package:boar_time/domain/factory/stamping_time_factory.dart';
 import 'package:boar_time/infrastructure/model/stamping_time_model.dart';
 
-class StampingTimeFactoryImpl implements StampingTimeFactory {
-  @override
+class StampingTimeFactory {
   StampingTime create({
     required DateTime date,
     required DateTime? startTime,
@@ -24,7 +22,6 @@ class StampingTimeFactoryImpl implements StampingTimeFactory {
     );
   }
 
-  @override
   StampingTime createFromModel(StampingTimeModel model) {
     return StampingTime(
       date: model.date,

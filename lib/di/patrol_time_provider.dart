@@ -1,21 +1,19 @@
 import 'package:boar_time/application/usecase/patrol_time_usecase_impl.dart';
 import 'package:boar_time/di/export_datasource_provider.dart';
 import 'package:boar_time/di/stamping_time_provider.dart';
-import 'package:boar_time/domain/factory/patrol_time_model_factory.dart';
-import 'package:boar_time/domain/factory/patrol_time_factory.dart';
 import 'package:boar_time/domain/repositories/patrol_time_repository.dart';
 import 'package:boar_time/domain/usecase/patrol_time_usecase.dart';
-import 'package:boar_time/infrastructure/factory/patrol_time_model_factory_impl.dart';
-import 'package:boar_time/infrastructure/factory/patrol_time_factory_impl.dart';
+import 'package:boar_time/infrastructure/factory/patrol_time/patrol_time_model_factory_impl.dart';
+import 'package:boar_time/infrastructure/factory/patrol_time/patrol_time_factory_impl.dart';
 import 'package:boar_time/infrastructure/repositories/patrol_time_repository_impl.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final patrolTimeFactoryProvider = Provider<PatrolTimeFactory>(
-  (ref) => PatrolTimeFactoryImpl(),
+  (_) => PatrolTimeFactory(),
 );
 
 final patrolTimeModelFactoryProvider = Provider<PatrolTimeModelFactory>(
-  (ref) => PatrolTimeModelFactoryImpl(),
+  (_) => PatrolTimeModelFactory(),
 );
 
 final patrolTimeRepositoryProvider = Provider<PatrolTimeRepository>((ref) {

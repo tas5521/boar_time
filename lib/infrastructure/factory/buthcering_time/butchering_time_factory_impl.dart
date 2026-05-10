@@ -1,9 +1,7 @@
 import 'package:boar_time/domain/entities/butchering_time.dart';
-import 'package:boar_time/domain/factory/butchering_time_factory.dart';
 import 'package:boar_time/infrastructure/model/butchering_time_model.dart';
 
-class ButcheringTimeFactoryImpl implements ButcheringTimeFactory {
-  @override
+class ButcheringTimeFactory {
   ButcheringTime create({
     required DateTime date,
     required DateTime? startTime,
@@ -20,7 +18,6 @@ class ButcheringTimeFactoryImpl implements ButcheringTimeFactory {
     );
   }
 
-  @override
   ButcheringTime createFromModel(ButcheringTimeModel model) {
     return ButcheringTime(
       date: model.date,
