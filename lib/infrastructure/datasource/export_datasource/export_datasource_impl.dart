@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:boar_time/core/enums/export_format.dart';
+import 'package:boar_time/domain/enums/export_format.dart';
+import 'package:boar_time/domain/enums/patrol_label.dart';
 import 'package:boar_time/infrastructure/datasource/export_datasource/export_datasource.dart';
 import 'package:boar_time/infrastructure/model/butchering_time_model.dart';
 import 'package:boar_time/infrastructure/model/job_time_model_base.dart';
 import 'package:boar_time/infrastructure/model/patrol_time_model.dart';
-import 'package:boar_time/model/patrol_label.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';

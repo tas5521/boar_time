@@ -1,5 +1,5 @@
 import 'package:boar_time/domain/entities/stamping_time.dart';
-import 'package:boar_time/model/patrol_record/patrol_record.dart';
+import 'package:boar_time/infrastructure/isar/patrol_record/patrol_record.dart';
 
 abstract class StampingTimeUsecase {
   Future<StampingTime> getStampingTime();

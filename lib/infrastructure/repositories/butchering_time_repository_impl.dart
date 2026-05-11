@@ -1,4 +1,4 @@
-import 'package:boar_time/core/enums/export_format.dart';
+import 'package:boar_time/domain/enums/export_format.dart';
 import 'package:boar_time/domain/entities/butchering_time.dart';
 import 'package:boar_time/domain/repositories/butchering_time_repository.dart';
 import 'package:boar_time/infrastructure/datasource/export_datasource/export_datasource.dart';
@@ -6,7 +6,7 @@ import 'package:boar_time/infrastructure/datasource/work_record_datasource/work_
 import 'package:boar_time/infrastructure/factory/butchering_time/butchering_time_factory.dart';
 import 'package:boar_time/infrastructure/factory/butchering_time/butchering_time_model_factory.dart';
 import 'package:boar_time/infrastructure/model/butchering_time_model.dart';
-import 'package:boar_time/model/work_record/work_record.dart';
+import 'package:boar_time/infrastructure/isar/work_record/work_record.dart';
 
 class ButcheringTimeRepositoryImpl implements ButcheringTimeRepository {
   ButcheringTimeRepositoryImpl({

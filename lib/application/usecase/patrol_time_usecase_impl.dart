@@ -1,4 +1,4 @@
-import 'package:boar_time/core/enums/export_format.dart';
+import 'package:boar_time/domain/enums/export_format.dart';
 import 'package:boar_time/domain/entities/patrol_time.dart';
 import 'package:boar_time/domain/repositories/patrol_time_repository.dart';
 import 'package:boar_time/domain/usecase/patrol_time_usecase.dart';

@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:boar_time/core/enums/export_format.dart';
+import 'package:boar_time/domain/enums/export_format.dart';
+import 'package:boar_time/domain/enums/patrol_label.dart';
 import 'package:boar_time/di/patrol_time_provider.dart';
-import 'package:boar_time/model/patrol_label.dart';
 import 'package:boar_time/presentation/state/patrol_time_state/patrol_time_state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

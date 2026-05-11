@@ -1,6 +1,6 @@
 import 'dart:core';
 
-import 'package:boar_time/model/patrol_label.dart';
+import 'package:boar_time/domain/enums/patrol_label.dart';
 
 class PatrolTime {
   const PatrolTime({

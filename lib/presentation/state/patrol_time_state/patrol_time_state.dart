@@ -1,5 +1,5 @@
 import 'package:boar_time/domain/entities/patrol_time.dart';
-import 'package:boar_time/model/patrol_label.dart';
+import 'package:boar_time/domain/enums/patrol_label.dart';
 import 'package:boar_time/presentation/state/abstract_model/time_state_base.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
