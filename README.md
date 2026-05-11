@@ -32,6 +32,7 @@
 | ローカル DB | `isar_community` |
 | コード生成 | `freezed`, `build_runner`, `isar_community_generator` |
 | UI | Material 3, `flutter_screenutil`, `flutter_animate` |
+| 画面遷移 | `auto_route` |
 | 帳票・ファイル | `pdf`, `excel`, `open_filex`, `path_provider` |
 | 設定管理 | `shared_preferences` |
 
