@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
-import 'package:boar_time/model/job_type.dart';
+import 'package:boar_time/domain/enums/job_type.dart';
 import 'package:boar_time/presentation/notifier/active_tab/active_tab_notifier.dart';
 import 'package:boar_time/presentation/notifier/butchering/butchering_time_notifier.dart';
 import 'package:boar_time/presentation/notifier/stamping/stamping_notifier.dart';

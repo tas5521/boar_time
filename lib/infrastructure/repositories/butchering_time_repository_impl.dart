@@ -1,4 +1,4 @@
-import 'package:boar_time/core/enums/export_format.dart';
+import 'package:boar_time/domain/enums/export_format.dart';
 import 'package:boar_time/domain/entities/butchering_time.dart';
 import 'package:boar_time/domain/repositories/butchering_time_repository.dart';
 import 'package:boar_time/infrastructure/datasource/export_datasource/export_datasource.dart';

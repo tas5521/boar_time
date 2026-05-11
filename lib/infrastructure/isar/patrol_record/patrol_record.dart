@@ -1,5 +1,5 @@
 import 'package:boar_time/infrastructure/model/patrol_time_model.dart';
-import 'package:boar_time/model/patrol_label.dart';
+import 'package:boar_time/domain/enums/patrol_label.dart';
 import 'package:isar_community/isar.dart';
 
 part 'patrol_record.g.dart';

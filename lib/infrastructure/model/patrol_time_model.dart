@@ -1,5 +1,5 @@
 import 'package:boar_time/infrastructure/model/job_time_model_base.dart';
-import 'package:boar_time/model/patrol_label.dart';
+import 'package:boar_time/domain/enums/patrol_label.dart';
 import 'package:boar_time/infrastructure/isar/patrol_record/patrol_record.dart';
 
 class PatrolTimeModel implements JobTimeModelBase {

@@ -1,4 +1,4 @@
-import 'package:boar_time/core/enums/export_format.dart';
+import 'package:boar_time/domain/enums/export_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

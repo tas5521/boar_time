@@ -1,6 +1,6 @@
 import 'package:boar_time/domain/entities/patrol_time.dart';
 import 'package:boar_time/infrastructure/model/patrol_time_model.dart';
-import 'package:boar_time/model/patrol_label.dart';
+import 'package:boar_time/domain/enums/patrol_label.dart';
 
 class PatrolTimeFactory {
   PatrolTime create({

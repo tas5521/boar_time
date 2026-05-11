@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:boar_time/icons/my_flutter_app_icons.dart';
-import 'package:boar_time/model/job_type.dart';
-import 'package:boar_time/model/patrol_label.dart';
+import 'package:boar_time/domain/enums/job_type.dart';
+import 'package:boar_time/domain/enums/patrol_label.dart';
 import 'package:boar_time/presentation/navigation/auto_route/app_router.gr.dart';
 import 'package:boar_time/presentation/notifier/active_tab/active_tab_notifier.dart';
 import 'package:boar_time/presentation/notifier/patrol/patrol_time_notifier.dart';

@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:boar_time/model/patrol_label.dart';
+import 'package:boar_time/domain/enums/patrol_label.dart';
 import 'package:boar_time/presentation/notifier/patrol/patrol_time_notifier.dart';
 import 'package:boar_time/presentation/state/patrol_time_state/patrol_time_state.dart';
 import 'package:flutter/material.dart';
