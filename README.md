@@ -78,6 +78,8 @@
 
 ```mermaid
 flowchart LR
+  Page --> Notifier
+  Notifier --> State
   Notifier --> Usecase
   Usecase --> Repository
 
@@ -87,13 +89,11 @@ flowchart LR
     Entity
   end
 
-  Notifier --> Entity
-  UsecaseImpl --> Usecase
-  UsecaseImpl --> Entity
-  RepositoryImpl --> Repository
-  RepositoryImpl --> Entity
-  RepositoryImpl --> Isar[(Isar)]
-  RepositoryImpl --> Files[PDF / CSV / xlsx]
+  subgraph presentation
+    Page
+    Notifier
+    State[State - freezed]
+  end
 
   subgraph application
     UsecaseImpl[Usecase 実装]
@@ -103,9 +103,14 @@ flowchart LR
     RepositoryImpl[Repository 実装]
   end
 
-  subgraph presentation
-    Notifier
-  end
+  State --> Entity
+  Notifier --> Entity
+  UsecaseImpl --> Usecase
+  UsecaseImpl --> Entity
+  RepositoryImpl --> Repository
+  RepositoryImpl --> Entity
+  RepositoryImpl --> Isar[(Isar)]
+  RepositoryImpl --> Files[PDF / CSV / xlsx]
 ```
 
 矢印は「依存の向き（利用する側 → される側）」を表します。**domainは他の層に依存しません**。`lib/di` は各層の具象を束ねて注入する役割です。
