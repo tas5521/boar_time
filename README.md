@@ -78,42 +78,13 @@
 
 ```mermaid
 flowchart LR
-  subgraph presentation
-    Widget --> Notifier
-  end
-
-  subgraph application
-    UsecaseImpl
-  end
-
-  subgraph domain
-    Entity
-    UsecaseIF
-    RepositoryIF
-  end
-
-  subgraph infrastructure
-    RepositoryImpl --> Datasource
-    RepositoryImpl --> ExportDS
-  end
-
-  subgraph di
-    Provider
-  end
-
-  Notifier --> UsecaseIF
-  Notifier --> Entity
-  UsecaseImpl -.-> UsecaseIF
-  UsecaseImpl --> RepositoryIF
-  RepositoryImpl -.-> RepositoryIF
-  Provider --> UsecaseImpl
-  Provider --> RepositoryImpl
-  Datasource --> Isar[(Isar)]
-  ExportDS --> Files[PDF / CSV / xlsx]
+  presentation --> application --> domain
+  infrastructure --> domain
+  infrastructure --> Isar[(Isar)]
+  infrastructure --> Files[PDF / CSV / xlsx]
 ```
 
-- 実線 = 依存（利用）、点線 = implements（インターフェースの実装）
-- プレゼンテーションは Entity や enum など **domain** の型も参照します
+矢印は「依存（利用）の向き」を表します。**domain は他の層に依存しません**。`lib/di` は各層の具象を束ねて注入する役割です。
 
 | ディレクトリ | 責務 |
 | --- | --- |
