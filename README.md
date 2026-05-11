@@ -74,69 +74,46 @@
 - **プレゼンテーション層** — 画面と Notifier。Usecaseは抽象経由で利用
 - **依存の注入** — 具象の組み立ては `lib/di`のProviderに集約
 
-### レイヤ間の依存（概要）
+### レイヤ間の依存
 
 ```mermaid
 flowchart LR
-  subgraph P["表現層<br/>lib/presentation"]
-    direction TB
-    UI[画面 Widget]
-    N[Notifier]
-    UI --> N
+  subgraph presentation
+    Widget --> Notifier
   end
 
-  subgraph A["アプリケーション層<br/>lib/application"]
-    UCI[Usecase 実装]
+  subgraph application
+    UsecaseImpl
   end
 
-  subgraph D["ドメイン層<br/>lib/domain"]
-    DOM[Entity · 抽象 · enums]
+  subgraph domain
+    Entity
+    UsecaseIF
+    RepositoryIF
   end
 
-  subgraph I["インフラ層<br/>lib/infrastructure"]
-    direction TB
-    RI[Repository 実装]
-    SUB[Isar / Datasource · Factory · Export …]
-    RI --> SUB
+  subgraph infrastructure
+    RepositoryImpl --> Datasource
+    RepositoryImpl --> ExportDS
   end
 
-  subgraph DI["構成<br/>lib/di"]
-    PRV[Provider]
+  subgraph di
+    Provider
   end
 
-  N --> UCI
-  N --> DOM
-  UCI --> DOM
-  RI -.->|implements| DOM
-  PRV --> UCI
-  PRV --> RI
-
-  style P fill:#fff8e1,stroke:#f57f17
-  style A fill:#e3f2fd,stroke:#1565c0
-  style D fill:#e8f5e9,stroke:#2e7d32
-  style I fill:#fce4ec,stroke:#ad1457
-  style DI fill:#f3e5f5,stroke:#6a1b9a
+  Notifier --> UsecaseIF
+  Notifier --> Entity
+  UsecaseImpl -.-> UsecaseIF
+  UsecaseImpl --> RepositoryIF
+  RepositoryImpl -.-> RepositoryIF
+  Provider --> UsecaseImpl
+  Provider --> RepositoryImpl
+  Datasource --> Isar[(Isar)]
+  ExportDS --> Files[PDF / CSV / xlsx]
 ```
 
-点線は「インターフェースの実装」を表します。プレゼンテーションは型のために **ドメイン**（Entity や enum）も参照します。
-
-### インフラ周りのデータの流れ（補足）
-
-```mermaid
-flowchart TB
-  RI[Repository 実装]
-  DS[Datasource<br/>Isar 読み書き]
-  EXP[ExportDatasource<br/>帳票ファイル生成]
-  DB[(Isar)]
-  OUT[PDF / CSV / xlsx]
-
-  RI --> DS
-  RI --> EXP
-  DS --> DB
-  EXP --> OUT
-```
-
-`lib/infrastructure/isar/` の `@collection` は、DatasourceがIsar経由で扱う永続化スキーマです。
+- 実線 = 依存（利用）、点線 = implements（インターフェースの実装）
+- プレゼンテーションは Entity や enum など **domain** の型も参照します
 
 | ディレクトリ | 責務 |
 | --- | --- |
