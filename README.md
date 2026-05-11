@@ -41,8 +41,8 @@
   - iOS / Android を**単一コードベース**で開発・保守できる。
 
 - **Riverpod + flutter_hooks**  
-  - **Notifier / AsyncNotifier:** 画面ごとのビジネスロジックと状態保持を担当。Manager層へ永続化を委譲し、Viewとロジックを分離することで変更の影響範囲を限定しやすい構成にした。
-  - **Provider:** NotifierをViewに公開する仕組み。どの画面がどの状態に依存しているかが宣言から一目で分かる。
+  - **Notifier / AsyncNotifier:** 画面ごとの状態と操作を担当。永続化や帳票出力は **Usecase → Repository（抽象）** に任せ、具体実装は **DI** で注入するクリーンアーキテクチャ寄りの構成にした。
+  - **Provider:** NotifierやRepository/Usecaseの具象を`lib/di`で束ねて、Viewからは抽象にだけ依存しやすくしている。
   - **Hooks（`flutter_hooks`）:**
     - `useState`: ダイアログ内の選択値など、画面ローカルな一時状態を簡潔に管理。Riverpodで扱うほどではない状態に使用。
     - `useEffect`: アプリのライフサイクル復帰時にデータを再取得するなど、副作用の実行タイミングを制御。
@@ -66,34 +66,64 @@
 
 ## アーキテクチャ
 
+クリーンアーキテクチャに近い層の分離を採用しています。  
+**ドメイン層**:　フレームワークに依存しないエンティティと抽象（Repository/Usecase）に限定  
+**アプリケーション層**: ユースケースの組み立て  
+**インフラ層**: Isar・ファイル出力などの具体技術を担当  
+**プレゼンテーション層**: Notifierはドメインの抽象に対してユースケースを呼び出す
+**依存の注入**: `lib/di`のProvidersに集約  
+
 ```mermaid
 flowchart TB
-  View["View（画面）"]
-  Notifier["Notifier（Riverpod）"]
-  Manager["Manager（永続化・出力）"]
-  IsarDB["Isar（ローカルDB）"]
-  Model["Model（freezed / Isar スキーマ）"]
-  Prefs["SharedPreferences"]
-  Export["PDF / CSV / Excel"]
+  subgraph presentation [表現層 lib/presentation]
+    Page[画面 Widget]
+    Notifier[Riverpod Notifier]
+  end
+  subgraph application [アプリケーション層 lib/application]
+    UCImpl[Usecase 実装]
+  end
+  subgraph domain [ドメイン層 lib/domain]
+    RepoIf[Repository 抽象]
+    UCIf[Usecase 抽象]
+  end
+  subgraph infrastructure [インフラ層 lib/infrastructure]
+    RepoImpl[Repository 実装]
+    DS[Datasource Isar]
+    ExportDS[ExportDatasource]
+    Factory[Model Factory]
+  end
+  subgraph di [構成 lib/di]
+    Prov[Provider 結線]
+  end
+  Isar[(Isar)]
+  Files[PDF / CSV / Excel ファイル]
 
-  View -->|状態の購読・操作| Notifier
-  Notifier -->|読み書き委譲| Manager
-  Manager --> IsarDB
-  Manager --> Export
-  Notifier --> Model
-  Manager --> Model
-  View --> Prefs
+  Page --> Notifier
+  Notifier --> UCIf
+  Prov --> UCImpl
+  Prov --> RepoImpl
+  UCImpl --> RepoIf
+  UCImpl -.->|implements| UCIf
+  RepoImpl --> DS
+  RepoImpl --> Factory
+  RepoImpl --> ExportDS
+  RepoImpl -.->|implements| RepoIf
+  DS --> Isar
+  ExportDS --> Files
 ```
 
 | ディレクトリ | 責務 |
 | --- | --- |
-| `lib/view/` | 画面・ウィジェット。`HookConsumerWidget`等でNotifierを購読 |
-| `lib/notifier/` | Riverpodにて、`Notifier` / `AsyncNotifier`をViewに提供。画面用の状態保持とManagerへの委譲 |
-| `lib/manager/` | Isar読み書き、エクスポート処理など永続化・出力ロジック |
-| `lib/model/` | ドメインモデル・画面用 state（freezed / Isarスキーマ） |
+| `lib/presentation/` | 画面・共通ウィジェット、`HookConsumerWidget` 等。RiverpodのNotifier、画面用State（freezed）、`auto_route`によるルーティング |
+| `lib/application/` | ドメインのユースケースインターフェースの実装。複数Repositoryを組み合わせたアプリ固有の手続き |
+| `lib/domain/` | Entity、Repository / Usecaseの抽象、全体で共有する列挙（`enums/`：例 `ExportFormat`、`JobType`、`PatrolLabel`） |
+| `lib/infrastructure/` | Repository実装、Isarの`@collection`スキーマ（`isar/`）、Datasource、永続化用Model・Factory、帳票用ExportDatasource（PDF / CSV / Excel） |
+| `lib/di/` | Providerによる具象の生成・注入（IsarとSharedPreferencesは`main`で初期化し、`overrideWithValue`で渡す） |
 | `lib/utils/migration/` | バージョンアップに伴うデータ移行 |
 
-**起動フロー:** `main`でIsar初期化 → マイグレーション → `ProviderScope`付き`runApp`（`lib/main.dart`）。
+**依存の向き（原則）:** 内側の`domain`は外側を知らない。
+
+**起動フロー:** `main`でIsar初期化 → マイグレーション → SharedPreferences取得 → ProviderScopeの`overrides`で`isarProvider` / `sharedPreferencesProvider` を注入 → `runApp`（`lib/main.dart`）。
 
 ## セットアップ
 
