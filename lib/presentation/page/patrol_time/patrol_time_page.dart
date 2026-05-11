@@ -5,6 +5,7 @@ import 'package:boar_time/model/patrol_label.dart';
 import 'package:boar_time/presentation/navigation/auto_route/app_router.gr.dart';
 import 'package:boar_time/presentation/notifier/active_tab/active_tab_notifier.dart';
 import 'package:boar_time/presentation/notifier/patrol/patrol_time_notifier.dart';
+import 'package:boar_time/presentation/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/presentation/page/view_parts/add_patrol_record_dialog.dart';
 import 'package:boar_time/presentation/page/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/presentation/page/view_parts/icon_action_button.dart';
@@ -44,6 +45,13 @@ class PatrolTimePage extends HookConsumerWidget {
           patrolTimeProvider((year: year.value, month: month.value)),
         );
       }
+    });
+
+    ref.listen(patrolTimeProvider((year: year.value, month: month.value)), (
+      _,
+      _,
+    ) {
+      ref.invalidate(stampingTimeProvider);
     });
 
     return Scaffold(

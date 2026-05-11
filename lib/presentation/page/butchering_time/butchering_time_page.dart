@@ -3,6 +3,7 @@ import 'package:boar_time/icons/my_flutter_app_icons.dart';
 import 'package:boar_time/model/job_type.dart';
 import 'package:boar_time/presentation/notifier/active_tab/active_tab_notifier.dart';
 import 'package:boar_time/presentation/notifier/butchering/butchering_time_notifier.dart';
+import 'package:boar_time/presentation/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/presentation/page/view_parts/edit_break_dalog.dart';
 import 'package:boar_time/presentation/page/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/presentation/page/view_parts/icon_action_button.dart';
@@ -46,6 +47,15 @@ class ButcheringTimePage extends HookConsumerWidget {
         ref.invalidate(butcheringTimeProvider);
       }
     });
+
+    ref.listen(butcheringTimeProvider((year: year.value, month: month.value)), (
+      _,
+      _,
+    ) {
+      ref.invalidate(stampingTimeProvider);
+    });
+
+    
 
     return Scaffold(
       appBar: AppBar(
