@@ -78,13 +78,33 @@
 
 ```mermaid
 flowchart LR
-  presentation --> application --> domain
-  infrastructure --> domain
-  infrastructure --> Isar[(Isar)]
-  infrastructure --> Files[PDF / CSV / xlsx]
+  Notifier --> Usecase
+  Usecase --> Repository
+
+  subgraph domain
+    Usecase[Usecase 抽象]
+    Repository[Repository 抽象]
+  end
+
+  UsecaseImpl --> Usecase
+  RepositoryImpl --> Repository
+  RepositoryImpl --> Isar[(Isar)]
+  RepositoryImpl --> Files[PDF / CSV / xlsx]
+
+  subgraph application
+    UsecaseImpl[Usecase 実装]
+  end
+
+  subgraph infrastructure
+    RepositoryImpl[Repository 実装]
+  end
+
+  subgraph presentation
+    Notifier
+  end
 ```
 
-矢印は「依存（利用）の向き」を表します。**domain は他の層に依存しません**。`lib/di` は各層の具象を束ねて注入する役割です。
+矢印は「依存の向き（利用する側 → される側）」を表します。**domainは他の層に依存しません**。`lib/di` は各層の具象を束ねて注入する役割です。
 
 | ディレクトリ | 責務 |
 | --- | --- |
