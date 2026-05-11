@@ -6,7 +6,7 @@ import 'package:boar_time/infrastructure/datasource/patrol_record_datasource/pat
 import 'package:boar_time/infrastructure/factory/patrol_time/patrol_time_factory.dart';
 import 'package:boar_time/infrastructure/factory/patrol_time/patrol_time_model_factory.dart';
 import 'package:boar_time/infrastructure/model/patrol_time_model.dart';
-import 'package:boar_time/model/patrol_record/patrol_record.dart';
+import 'package:boar_time/infrastructure/isar/patrol_record/patrol_record.dart';
 
 class PatrolTimeRepositoryImpl implements PatrolTimeRepository {
   PatrolTimeRepositoryImpl({

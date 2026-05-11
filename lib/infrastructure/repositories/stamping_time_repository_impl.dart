@@ -4,7 +4,7 @@ import 'package:boar_time/infrastructure/datasource/patrol_record_datasource/pat
 import 'package:boar_time/infrastructure/datasource/work_record_datasource/work_record_datasource.dart';
 import 'package:boar_time/infrastructure/factory/stamping_time/stamping_time_factory.dart';
 import 'package:boar_time/infrastructure/model/stamping_time_model.dart';
-import 'package:boar_time/model/work_record/work_record.dart';
+import 'package:boar_time/infrastructure/isar/work_record/work_record.dart';
 
 class StampingTimeRepositoryImpl implements StampingTimeRepository {
   StampingTimeRepositoryImpl({

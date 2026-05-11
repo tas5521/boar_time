@@ -1,4 +1,4 @@
-import 'package:boar_time/model/patrol_record/patrol_record.dart';
+import 'package:boar_time/infrastructure/isar/patrol_record/patrol_record.dart';
 
 abstract class PatrolRecordRepository {
   Future<PatrolRecord?> getActive(DateTime date);

@@ -1,5 +1,5 @@
 import 'package:boar_time/infrastructure/datasource/patrol_record_datasource/patrol_record_datasource.dart';
-import 'package:boar_time/model/patrol_record/patrol_record.dart';
+import 'package:boar_time/infrastructure/isar/patrol_record/patrol_record.dart';
 import 'package:isar_community/isar.dart';
 
 class PatrolRecordDatasourceImpl implements PatrolRecordDatasource {

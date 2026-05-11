@@ -1,5 +1,5 @@
-import 'package:boar_time/model/patrol_record/patrol_record.dart';
-import 'package:boar_time/model/work_record/work_record.dart';
+import 'package:boar_time/infrastructure/isar/patrol_record/patrol_record.dart';
+import 'package:boar_time/infrastructure/isar/work_record/work_record.dart';
 
 class StampingTimeModel {
   StampingTimeModel({

@@ -3,8 +3,8 @@ import 'package:boar_time/domain/repositories/patrol_record_repository.dart';
 import 'package:boar_time/domain/repositories/stamping_time_repository.dart';
 import 'package:boar_time/domain/repositories/work_record_repository.dart';
 import 'package:boar_time/domain/usecase/stamping_time_usecase.dart';
-import 'package:boar_time/model/patrol_record/patrol_record.dart';
-import 'package:boar_time/model/work_record/work_record.dart';
+import 'package:boar_time/infrastructure/isar/patrol_record/patrol_record.dart';
+import 'package:boar_time/infrastructure/isar/work_record/work_record.dart';
 
 class StampingTimeUsecaseImpl implements StampingTimeUsecase {
   StampingTimeUsecaseImpl(

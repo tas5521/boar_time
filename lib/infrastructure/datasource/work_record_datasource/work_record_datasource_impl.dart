@@ -1,5 +1,5 @@
 import 'package:boar_time/infrastructure/datasource/work_record_datasource/work_record_datasource.dart';
-import 'package:boar_time/model/work_record/work_record.dart';
+import 'package:boar_time/infrastructure/isar/work_record/work_record.dart';
 import 'package:isar_community/isar.dart';
 
 class WorkRecordDatasourceImpl implements WorkRecordDatasource {

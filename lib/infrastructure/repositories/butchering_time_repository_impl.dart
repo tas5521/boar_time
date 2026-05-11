@@ -6,7 +6,7 @@ import 'package:boar_time/infrastructure/datasource/work_record_datasource/work_
 import 'package:boar_time/infrastructure/factory/butchering_time/butchering_time_factory.dart';
 import 'package:boar_time/infrastructure/factory/butchering_time/butchering_time_model_factory.dart';
 import 'package:boar_time/infrastructure/model/butchering_time_model.dart';
-import 'package:boar_time/model/work_record/work_record.dart';
+import 'package:boar_time/infrastructure/isar/work_record/work_record.dart';
 
 class ButcheringTimeRepositoryImpl implements ButcheringTimeRepository {
   ButcheringTimeRepositoryImpl({
