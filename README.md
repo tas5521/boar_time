@@ -66,51 +66,77 @@
 
 ## アーキテクチャ
 
-クリーンアーキテクチャに近い層の分離を採用しています。  
-**ドメイン層**:　フレームワークに依存しないエンティティと抽象（Repository/Usecase）に限定  
-**アプリケーション層**: ユースケースの組み立て  
-**インフラ層**: Isar・ファイル出力などの具体技術を担当  
-**プレゼンテーション層**: Notifierはドメインの抽象に対してユースケースを呼び出す
-**依存の注入**: `lib/di`のProvidersに集約  
+クリーンアーキテクチャに近い層の分離を採用しています。
+
+- **ドメイン層** — フレームワークに依存しない Entity・抽象（Repository / Usecase）・共有 enum（`domain/enums/`）
+- **アプリケーション層** — ユースケースの組み立て（`lib/application`）
+- **インフラ層** — Isar・ファイル出力などの具体技術（`lib/infrastructure`）
+- **プレゼンテーション層** — 画面と Notifier。Usecaseは抽象経由で利用
+- **依存の注入** — 具象の組み立ては `lib/di`のProviderに集約
+
+### レイヤ間の依存（概要）
+
+```mermaid
+flowchart LR
+  subgraph P["表現層<br/>lib/presentation"]
+    direction TB
+    UI[画面 Widget]
+    N[Notifier]
+    UI --> N
+  end
+
+  subgraph A["アプリケーション層<br/>lib/application"]
+    UCI[Usecase 実装]
+  end
+
+  subgraph D["ドメイン層<br/>lib/domain"]
+    DOM[Entity · 抽象 · enums]
+  end
+
+  subgraph I["インフラ層<br/>lib/infrastructure"]
+    direction TB
+    RI[Repository 実装]
+    SUB[Isar / Datasource · Factory · Export …]
+    RI --> SUB
+  end
+
+  subgraph DI["構成<br/>lib/di"]
+    PRV[Provider]
+  end
+
+  N --> UCI
+  N --> DOM
+  UCI --> DOM
+  RI -.->|implements| DOM
+  PRV --> UCI
+  PRV --> RI
+
+  style P fill:#fff8e1,stroke:#f57f17
+  style A fill:#e3f2fd,stroke:#1565c0
+  style D fill:#e8f5e9,stroke:#2e7d32
+  style I fill:#fce4ec,stroke:#ad1457
+  style DI fill:#f3e5f5,stroke:#6a1b9a
+```
+
+点線は「インターフェースの実装」を表します。プレゼンテーションは型のために **ドメイン**（Entity や enum）も参照します。
+
+### インフラ周りのデータの流れ（補足）
 
 ```mermaid
 flowchart TB
-  subgraph presentation [表現層 lib/presentation]
-    Page[画面 Widget]
-    Notifier[Riverpod Notifier]
-  end
-  subgraph application [アプリケーション層 lib/application]
-    UCImpl[Usecase 実装]
-  end
-  subgraph domain [ドメイン層 lib/domain]
-    RepoIf[Repository 抽象]
-    UCIf[Usecase 抽象]
-  end
-  subgraph infrastructure [インフラ層 lib/infrastructure]
-    RepoImpl[Repository 実装]
-    DS[Datasource Isar]
-    ExportDS[ExportDatasource]
-    Factory[Model Factory]
-  end
-  subgraph di [構成 lib/di]
-    Prov[Provider 結線]
-  end
-  Isar[(Isar)]
-  Files[PDF / CSV / Excel ファイル]
+  RI[Repository 実装]
+  DS[Datasource<br/>Isar 読み書き]
+  EXP[ExportDatasource<br/>帳票ファイル生成]
+  DB[(Isar)]
+  OUT[PDF / CSV / xlsx]
 
-  Page --> Notifier
-  Notifier --> UCIf
-  Prov --> UCImpl
-  Prov --> RepoImpl
-  UCImpl --> RepoIf
-  UCImpl -.->|implements| UCIf
-  RepoImpl --> DS
-  RepoImpl --> Factory
-  RepoImpl --> ExportDS
-  RepoImpl -.->|implements| RepoIf
-  DS --> Isar
-  ExportDS --> Files
+  RI --> DS
+  RI --> EXP
+  DS --> DB
+  EXP --> OUT
 ```
+
+`lib/infrastructure/isar/` の `@collection` は、DatasourceがIsar経由で扱う永続化スキーマです。
 
 | ディレクトリ | 責務 |
 | --- | --- |
