@@ -5,6 +5,7 @@ import 'package:boar_time/presentation/notifier/active_tab/active_tab_notifier.d
 import 'package:boar_time/presentation/notifier/stamping/stamping_notifier.dart';
 import 'package:boar_time/presentation/page/view_parts/boar_speech_area.dart';
 import 'package:boar_time/presentation/page/view_parts/time_display.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,7 +17,7 @@ class StampingPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(stampingTimeProvider).value;
+    final state = ref.watch(stampingTimeProvider);
     final lifecycle = useAppLifecycleState();
 
     useEffect(() {
@@ -89,141 +90,176 @@ class StampingPage extends HookConsumerWidget {
           ),
         ],
       ),
-      body: Container(
-        padding: EdgeInsets.all(16.w),
-        child: Column(
-          spacing: 40.w,
-          children: [
-            Container(
-              margin: EdgeInsets.only(left: 4.w),
-              width: 340.w,
-              child: TimeDisplay(
-                onDateChanged: () {
-                  ref.invalidate(stampingTimeProvider);
-                },
+      body: state.when(
+        data: (data) => Container(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            spacing: 40.w,
+            children: [
+              Container(
+                margin: EdgeInsets.only(left: 4.w),
+                width: 340.w,
+                child: TimeDisplay(
+                  onDateChanged: () {
+                    ref.invalidate(stampingTimeProvider);
+                  },
+                ),
               ),
-            ),
-            Column(
-              spacing: 32.w,
+              Column(
+                spacing: 32.w,
+                children: [
+                  Row(
+                    spacing: 16.w,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      customButton(
+                        '解体 出勤',
+                        enabled: data.startTime == null,
+                        onPressed: () async {
+                          final isSuccess = await ref
+                              .read(stampingTimeProvider.notifier)
+                              .setStartTime();
+                          if (!isSuccess || !context.mounted) return;
+                          await showStampCompletedDialog(
+                            context,
+                            message: '解体の出勤を記録しました。',
+                          );
+                        },
+                      ),
+                      customButton(
+                        '解体 退勤',
+                        enabled: data.endTime == null,
+                        onPressed: () async {
+                          final isSuccess = await ref
+                              .read(stampingTimeProvider.notifier)
+                              .setEndTime();
+                          if (!isSuccess || !context.mounted) return;
+                          await showStampCompletedDialog(
+                            context,
+                            message: '解体の退勤を記録しました。',
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  Row(
+                    spacing: 16.w,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      customButton(
+                        '休憩 開始',
+                        enabled: data.breakStart == null,
+                        onPressed: () async {
+                          final isSuccess = await ref
+                              .read(stampingTimeProvider.notifier)
+                              .setBreakStart();
+                          if (!isSuccess || !context.mounted) return;
+                          await showStampCompletedDialog(
+                            context,
+                            message: '休憩開始を記録しました。',
+                          );
+                        },
+                      ),
+                      customButton(
+                        '休憩 終了',
+                        enabled: data.breakEnd == null,
+                        onPressed: () async {
+                          final isSuccess = await ref
+                              .read(stampingTimeProvider.notifier)
+                              .setBreakEnd();
+                          if (!isSuccess || !context.mounted) return;
+                          await showStampCompletedDialog(
+                            context,
+                            message: '休憩終了を記録しました。',
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  Row(
+                    spacing: 16.w,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      customButton(
+                        '見回り 開始',
+                        enabled:
+                            data.patrolStart == null && data.patrolEnd == null,
+                        onPressed: () async {
+                          final isSuccess = await ref
+                              .read(stampingTimeProvider.notifier)
+                              .setPatrolStart();
+                          if (!isSuccess || !context.mounted) return;
+                          await showStampCompletedDialog(
+                            context,
+                            message: '見回り開始を記録しました。',
+                          );
+                        },
+                      ),
+                      customButton(
+                        '見回り 終了',
+                        enabled:
+                            data.patrolStart != null && data.patrolEnd == null,
+                        onPressed: () async {
+                          final isSuccess = await ref
+                              .read(stampingTimeProvider.notifier)
+                              .setPatrolEnd();
+                          if (!isSuccess || !context.mounted) return;
+                          await showStampCompletedDialog(
+                            context,
+                            message: '見回り終了を記録しました。',
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Spacer(),
+                      BoarSpeechArea(),
+                      SizedBox(width: 10.w),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Row(
-                  spacing: 16.w,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    customButton(
-                      '解体 出勤',
-                      enabled: state != null && state.startTime == null,
-                      onPressed: () async {
-                        final isSuccess = await ref
-                            .read(stampingTimeProvider.notifier)
-                            .setStartTime();
-                        if (!isSuccess || !context.mounted) return;
-                        await showStampCompletedDialog(
-                          context,
-                          message: '解体の出勤を記録しました。',
-                        );
-                      },
-                    ),
-                    customButton(
-                      '解体 退勤',
-                      enabled: state != null && state.endTime == null,
-                      onPressed: () async {
-                        final isSuccess = await ref
-                            .read(stampingTimeProvider.notifier)
-                            .setEndTime();
-                        if (!isSuccess || !context.mounted) return;
-                        await showStampCompletedDialog(
-                          context,
-                          message: '解体の退勤を記録しました。',
-                        );
-                      },
-                    ),
-                  ],
+                Icon(
+                  Icons.error_outline,
+                  size: 48.sp,
+                  color: Theme.of(context).colorScheme.error,
                 ),
-                Row(
-                  spacing: 16.w,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    customButton(
-                      '休憩 開始',
-                      enabled: state != null && state.breakStart == null,
-                      onPressed: () async {
-                        final isSuccess = await ref
-                            .read(stampingTimeProvider.notifier)
-                            .setBreakStart();
-                        if (!isSuccess || !context.mounted) return;
-                        await showStampCompletedDialog(
-                          context,
-                          message: '休憩開始を記録しました。',
-                        );
-                      },
-                    ),
-                    customButton(
-                      '休憩 終了',
-                      enabled: state != null && state.breakEnd == null,
-                      onPressed: () async {
-                        final isSuccess = await ref
-                            .read(stampingTimeProvider.notifier)
-                            .setBreakEnd();
-                        if (!isSuccess || !context.mounted) return;
-                        await showStampCompletedDialog(
-                          context,
-                          message: '休憩終了を記録しました。',
-                        );
-                      },
-                    ),
-                  ],
+                SizedBox(height: 16.w),
+                Text(
+                  '打刻データを読み込めませんでした。',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
                 ),
-                Row(
-                  spacing: 16.w,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    customButton(
-                      '見回り 開始',
-                      enabled:
-                          state != null &&
-                          state.patrolStart == null &&
-                          state.patrolEnd == null,
-                      onPressed: () async {
-                        final isSuccess = await ref
-                            .read(stampingTimeProvider.notifier)
-                            .setPatrolStart();
-                        if (!isSuccess || !context.mounted) return;
-                        await showStampCompletedDialog(
-                          context,
-                          message: '見回り開始を記録しました。',
-                        );
-                      },
-                    ),
-                    customButton(
-                      '見回り 終了',
-                      enabled:
-                          state != null &&
-                          state.patrolStart != null &&
-                          state.patrolEnd == null,
-                      onPressed: () async {
-                        final isSuccess = await ref
-                            .read(stampingTimeProvider.notifier)
-                            .setPatrolEnd();
-                        if (!isSuccess || !context.mounted) return;
-                        await showStampCompletedDialog(
-                          context,
-                          message: '見回り終了を記録しました。',
-                        );
-                      },
-                    ),
-                  ],
+                SizedBox(height: 8.w),
+                Text(
+                  kDebugMode
+                      ? error.toString()
+                      : '通信やストレージの不調の可能性があります。しばらくしてから再度お試しください。',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14.sp, color: Colors.black54),
                 ),
-                Row(
-                  children: [
-                    const Spacer(),
-                    BoarSpeechArea(),
-                    SizedBox(width: 10.w),
-                  ],
+                SizedBox(height: 24.w),
+                ElevatedButton(
+                  onPressed: () {
+                    ref.invalidate(stampingTimeProvider);
+                  },
+                  child: Text('再読み込み', style: TextStyle(fontSize: 16.sp)),
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

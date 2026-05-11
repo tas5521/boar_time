@@ -23,7 +23,9 @@ class StampingTimeNotifier extends AsyncNotifier<StampingTimeState> {
 
   Future<bool> setStartTime() async {
     try {
-      state = AsyncValue.loading();
+      state = const AsyncValue<StampingTimeState>.loading().copyWithPrevious(
+        state,
+      );
       final usecase = ref.read(stampingTimeUsecaseProvider);
       final stampingTimeEntity = await usecase.setStartTime();
       final stampingTimeState = StampingTimeState.fromEntity(
@@ -40,7 +42,9 @@ class StampingTimeNotifier extends AsyncNotifier<StampingTimeState> {
 
   Future<bool> setEndTime() async {
     try {
-      state = AsyncValue.loading();
+      state = const AsyncValue<StampingTimeState>.loading().copyWithPrevious(
+        state,
+      );
       final usecase = ref.read(stampingTimeUsecaseProvider);
       final stampingTimeEntity = await usecase.setEndTime();
       final stampingTimeState = StampingTimeState.fromEntity(
@@ -57,7 +61,9 @@ class StampingTimeNotifier extends AsyncNotifier<StampingTimeState> {
 
   Future<bool> setBreakStart() async {
     try {
-      state = AsyncValue.loading();
+      state = const AsyncValue<StampingTimeState>.loading().copyWithPrevious(
+        state,
+      );
       final usecase = ref.read(stampingTimeUsecaseProvider);
       final stampingTimeEntity = await usecase.setBreakStartTime();
       final stampingTimeState = StampingTimeState.fromEntity(
@@ -74,7 +80,9 @@ class StampingTimeNotifier extends AsyncNotifier<StampingTimeState> {
 
   Future<bool> setBreakEnd() async {
     try {
-      state = AsyncValue.loading();
+      state = const AsyncValue<StampingTimeState>.loading().copyWithPrevious(
+        state,
+      );
       final usecase = ref.read(stampingTimeUsecaseProvider);
       final stampingTimeEntity = await usecase.setBreakEndTime();
       final stampingTimeState = StampingTimeState.fromEntity(
@@ -92,7 +100,9 @@ class StampingTimeNotifier extends AsyncNotifier<StampingTimeState> {
   Future<bool> setPatrolStart() async {
     try {
       final preState = state;
-      state = AsyncValue.loading();
+      state = const AsyncValue<StampingTimeState>.loading().copyWithPrevious(
+        state,
+      );
       final usecase = ref.read(stampingTimeUsecaseProvider);
       final active = await usecase.getActive();
       if (active == null) {
@@ -113,7 +123,9 @@ class StampingTimeNotifier extends AsyncNotifier<StampingTimeState> {
   Future<bool> setPatrolEnd() async {
     try {
       final preState = state;
-      state = AsyncValue.loading();
+      state = const AsyncValue<StampingTimeState>.loading().copyWithPrevious(
+        state,
+      );
       final usecase = ref.read(stampingTimeUsecaseProvider);
       final active = await usecase.getActive();
       if (active != null) {
