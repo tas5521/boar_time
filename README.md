@@ -84,10 +84,14 @@ flowchart LR
   subgraph domain
     Usecase[Usecase 抽象]
     Repository[Repository 抽象]
+    Entity
   end
 
+  Notifier --> Entity
   UsecaseImpl --> Usecase
+  UsecaseImpl --> Entity
   RepositoryImpl --> Repository
+  RepositoryImpl --> Entity
   RepositoryImpl --> Isar[(Isar)]
   RepositoryImpl --> Files[PDF / CSV / xlsx]
 
