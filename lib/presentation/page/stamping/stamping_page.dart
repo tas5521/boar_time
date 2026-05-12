@@ -44,7 +44,7 @@ class StampingPage extends HookConsumerWidget {
             builder: (dialogContext) => AlertDialog(
               title: Text('ご注意', style: TextStyle(fontSize: 20.w)),
               content: Text(
-                '本アプリでは、打刻時間のデータを端末内に保存しています。\nアプリを削除するとデータは消去されますので、ご注意ください。',
+                '本アプリでは、データを端末内に保存しています。\nアプリを削除するとデータは消去されますので、ご注意ください。',
                 style: TextStyle(fontSize: 16.w),
               ),
               actions: [
@@ -240,7 +240,10 @@ class StampingPage extends HookConsumerWidget {
                 Text(
                   '打刻データを読み込めませんでした。',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 SizedBox(height: 8.w),
                 Text(
