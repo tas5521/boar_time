@@ -69,7 +69,9 @@ class ButcheringTimeNotifier
 
   Future<void> updateData(ButcheringTimeState target) async {
     try {
-      state = const AsyncValue.loading();
+      state = AsyncValue<List<ButcheringTimeState>>.loading().copyWithPrevious(
+        state,
+      );
       final entity = target.toEntity();
       final usecase = ref.read(butcheringTimeUsecaseProvider);
       await usecase.upsert(entity);
@@ -91,7 +93,9 @@ class ButcheringTimeNotifier
       final prevState = state;
       final data = prevState.valueOrNull;
       if (data == null) return;
-      state = const AsyncValue.loading();
+      state = AsyncValue<List<ButcheringTimeState>>.loading().copyWithPrevious(
+        state,
+      );
       final usecase = ref.read(butcheringTimeUsecaseProvider);
       final entityList = data.map((state) => state.toEntity()).toList();
       await usecase.export(entityList, format, filename);
