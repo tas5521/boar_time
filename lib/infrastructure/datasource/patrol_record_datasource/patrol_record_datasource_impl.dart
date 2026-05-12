@@ -17,11 +17,6 @@ class PatrolRecordDatasourceImpl implements PatrolRecordDatasource {
   }
 
   @override
-  Future<PatrolRecord?> getById(int id) async {
-    return await isar.patrolRecords.get(id);
-  }
-
-  @override
   Future<List<PatrolRecord>> getByDate(DateTime date) async {
     return isar.patrolRecords
         .filter()
@@ -73,7 +68,7 @@ class PatrolRecordDatasourceImpl implements PatrolRecordDatasource {
 
   @override
   Future<void> upsertById(PatrolRecord record) async {
-    final exist = await getById(record.id);
+    final exist = await isar.patrolRecords.get(record.id);
     if (exist == null) {
       await update(record);
     } else {
