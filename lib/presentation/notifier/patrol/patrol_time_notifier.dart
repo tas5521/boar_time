@@ -76,6 +76,7 @@ class PatrolTimeNotifier
       state = AsyncValue.data(patrolTimeStateList);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
+      rethrow;
     }
   }
 
