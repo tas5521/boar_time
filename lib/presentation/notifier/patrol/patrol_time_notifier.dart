@@ -33,7 +33,9 @@ class PatrolTimeNotifier
 
   Future<bool> updateData(PatrolTimeState target) async {
     try {
-      state = const AsyncValue.loading();
+      state = AsyncValue<List<PatrolTimeState>>.loading().copyWithPrevious(
+        state,
+      );
       final entity = target.toEntity();
       final usecase = ref.read(patrolTimeUsecaseProvider);
       await usecase.upsert(entity);
@@ -56,7 +58,9 @@ class PatrolTimeNotifier
     required PatrolLabel label,
   }) async {
     try {
-      state = const AsyncValue.loading();
+      state = AsyncValue<List<PatrolTimeState>>.loading().copyWithPrevious(
+        state,
+      );
       final newEntity = PatrolTimeState(
         date: date,
         start: start,
@@ -77,7 +81,9 @@ class PatrolTimeNotifier
 
   Future<bool> delete(PatrolTimeState patrolTimeState) async {
     try {
-      state = const AsyncValue.loading();
+      state = AsyncValue<List<PatrolTimeState>>.loading().copyWithPrevious(
+        state,
+      );
       final entity = patrolTimeState.toEntity();
       final usecase = ref.read(patrolTimeUsecaseProvider);
       await usecase.delete(entity);
@@ -101,7 +107,9 @@ class PatrolTimeNotifier
       final prevState = state;
       final data = prevState.valueOrNull;
       if (data == null) return;
-      state = const AsyncValue.loading();
+      state = AsyncValue<List<PatrolTimeState>>.loading().copyWithPrevious(
+        state,
+      );
       final usecase = ref.read(patrolTimeUsecaseProvider);
       final entityList = data.map((state) => state.toEntity()).toList();
       await usecase.export(entityList, format, filename);
