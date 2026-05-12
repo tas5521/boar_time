@@ -309,6 +309,11 @@ class PatrolTimePage extends HookConsumerWidget {
                                                       child: Center(
                                                         child: Text(
                                                           label.displayName,
+                                                          style: TextStyle(
+                                                            fontSize: 14.sp,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
