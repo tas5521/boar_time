@@ -11,6 +11,7 @@ import 'package:boar_time/presentation/page/view_parts/edit_time_dialog.dart';
 import 'package:boar_time/presentation/page/view_parts/icon_action_button.dart';
 import 'package:boar_time/presentation/page/view_parts/show_export_dialog.dart';
 import 'package:boar_time/presentation/page/view_parts/show_year_month_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -111,254 +112,298 @@ class PatrolTimePage extends HookConsumerWidget {
           style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.bold),
         ),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.fromLTRB(12.0.w, 12.0.w, 6.0.w, 12.0.w),
-              color: Colors.orangeAccent,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    alignment: Alignment.center,
-                    width: 100.w,
-                    child: Text('日付', style: TextStyle(fontSize: 16.sp)),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    width: 52.w,
-                    child: Text('開始', style: TextStyle(fontSize: 16.sp)),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    width: 52.w,
-                    child: Text('終了', style: TextStyle(fontSize: 16.sp)),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    width: 88.w,
-                    child: Text('業務内容', style: TextStyle(fontSize: 16.sp)),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    width: 52.w,
-                    child: Text('詳細', style: TextStyle(fontSize: 16.sp)),
-                  ),
-                ],
+      body: patrolTimeState.when(
+        data: (data) => Center(
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.fromLTRB(12.0.w, 12.0.w, 6.0.w, 12.0.w),
+                color: Colors.orangeAccent,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      width: 100.w,
+                      child: Text('日付', style: TextStyle(fontSize: 16.sp)),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: 52.w,
+                      child: Text('開始', style: TextStyle(fontSize: 16.sp)),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: 52.w,
+                      child: Text('終了', style: TextStyle(fontSize: 16.sp)),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: 88.w,
+                      child: Text('業務内容', style: TextStyle(fontSize: 16.sp)),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: 52.w,
+                      child: Text('詳細', style: TextStyle(fontSize: 16.sp)),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-              child: patrolList.isEmpty
-                  ? Center(
-                      child: Text(
-                        '${year.value}年${month.value}月は見回りの記録がありません',
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          color: Colors.black87,
+              Expanded(
+                child: patrolList.isEmpty
+                    ? Center(
+                        child: Text(
+                          '${year.value}年${month.value}月は見回りの記録がありません',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: Colors.black87,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      child: DataTable(
-                        headingRowHeight: 0,
-                        columnSpacing: 4.w,
-                        horizontalMargin: 12.w,
-                        columns: const [
-                          DataColumn(label: SizedBox()),
-                          DataColumn(label: SizedBox()),
-                          DataColumn(label: SizedBox()),
-                          DataColumn(label: SizedBox()),
-                          DataColumn(label: SizedBox()),
-                        ],
-                        rows: patrolList.map((row) {
-                          final formattedDate = DateFormat(
-                            'yyyy/MM/dd',
-                          ).format(row.date);
-                          return DataRow(
-                            cells: [
-                              DataCell(
-                                Container(
-                                  alignment: Alignment.center,
-                                  width: 100.w,
-                                  child: Text(
-                                    formattedDate,
-                                    style: TextStyle(fontSize: 16.sp),
-                                  ),
-                                ),
-                              ),
-                              DataCell(
-                                Container(
-                                  alignment: Alignment.center,
-                                  width: 52.w,
-                                  child: Text(
-                                    _fmt(row.start),
-                                    style: TextStyle(fontSize: 16.sp),
-                                  ),
-                                ),
-                                onTap: () {
-                                  showEditTimeDialog(
-                                    context,
-                                    label: '見回り開始時間',
-                                    date: row.date,
-                                    type: JobType.patrol,
-                                    initialTime: TimeOfDay.fromDateTime(
-                                      row.start,
+                      )
+                    : SingleChildScrollView(
+                        child: DataTable(
+                          headingRowHeight: 0,
+                          columnSpacing: 4.w,
+                          horizontalMargin: 12.w,
+                          columns: const [
+                            DataColumn(label: SizedBox()),
+                            DataColumn(label: SizedBox()),
+                            DataColumn(label: SizedBox()),
+                            DataColumn(label: SizedBox()),
+                            DataColumn(label: SizedBox()),
+                          ],
+                          rows: patrolList.map((row) {
+                            final formattedDate = DateFormat(
+                              'yyyy/MM/dd',
+                            ).format(row.date);
+                            return DataRow(
+                              cells: [
+                                DataCell(
+                                  Container(
+                                    alignment: Alignment.center,
+                                    width: 100.w,
+                                    child: Text(
+                                      formattedDate,
+                                      style: TextStyle(fontSize: 16.sp),
                                     ),
-                                    onPressed: (selected) async {
-                                      if (selected == null) return;
-                                      final newStartDate = DateTime(
-                                        row.date.year,
-                                        row.date.month,
-                                        row.date.day,
-                                        selected.hour,
-                                        selected.minute,
-                                      );
-                                      final targetData = row.copyWith(
-                                        start: newStartDate,
-                                      );
-                                      await ref
-                                          .read(
-                                            patrolTimeProvider((
-                                              year: year.value,
-                                              month: month.value,
-                                            )).notifier,
-                                          )
-                                          .updateData(targetData);
-                                    },
-                                  );
-                                },
-                              ),
-                              DataCell(
-                                Container(
-                                  alignment: Alignment.center,
-                                  width: 52.w,
-                                  child: Text(
-                                    _fmt(row.end),
-                                    style: TextStyle(fontSize: 16.sp),
                                   ),
                                 ),
-                                onTap: () {
-                                  showEditTimeDialog(
-                                    context,
-                                    label: '見回り終了時間',
-                                    date: row.date,
-                                    type: JobType.patrol,
-                                    initialTime: row.end != null
-                                        ? TimeOfDay.fromDateTime(row.end!)
-                                        : null,
-                                    onPressed: (selected) async {
-                                      final DateTime? newEndDate;
-                                      if (selected != null) {
-                                        newEndDate = DateTime(
+                                DataCell(
+                                  Container(
+                                    alignment: Alignment.center,
+                                    width: 52.w,
+                                    child: Text(
+                                      _fmt(row.start),
+                                      style: TextStyle(fontSize: 16.sp),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    showEditTimeDialog(
+                                      context,
+                                      label: '見回り開始時間',
+                                      date: row.date,
+                                      type: JobType.patrol,
+                                      initialTime: TimeOfDay.fromDateTime(
+                                        row.start,
+                                      ),
+                                      onPressed: (selected) async {
+                                        if (selected == null) return;
+                                        final newStartDate = DateTime(
                                           row.date.year,
                                           row.date.month,
                                           row.date.day,
                                           selected.hour,
                                           selected.minute,
                                         );
-                                      } else {
-                                        newEndDate = null;
-                                      }
-                                      final targetData = row.copyWith(
-                                        end: newEndDate,
-                                      );
-                                      await ref
-                                          .read(
-                                            patrolTimeProvider((
-                                              year: year.value,
-                                              month: month.value,
-                                            )).notifier,
-                                          )
-                                          .updateData(targetData);
-                                    },
-                                  );
-                                },
-                              ),
-                              DataCell(
-                                SizedBox(
-                                  width: 88.w,
-                                  child: DropdownButtonHideUnderline(
-                                    child: Baseline(
-                                      baseline: 14.w,
-                                      baselineType: TextBaseline.alphabetic,
-                                      child: DropdownButton<PatrolLabel>(
-                                        value: row.label,
-                                        isDense: true,
-                                        isExpanded: true,
-                                        icon: const SizedBox.shrink(),
-                                        style: TextStyle(
-                                          fontSize: 14.sp,
-                                          color: Theme.of(
+                                        final targetData = row.copyWith(
+                                          start: newStartDate,
+                                        );
+                                        await ref
+                                            .read(
+                                              patrolTimeProvider((
+                                                year: year.value,
+                                                month: month.value,
+                                              )).notifier,
+                                            )
+                                            .updateData(targetData);
+                                      },
+                                    );
+                                  },
+                                ),
+                                DataCell(
+                                  Container(
+                                    alignment: Alignment.center,
+                                    width: 52.w,
+                                    child: Text(
+                                      _fmt(row.end),
+                                      style: TextStyle(fontSize: 16.sp),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    showEditTimeDialog(
+                                      context,
+                                      label: '見回り終了時間',
+                                      date: row.date,
+                                      type: JobType.patrol,
+                                      initialTime: row.end != null
+                                          ? TimeOfDay.fromDateTime(row.end!)
+                                          : null,
+                                      onPressed: (selected) async {
+                                        final DateTime? newEndDate;
+                                        if (selected != null) {
+                                          newEndDate = DateTime(
+                                            row.date.year,
+                                            row.date.month,
+                                            row.date.day,
+                                            selected.hour,
+                                            selected.minute,
+                                          );
+                                        } else {
+                                          newEndDate = null;
+                                        }
+                                        final targetData = row.copyWith(
+                                          end: newEndDate,
+                                        );
+                                        await ref
+                                            .read(
+                                              patrolTimeProvider((
+                                                year: year.value,
+                                                month: month.value,
+                                              )).notifier,
+                                            )
+                                            .updateData(targetData);
+                                      },
+                                    );
+                                  },
+                                ),
+                                DataCell(
+                                  SizedBox(
+                                    width: 88.w,
+                                    child: DropdownButtonHideUnderline(
+                                      child: Baseline(
+                                        baseline: 14.w,
+                                        baselineType: TextBaseline.alphabetic,
+                                        child: DropdownButton<PatrolLabel>(
+                                          value: row.label,
+                                          isDense: true,
+                                          isExpanded: true,
+                                          icon: const SizedBox.shrink(),
+                                          style: TextStyle(
+                                            fontSize: 14.sp,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurface,
+                                          ),
+                                          dropdownColor: Theme.of(
                                             context,
-                                          ).colorScheme.onSurface,
-                                        ),
-                                        dropdownColor: Theme.of(
-                                          context,
-                                        ).colorScheme.surface,
-                                        items: PatrolLabel.values
-                                            .map(
-                                              (label) =>
-                                                  DropdownMenuItem<PatrolLabel>(
-                                                    value: label,
-                                                    child: Center(
-                                                      child: Text(
-                                                        label.displayName,
+                                          ).colorScheme.surface,
+                                          items: PatrolLabel.values
+                                              .map(
+                                                (label) =>
+                                                    DropdownMenuItem<
+                                                      PatrolLabel
+                                                    >(
+                                                      value: label,
+                                                      child: Center(
+                                                        child: Text(
+                                                          label.displayName,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                            )
-                                            .toList(),
-                                        onChanged: (value) async {
-                                          if (value == null) return;
-                                          final newLabelData = row.copyWith(
-                                            label: value,
-                                          );
-                                          await ref
-                                              .read(
-                                                patrolTimeProvider((
-                                                  year: year.value,
-                                                  month: month.value,
-                                                )).notifier,
                                               )
-                                              .updateData(newLabelData);
-                                        },
+                                              .toList(),
+                                          onChanged: (value) async {
+                                            if (value == null) return;
+                                            final newLabelData = row.copyWith(
+                                              label: value,
+                                            );
+                                            await ref
+                                                .read(
+                                                  patrolTimeProvider((
+                                                    year: year.value,
+                                                    month: month.value,
+                                                  )).notifier,
+                                                )
+                                                .updateData(newLabelData);
+                                          },
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              DataCell(
-                                SizedBox(
-                                  width: 52.w,
-                                  child: IconButton(
-                                    icon: const Icon(Icons.edit),
-                                    iconSize: 20.sp,
-                                    tooltip: '編集',
-                                    onPressed: () {
-                                      context.router.root.push(
-                                        PatrolEditRoute(
-                                          patrolTimeState: row,
-                                          patrolTimeNotifier: ref.read(
-                                            patrolTimeProvider((
-                                              year: year.value,
-                                              month: month.value,
-                                            )).notifier,
+                                DataCell(
+                                  SizedBox(
+                                    width: 52.w,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.edit),
+                                      iconSize: 20.sp,
+                                      tooltip: '編集',
+                                      onPressed: () {
+                                        context.router.root.push(
+                                          PatrolEditRoute(
+                                            patrolTimeState: row,
+                                            patrolTimeNotifier: ref.read(
+                                              patrolTimeProvider((
+                                                year: year.value,
+                                                month: month.value,
+                                              )).notifier,
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    },
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          );
-                        }).toList(),
+                              ],
+                            );
+                          }).toList(),
+                        ),
                       ),
-                    ),
+              ),
+            ],
+          ),
+        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 48.sp,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+                SizedBox(height: 16.w),
+                Text(
+                  '見回りデータを読み込めませんでした。',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 8.w),
+                Text(
+                  kDebugMode
+                      ? error.toString()
+                      : '通信やストレージの不調の可能性があります。しばらくしてから再度お試しください。',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14.sp, color: Colors.black54),
+                ),
+                SizedBox(height: 24.w),
+                ElevatedButton(
+                  onPressed: () {
+                    ref.invalidate(stampingTimeProvider);
+                  },
+                  child: Text('再読み込み', style: TextStyle(fontSize: 16.sp)),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
