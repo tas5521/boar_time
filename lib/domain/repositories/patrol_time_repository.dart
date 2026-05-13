@@ -1,7 +1,7 @@
 import 'package:boar_time/domain/enums/export_format.dart';
 import 'package:boar_time/domain/entities/patrol_time.dart';
 
-abstract class PatrolTimeRepository {
+abstract interface class PatrolTimeRepository {
   Future<List<PatrolTime>> getPatrolTimeList(int year, int month);
   Future<void> upsert(PatrolTime patrolTime);
   Future<void> createByEntity(PatrolTime patrolTime);

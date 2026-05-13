@@ -1,7 +1,7 @@
 import 'package:boar_time/domain/repositories/first_launch_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class FirstLaunchRepositoryImpl extends FirstLaunchRepository {
+class FirstLaunchRepositoryImpl implements FirstLaunchRepository {
   FirstLaunchRepositoryImpl({required this.prefs});
 
   final SharedPreferences prefs;

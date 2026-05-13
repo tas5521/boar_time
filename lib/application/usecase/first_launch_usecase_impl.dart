@@ -1,7 +1,7 @@
 import 'package:boar_time/domain/repositories/first_launch_repository.dart';
 import 'package:boar_time/domain/usecase/first_launch_usecase.dart';
 
-class FirstLaunchUsecaseImpl extends FirstLaunchUsecase {
+class FirstLaunchUsecaseImpl implements FirstLaunchUsecase {
   FirstLaunchUsecaseImpl(this._firstLaunchRepository);
 
   final FirstLaunchRepository _firstLaunchRepository;
