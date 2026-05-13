@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:boar_time/domain/enums/export_format.dart';
 import 'package:boar_time/domain/enums/patrol_label.dart';
 import 'package:boar_time/di/patrol_time_provider.dart';
+import 'package:boar_time/domain/usecase/patrol_time_usecase.dart';
 import 'package:boar_time/presentation/state/patrol_time_state/patrol_time_state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -16,16 +17,18 @@ final patrolTimeProvider =
 class PatrolTimeNotifier
     extends
         FamilyAsyncNotifier<List<PatrolTimeState>, ({int year, int month})> {
+  late final PatrolTimeUsecase _usecase;
   @override
-  FutureOr<List<PatrolTimeState>> build(arg) =>
-      _createPatrolTimeState(arg.year, arg.month);
+  FutureOr<List<PatrolTimeState>> build(arg) {
+    _usecase = ref.read(patrolTimeUsecaseProvider);
+    return _createPatrolTimeState(arg.year, arg.month);
+  }
 
   Future<List<PatrolTimeState>> _createPatrolTimeState(
     int year,
     int month,
   ) async {
-    final usecase = ref.read(patrolTimeUsecaseProvider);
-    final patrolTimeList = await usecase.getPatrolTimeList(year, month);
+    final patrolTimeList = await _usecase.getPatrolTimeList(year, month);
     final sorted = [...patrolTimeList]
       ..sort((a, b) => a.start.compareTo(b.start));
     return sorted.map((entity) => PatrolTimeState.fromEntity(entity)).toList();
@@ -37,8 +40,7 @@ class PatrolTimeNotifier
         state,
       );
       final entity = target.toEntity();
-      final usecase = ref.read(patrolTimeUsecaseProvider);
-      await usecase.upsert(entity);
+      await _usecase.upsert(entity);
       final butcheringTimeStateList = await _createPatrolTimeState(
         arg.year,
         arg.month,
@@ -67,8 +69,7 @@ class PatrolTimeNotifier
         end: end,
         label: label,
       ).toEntity();
-      final usecase = ref.read(patrolTimeUsecaseProvider);
-      await usecase.createByEntity(newEntity);
+      await _usecase.createByEntity(newEntity);
       final patrolTimeStateList = await _createPatrolTimeState(
         date.year,
         date.month,
@@ -86,8 +87,7 @@ class PatrolTimeNotifier
         state,
       );
       final entity = patrolTimeState.toEntity();
-      final usecase = ref.read(patrolTimeUsecaseProvider);
-      await usecase.delete(entity);
+      await _usecase.delete(entity);
       final patrolTimeStateList = await _createPatrolTimeState(
         arg.year,
         arg.month,
@@ -111,9 +111,8 @@ class PatrolTimeNotifier
       state = AsyncValue<List<PatrolTimeState>>.loading().copyWithPrevious(
         state,
       );
-      final usecase = ref.read(patrolTimeUsecaseProvider);
       final entityList = data.map((state) => state.toEntity()).toList();
-      await usecase.export(entityList, format, filename);
+      await _usecase.export(entityList, format, filename);
       state = prevState;
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:boar_time/domain/enums/export_format.dart';
 import 'package:boar_time/di/butchering_time_provider.dart';
 import 'package:boar_time/domain/entities/butchering_time.dart';
+import 'package:boar_time/domain/usecase/butchering_time_usecase.dart';
 import 'package:boar_time/presentation/state/butchering_time_state/butchering_time_state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -19,16 +20,22 @@ class ButcheringTimeNotifier
           List<ButcheringTimeState>,
           ({int year, int month})
         > {
+  late final ButcheringTimeUsecase _usecase;
+
   @override
-  FutureOr<List<ButcheringTimeState>> build(arg) =>
-      _createButcheringTimeState(arg.year, arg.month);
+  FutureOr<List<ButcheringTimeState>> build(arg) {
+    _usecase = ref.read(butcheringTimeUsecaseProvider);
+    return _createButcheringTimeState(arg.year, arg.month);
+  }
 
   Future<List<ButcheringTimeState>> _createButcheringTimeState(
     int year,
     int month,
   ) async {
-    final usecase = ref.read(butcheringTimeUsecaseProvider);
-    final butcheringTimeList = await usecase.getButcheringTimeList(year, month);
+    final butcheringTimeList = await _usecase.getButcheringTimeList(
+      year,
+      month,
+    );
     final lastDay = DateTime(
       year,
       month + 1,
@@ -73,8 +80,7 @@ class ButcheringTimeNotifier
         state,
       );
       final entity = target.toEntity();
-      final usecase = ref.read(butcheringTimeUsecaseProvider);
-      await usecase.upsert(entity);
+      await _usecase.upsert(entity);
       final butcheringTimeStateList = await _createButcheringTimeState(
         arg.year,
         arg.month,
