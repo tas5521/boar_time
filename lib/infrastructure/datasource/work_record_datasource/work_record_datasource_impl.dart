@@ -3,19 +3,19 @@ import 'package:boar_time/infrastructure/isar/work_record/work_record.dart';
 import 'package:isar_community/isar.dart';
 
 class WorkRecordDatasourceImpl implements WorkRecordDatasource {
-  WorkRecordDatasourceImpl({required this.isar});
+  WorkRecordDatasourceImpl(this._isar);
 
-  final Isar isar;
+  final Isar _isar;
 
   @override
   Future<WorkRecord?> getByDate(DateTime date) async {
     final targetDate = DateTime(date.year, date.month, date.day);
-    return await isar.workRecords.filter().dateEqualTo(targetDate).findFirst();
+    return await _isar.workRecords.filter().dateEqualTo(targetDate).findFirst();
   }
 
   @override
   Future<List<WorkRecord>> getAll() async {
-    return await isar.workRecords.where().findAll();
+    return await _isar.workRecords.where().findAll();
   }
 
   @override
@@ -33,6 +33,6 @@ class WorkRecordDatasourceImpl implements WorkRecordDatasource {
   }
 
   Future<void> _update(WorkRecord record) async {
-    await isar.writeTxn(() => isar.workRecords.put(record));
+    await _isar.writeTxn(() => _isar.workRecords.put(record));
   }
 }

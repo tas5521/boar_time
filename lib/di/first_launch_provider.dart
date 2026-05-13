@@ -6,17 +6,9 @@ import 'package:boar_time/infrastructure/repositories/first_lauch_repository_imp
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final firstLaunchRepositoryProvider = Provider<FirstLaunchRepository>(
-  (ref) {
-    final sharedPreferences = ref.watch(sharedPreferencesProvider);
-    return FirstLaunchRepositoryImpl(prefs: sharedPreferences);
-  },
+  (ref) => FirstLaunchRepositoryImpl(ref.watch(sharedPreferencesProvider)),
 );
 
-final firstLaunchUsecaseProvider = Provider<FirstLaunchUsecase>((
-  ref,
-) {
-  final firstLaunchRepository = ref.watch(
-    firstLaunchRepositoryProvider,
-  );
-  return FirstLaunchUsecaseImpl(firstLaunchRepository);
-});
+final firstLaunchUsecaseProvider = Provider<FirstLaunchUsecase>(
+  (ref) => FirstLaunchUsecaseImpl(ref.watch(firstLaunchRepositoryProvider)),
+);

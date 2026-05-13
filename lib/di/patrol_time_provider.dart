@@ -16,20 +16,15 @@ final patrolTimeModelFactoryProvider = Provider<PatrolTimeModelFactory>(
   (_) => PatrolTimeModelFactory(),
 );
 
-final patrolTimeRepositoryProvider = Provider<PatrolTimeRepository>((ref) {
-  final patrolRecordDatasource = ref.watch(patrolRecordDatasourceProvider);
-  final patrolTimeFactory = ref.watch(patrolTimeFactoryProvider);
-  final patrolTimeModelFactory = ref.watch(patrolTimeModelFactoryProvider);
-  final exportDatasource = ref.watch(exportDatasourceProvider);
-  return PatrolTimeRepositoryImpl(
-    patrolRecordDatasource: patrolRecordDatasource,
-    patrolTimeFactory: patrolTimeFactory,
-    patrolTimeModelFactory: patrolTimeModelFactory,
-    exportDatasource: exportDatasource,
-  );
-});
+final patrolTimeRepositoryProvider = Provider<PatrolTimeRepository>(
+  (ref) => PatrolTimeRepositoryImpl(
+    ref.watch(patrolRecordDatasourceProvider),
+    ref.watch(patrolTimeFactoryProvider),
+    ref.watch(patrolTimeModelFactoryProvider),
+    ref.watch(exportDatasourceProvider),
+  ),
+);
 
-final patrolTimeUsecaseProvider = Provider<PatrolTimeUsecase>((ref) {
-  final patrolTimeRepository = ref.watch(patrolTimeRepositoryProvider);
-  return PatrolTimeUsecaseImpl(patrolTimeRepository: patrolTimeRepository);
-});
+final patrolTimeUsecaseProvider = Provider<PatrolTimeUsecase>(
+  (ref) => PatrolTimeUsecaseImpl(ref.watch(patrolTimeRepositoryProvider)),
+);

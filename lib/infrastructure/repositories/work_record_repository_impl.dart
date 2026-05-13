@@ -3,15 +3,15 @@ import 'package:boar_time/infrastructure/datasource/work_record_datasource/work_
 import 'package:boar_time/infrastructure/isar/work_record/work_record.dart';
 
 class WorkRecordRepositoryImpl implements WorkRecordRepository {
-  WorkRecordRepositoryImpl({required this.workRecordDatasource});
+  WorkRecordRepositoryImpl(this._workRecordDatasource);
 
-  WorkRecordDatasource workRecordDatasource;
+  final WorkRecordDatasource _workRecordDatasource;
 
   @override
   Future<WorkRecord?> getByDate(DateTime date) =>
-      workRecordDatasource.getByDate(date);
+      _workRecordDatasource.getByDate(date);
 
   @override
   Future<void> upsertByDate(WorkRecord record) =>
-      workRecordDatasource.upsertByDate(record);
+      _workRecordDatasource.upsertByDate(record);
 }

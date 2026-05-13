@@ -4,30 +4,30 @@ import 'package:boar_time/domain/repositories/patrol_time_repository.dart';
 import 'package:boar_time/domain/usecase/patrol_time_usecase.dart';
 
 class PatrolTimeUsecaseImpl implements PatrolTimeUsecase {
-  PatrolTimeUsecaseImpl({required this.patrolTimeRepository});
+  PatrolTimeUsecaseImpl(this._patrolTimeRepository);
 
-  final PatrolTimeRepository patrolTimeRepository;
+  final PatrolTimeRepository _patrolTimeRepository;
 
   @override
   Future<List<PatrolTime>> getPatrolTimeList(int year, int month) =>
-      patrolTimeRepository.getPatrolTimeList(year, month);
+      _patrolTimeRepository.getPatrolTimeList(year, month);
 
   @override
   Future<void> upsert(PatrolTime patrolTime) =>
-      patrolTimeRepository.upsert(patrolTime);
+      _patrolTimeRepository.upsert(patrolTime);
 
   @override
   Future<void> createByEntity(PatrolTime patrolTime) =>
-      patrolTimeRepository.createByEntity(patrolTime);
+      _patrolTimeRepository.createByEntity(patrolTime);
 
   @override
   Future<void> delete(PatrolTime patrolTime) =>
-      patrolTimeRepository.delete(patrolTime);
+      _patrolTimeRepository.delete(patrolTime);
 
   @override
   Future<void> export(
     List<PatrolTime> entityList,
     ExportFormat format,
     String filename,
-  ) => patrolTimeRepository.export(entityList, format, filename);
+  ) => _patrolTimeRepository.export(entityList, format, filename);
 }

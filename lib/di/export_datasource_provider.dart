@@ -3,5 +3,5 @@ import 'package:boar_time/infrastructure/datasource/export_datasource/export_dat
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final exportDatasourceProvider = Provider<ExportDatasource>(
-  (ref) => ExportDatasourceImpl(),
+  (_) => ExportDatasourceImpl(),
 );

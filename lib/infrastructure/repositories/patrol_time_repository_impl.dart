@@ -9,50 +9,56 @@ import 'package:boar_time/infrastructure/model/patrol_time_model.dart';
 import 'package:boar_time/infrastructure/isar/patrol_record/patrol_record.dart';
 
 class PatrolTimeRepositoryImpl implements PatrolTimeRepository {
-  PatrolTimeRepositoryImpl({
-    required this.patrolRecordDatasource,
-    required this.patrolTimeFactory,
-    required this.patrolTimeModelFactory,
-    required this.exportDatasource,
-  });
+  PatrolTimeRepositoryImpl(
+    this._patrolRecordDatasource,
+    this._patrolTimeFactory,
+    this._patrolTimeModelFactory,
+    this._exportDatasource,
+  );
 
-  final PatrolRecordDatasource patrolRecordDatasource;
-  final PatrolTimeFactory patrolTimeFactory;
-  final PatrolTimeModelFactory patrolTimeModelFactory;
-  final ExportDatasource exportDatasource;
+  final PatrolRecordDatasource _patrolRecordDatasource;
+  final PatrolTimeFactory _patrolTimeFactory;
+  final PatrolTimeModelFactory _patrolTimeModelFactory;
+  final ExportDatasource _exportDatasource;
 
   @override
   Future<List<PatrolTime>> getPatrolTimeList(int year, int month) async {
-    final patrolRecords = await patrolRecordDatasource.getByMonth(year, month);
+    final patrolRecords = await _patrolRecordDatasource.getByMonth(year, month);
 
     final modelList = patrolRecords
         .map((record) => PatrolTimeModel.fromRecord(record))
         .toList();
     final patrolTimeList = modelList
-        .map((model) => patrolTimeFactory.createFromModel(model))
+        .map((model) => _patrolTimeFactory.createFromModel(model))
         .toList();
     return patrolTimeList;
   }
 
   @override
   Future<void> upsert(PatrolTime patrolTime) async {
-    final patrolTimeModel = patrolTimeModelFactory.createFromEntity(patrolTime);
+    final patrolTimeModel = _patrolTimeModelFactory.createFromEntity(
+      patrolTime,
+    );
     final targetRecord = PatrolRecord.fromModel(patrolTimeModel);
-    await patrolRecordDatasource.upsertById(targetRecord);
+    await _patrolRecordDatasource.upsertById(targetRecord);
   }
 
   @override
   Future<void> createByEntity(PatrolTime patrolTime) async {
-    final patrolTimeModel = patrolTimeModelFactory.createFromEntity(patrolTime);
+    final patrolTimeModel = _patrolTimeModelFactory.createFromEntity(
+      patrolTime,
+    );
     final targetRecord = PatrolRecord.fromModel(patrolTimeModel);
-    await patrolRecordDatasource.createByRecord(targetRecord);
+    await _patrolRecordDatasource.createByRecord(targetRecord);
   }
 
   @override
   Future<void> delete(PatrolTime patrolTime) async {
-    final patrolTimeModel = patrolTimeModelFactory.createFromEntity(patrolTime);
+    final patrolTimeModel = _patrolTimeModelFactory.createFromEntity(
+      patrolTime,
+    );
     final targetRecord = PatrolRecord.fromModel(patrolTimeModel);
-    await patrolRecordDatasource.deleteIfExists(targetRecord);
+    await _patrolRecordDatasource.deleteIfExists(targetRecord);
   }
 
   @override
@@ -62,9 +68,9 @@ class PatrolTimeRepositoryImpl implements PatrolTimeRepository {
     String filename,
   ) async {
     final patrolTimeModelList = entityList
-        .map((entity) => patrolTimeModelFactory.createFromEntity(entity))
+        .map((entity) => _patrolTimeModelFactory.createFromEntity(entity))
         .toList();
-    await exportDatasource.export(
+    await _exportDatasource.export(
       format: format,
       data: patrolTimeModelList,
       filename: filename,

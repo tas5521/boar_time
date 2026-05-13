@@ -14,50 +14,39 @@ import 'package:boar_time/infrastructure/repositories/stamping_time_repository_i
 import 'package:boar_time/infrastructure/repositories/work_record_repository_impl.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final workRecordDatasourceProvider = Provider<WorkRecordDatasource>((ref) {
-  final isar = ref.watch(isarProvider);
-  return WorkRecordDatasourceImpl(isar: isar);
-});
+final workRecordDatasourceProvider = Provider<WorkRecordDatasource>(
+  (ref) => WorkRecordDatasourceImpl(ref.watch(isarProvider)),
+);
 
-final patrolRecordDatasourceProvider = Provider<PatrolRecordDatasource>((ref) {
-  final isar = ref.watch(isarProvider);
-  return PatrolRecordDatasourceImpl(isar: isar);
-});
+final patrolRecordDatasourceProvider = Provider<PatrolRecordDatasource>(
+  (ref) => PatrolRecordDatasourceImpl(ref.watch(isarProvider)),
+);
 
 final stampingTimeFactoryProvider = Provider<StampingTimeFactory>(
   (_) => StampingTimeFactory(),
 );
 
-final stampingTimeRepositoryProvider = Provider<StampingTimeRepository>((ref) {
-  final workRecordDatasource = ref.watch(workRecordDatasourceProvider);
-  final patrolRecordDatasource = ref.watch(patrolRecordDatasourceProvider);
-  final stampingTimeFactory = ref.watch(stampingTimeFactoryProvider);
-  return StampingTimeRepositoryImpl(
-    workRecordDatasource: workRecordDatasource,
-    patrolRecordDatasource: patrolRecordDatasource,
-    stampingTimeFactory: stampingTimeFactory,
-  );
-});
+final stampingTimeRepositoryProvider = Provider<StampingTimeRepository>(
+  (ref) => StampingTimeRepositoryImpl(
+    ref.watch(workRecordDatasourceProvider),
+    ref.watch(patrolRecordDatasourceProvider),
+    ref.watch(stampingTimeFactoryProvider),
+  ),
+);
 
-final workRecordRepositoryProvider = Provider<WorkRecordRepository>((ref) {
-  final workRecordDatasource = ref.watch(workRecordDatasourceProvider);
-  return WorkRecordRepositoryImpl(workRecordDatasource: workRecordDatasource);
-});
+final workRecordRepositoryProvider = Provider<WorkRecordRepository>(
+  (ref) => WorkRecordRepositoryImpl(ref.watch(workRecordDatasourceProvider)),
+);
 
-final patrolRecordRepositoryProvider = Provider<PatrolRecordRepository>((ref) {
-  final patrolRecordDatasource = ref.watch(patrolRecordDatasourceProvider);
-  return PatrolRecordRepositoryImpl(
-    patrolRecordDatasource: patrolRecordDatasource,
-  );
-});
+final patrolRecordRepositoryProvider = Provider<PatrolRecordRepository>(
+  (ref) =>
+      PatrolRecordRepositoryImpl(ref.watch(patrolRecordDatasourceProvider)),
+);
 
-final stampingTimeUsecaseProvider = Provider<StampingTimeUsecase>((ref) {
-  final stampingTimeRepository = ref.watch(stampingTimeRepositoryProvider);
-  final workRecordRepository = ref.watch(workRecordRepositoryProvider);
-  final patrolRecordRepository = ref.watch(patrolRecordRepositoryProvider);
-  return StampingTimeUsecaseImpl(
-    stampingTimeRepository,
-    workRecordRepository,
-    patrolRecordRepository,
-  );
-});
+final stampingTimeUsecaseProvider = Provider<StampingTimeUsecase>(
+  (ref) => StampingTimeUsecaseImpl(
+    ref.watch(stampingTimeRepositoryProvider),
+    ref.watch(workRecordRepositoryProvider),
+    ref.watch(patrolRecordRepositoryProvider),
+  ),
+);

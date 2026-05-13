@@ -16,26 +16,16 @@ final butcheringTimeModelFactoryProvider = Provider<ButcheringTimeModelFactory>(
   (_) => ButcheringTimeModelFactory(),
 );
 
-final butcheringTimeRepositoryProvider = Provider<ButcheringTimeRepository>((
-  ref,
-) {
-  final workRecordDatasource = ref.watch(workRecordDatasourceProvider);
-  final butcheringTimeFactory = ref.watch(butcheringTimeFactoryProvider);
-  final butcheringTimeModelFactory = ref.watch(
-    butcheringTimeModelFactoryProvider,
-  );
-  final exportDatasource = ref.watch(exportDatasourceProvider);
-  return ButcheringTimeRepositoryImpl(
-    workRecordDatasource: workRecordDatasource,
-    butcheringTimeFactory: butcheringTimeFactory,
-    butcheringTimeModelFactory: butcheringTimeModelFactory,
-    exportDatasource: exportDatasource,
-  );
-});
+final butcheringTimeRepositoryProvider = Provider<ButcheringTimeRepository>(
+  (ref) => ButcheringTimeRepositoryImpl(
+    ref.watch(workRecordDatasourceProvider),
+    ref.watch(butcheringTimeFactoryProvider),
+    ref.watch(butcheringTimeModelFactoryProvider),
+    ref.watch(exportDatasourceProvider),
+  ),
+);
 
-final butcheringTimeUsecaseProvider = Provider<ButcheringTimeUsecase>((ref) {
-  final butcheringTimeRepository = ref.watch(butcheringTimeRepositoryProvider);
-  return ButcheringTimeUsecaseImpl(
-    butcheringTimeRepository: butcheringTimeRepository,
-  );
-});
+final butcheringTimeUsecaseProvider = Provider<ButcheringTimeUsecase>(
+  (ref) =>
+      ButcheringTimeUsecaseImpl(ref.watch(butcheringTimeRepositoryProvider)),
+);

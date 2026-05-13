@@ -9,37 +9,37 @@ import 'package:boar_time/infrastructure/model/butchering_time_model.dart';
 import 'package:boar_time/infrastructure/isar/work_record/work_record.dart';
 
 class ButcheringTimeRepositoryImpl implements ButcheringTimeRepository {
-  ButcheringTimeRepositoryImpl({
-    required this.workRecordDatasource,
-    required this.butcheringTimeFactory,
-    required this.butcheringTimeModelFactory,
-    required this.exportDatasource,
-  });
+  ButcheringTimeRepositoryImpl(
+    this._workRecordDatasource,
+    this._butcheringTimeFactory,
+    this._butcheringTimeModelFactory,
+    this._exportDatasource,
+  );
 
-  final WorkRecordDatasource workRecordDatasource;
-  final ButcheringTimeFactory butcheringTimeFactory;
-  final ButcheringTimeModelFactory butcheringTimeModelFactory;
-  final ExportDatasource exportDatasource;
+  final WorkRecordDatasource _workRecordDatasource;
+  final ButcheringTimeFactory _butcheringTimeFactory;
+  final ButcheringTimeModelFactory _butcheringTimeModelFactory;
+  final ExportDatasource _exportDatasource;
 
   @override
   Future<List<ButcheringTime>> getButcheringTimeList() async {
-    final workRecords = await workRecordDatasource.getAll();
+    final workRecords = await _workRecordDatasource.getAll();
     final modelList = workRecords
         .map((record) => ButcheringTimeModel.fromRecord(record))
         .toList();
     final butcheringTimeList = modelList
-        .map((model) => butcheringTimeFactory.createFromModel(model))
+        .map((model) => _butcheringTimeFactory.createFromModel(model))
         .toList();
     return butcheringTimeList;
   }
 
   @override
   Future<void> upsert(ButcheringTime butcheringTime) async {
-    final butcheringTimeModel = butcheringTimeModelFactory.createFromEntity(
+    final butcheringTimeModel = _butcheringTimeModelFactory.createFromEntity(
       butcheringTime,
     );
     final targetRecord = WorkRecord.fromModel(butcheringTimeModel);
-    await workRecordDatasource.upsertByDate(targetRecord);
+    await _workRecordDatasource.upsertByDate(targetRecord);
   }
 
   @override
@@ -49,9 +49,9 @@ class ButcheringTimeRepositoryImpl implements ButcheringTimeRepository {
     String filename,
   ) async {
     final butcheringTimeModelList = entityList
-        .map((entity) => butcheringTimeModelFactory.createFromEntity(entity))
+        .map((entity) => _butcheringTimeModelFactory.createFromEntity(entity))
         .toList();
-    await exportDatasource.export(
+    await _exportDatasource.export(
       format: format,
       data: butcheringTimeModelList,
       filename: filename,

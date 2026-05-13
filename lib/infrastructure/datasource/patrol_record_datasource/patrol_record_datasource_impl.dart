@@ -3,13 +3,13 @@ import 'package:boar_time/infrastructure/isar/patrol_record/patrol_record.dart';
 import 'package:isar_community/isar.dart';
 
 class PatrolRecordDatasourceImpl implements PatrolRecordDatasource {
-  PatrolRecordDatasourceImpl({required this.isar});
+  PatrolRecordDatasourceImpl(this._isar);
 
-  final Isar isar;
+  final Isar _isar;
 
   @override
   Future<PatrolRecord?> getActive(DateTime date) async {
-    return isar.patrolRecords
+    return _isar.patrolRecords
         .filter()
         .dateEqualTo(date)
         .endIsNull()
@@ -18,7 +18,7 @@ class PatrolRecordDatasourceImpl implements PatrolRecordDatasource {
 
   @override
   Future<List<PatrolRecord>> getByDate(DateTime date) async {
-    return isar.patrolRecords
+    return _isar.patrolRecords
         .filter()
         .dateEqualTo(date)
         .sortByStart()
@@ -30,7 +30,7 @@ class PatrolRecordDatasourceImpl implements PatrolRecordDatasource {
     final from = DateTime(year, month, 1);
     final to = DateTime(year, month + 1, 1);
 
-    return isar.patrolRecords
+    return _isar.patrolRecords
         .where()
         .dateBetween(from, to, includeUpper: false)
         .sortByStart()
@@ -39,15 +39,15 @@ class PatrolRecordDatasourceImpl implements PatrolRecordDatasource {
 
   @override
   Future<void> create(DateTime date, DateTime start) async {
-    await isar.writeTxn(() async {
-      await isar.patrolRecords.put(PatrolRecord(date: date, start: start));
+    await _isar.writeTxn(() async {
+      await _isar.patrolRecords.put(PatrolRecord(date: date, start: start));
     });
   }
 
   @override
   Future<void> createByRecord(PatrolRecord record) async {
-    await isar.writeTxn(() async {
-      await isar.patrolRecords.put(
+    await _isar.writeTxn(() async {
+      await _isar.patrolRecords.put(
         PatrolRecord(
           date: record.date,
           start: record.start,
@@ -64,11 +64,11 @@ class PatrolRecordDatasourceImpl implements PatrolRecordDatasource {
 
   @override
   Future<void> update(PatrolRecord record) =>
-      isar.writeTxn(() => isar.patrolRecords.put(record));
+      _isar.writeTxn(() => _isar.patrolRecords.put(record));
 
   @override
   Future<void> upsertById(PatrolRecord record) async {
-    final exist = await isar.patrolRecords.get(record.id);
+    final exist = await _isar.patrolRecords.get(record.id);
     if (exist == null) {
       await update(record);
     } else {
@@ -87,5 +87,5 @@ class PatrolRecordDatasourceImpl implements PatrolRecordDatasource {
 
   @override
   Future<bool> deleteIfExists(PatrolRecord record) =>
-      isar.writeTxn(() => isar.patrolRecords.delete(record.id));
+      _isar.writeTxn(() => _isar.patrolRecords.delete(record.id));
 }
