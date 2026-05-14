@@ -43,7 +43,7 @@
 
 - **Riverpod + flutter_hooks**  
   - **Notifier / AsyncNotifier:** 画面ごとの状態と操作を担当。永続化や帳票出力は **Usecase → Repository（抽象）** に任せ、具体実装は **DI** で注入するクリーンアーキテクチャ寄りの構成にした。
-  - **Provider:** NotifierやRepository/Usecaseの具象を`lib/di`で束ねて、Viewからは抽象にだけ依存しやすくしている。
+  - **Provider:** Notifier や Repository / Usecase の具象は、機能ごとの `lib/features/<機能>/di/` および横断関心の `lib/core/.../di/` で束ね、View からは抽象にだけ依存しやすくしている。
   - **Hooks（`flutter_hooks`）:**
     - `useState`: ダイアログ内の選択値など、画面ローカルな一時状態を簡潔に管理。Riverpodで扱うほどではない状態に使用。
     - `useEffect`: アプリのライフサイクル復帰時にデータを再取得するなど、副作用の実行タイミングを制御。
@@ -67,13 +67,13 @@
 
 ## アーキテクチャ
 
-クリーンアーキテクチャに近い層の分離を採用しています。
+クリーンアーキテクチャに近い層の分離、かつ、機能（コンポーネント）単位のスライスでソースコードを束ねています。各機能フォルダ内に domain / application / infrastructure / presentation を置き、複数機能から使う永続化や帳票の共通処理は `lib/core/` に寄せています。
 
-- **ドメイン層** — フレームワークに依存しない Entity・抽象（Repository / Usecase）・共有 enum（`domain/enums/`）
-- **アプリケーション層** — ユースケースの組み立て（`lib/application`）
-- **インフラ層** — Isar・ファイル出力などの具体技術（`lib/infrastructure`）
-- **プレゼンテーション層** — 画面と Notifier。Usecaseは抽象経由で利用
-- **依存の注入** — 具象の組み立ては `lib/di`のProviderに集約
+- **ドメイン層** — フレームワークに依存しない Entity・抽象（Repository / Usecase）。機能固有のものは `features/<機能>/domain/`、横断のものは `core/<関心>/domain/`（例: 見回り明細の `PatrolLabel`）
+- **アプリケーション層** — ユースケースの組み立て（`lib/features/<機能>/application/`）
+- **インフラ層** — Isar・Repository 実装・帳票用サービスなど（`lib/features/<機能>/infrastructure/` および `lib/core/.../infrastructure/`）
+- **プレゼンテーション層** — 画面・Notifier・画面用State（`lib/features/<機能>/presentation/`）。画面専用ウィジェットは `presentation/page/widgets/` に分割
+- **依存の注入** — 具象の組み立ては各機能の `di/` と `core/.../di/` の Provider に集約
 
 ### レイヤ間の依存
 
@@ -114,18 +114,19 @@ flowchart LR
   RepositoryImpl --> Files[PDF / CSV / xlsx]
 ```
 
-矢印は「依存の向き（利用する側 → される側）」を表します。**domainは他の層に依存しません**。`lib/di` は各層の具象を束ねて注入する役割です。
+矢印は「依存の向き（利用する側 → される側）」を表します。  
+Domainは他の層に依存しません。  
+具象の組み立ては各 `di/` の Provider が担います。
 
 | ディレクトリ | 責務 |
 | --- | --- |
-| `lib/presentation/` | 画面・共通ウィジェット、`HookConsumerWidget` 等。RiverpodのNotifier、画面用State（freezed）、`auto_route`によるルーティング |
-| `lib/application/` | ドメインのユースケースインターフェースの実装。複数Repositoryを組み合わせたアプリ固有の手続き |
-| `lib/domain/` | Entity、Repository / Usecaseの抽象、全体で共有する列挙（`enums/`：例 `ExportFormat`、`JobType`、`PatrolLabel`） |
-| `lib/infrastructure/` | Repository実装、Isarの`@collection`スキーマ（`isar/`）、Datasource、永続化用Model・Factory、帳票用ExportDatasource（PDF / CSV / Excel） |
-| `lib/di/` | Providerによる具象の生成・注入（IsarとSharedPreferencesは`main`で初期化し、`overrideWithValue`で渡す） |
+| `lib/app/` | `auto_route` のルーター、ボトムナビなどアプリの入り口。タブ状態などシェル用の Notifier |
+| `lib/features/<機能>/` | **解体・見回り・打刻**ごとに domain / application / infrastructure / presentation / `di` をまとめた機能スライス。画面は `HookConsumerWidget`、State は freezed |
+| `lib/core/` | 複数機能から参照する関心ごとのモジュール（例: `work_record` / `patrol_record` の永続化、`export` のファイル書き出し、`first_launch`、`isar` / `shared_preferences` の Provider） |
+| `lib/shared/` | 機能横断の UI（`widgets/`）、アイコン（`icons/`）、共有列挙（`enums/`：例 `ExportFormat`） |
 | `lib/utils/migration/` | バージョンアップに伴うデータ移行 |
 
-**依存の向き（原則）:** 内側の`domain`は外側を知らない。
+帳票のバイト列生成は機能ごとの `infrastructure/services/*_export_service.dart`、ファイル保存と起動は `core/export/export_file_writer.dart` が担当します。
 
 **起動フロー:** `main`でIsar初期化 → マイグレーション → SharedPreferences取得 → ProviderScopeの`overrides`で`isarProvider` / `sharedPreferencesProvider` を注入 → `runApp`（`lib/main.dart`）。
 

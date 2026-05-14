@@ -1,5 +1,5 @@
-import 'package:boar_time/infrastructure/isar/patrol_record/patrol_record.dart';
-import 'package:boar_time/infrastructure/isar/work_record/work_record.dart';
+import 'package:boar_time/core/patrol_record/infrastructure/isar/patrol_record/patrol_record.dart';
+import 'package:boar_time/core/work_record/infrastructure/isar/work_record/work_record.dart';
 import 'package:boar_time/utils/migration/app_meta.dart';
 import 'package:isar_community/isar.dart';
 
