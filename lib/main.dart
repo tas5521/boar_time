@@ -1,8 +1,8 @@
-import 'package:boar_time/di/isar_provider.dart';
-import 'package:boar_time/di/shared_preferences_provider.dart';
-import 'package:boar_time/infrastructure/isar/patrol_record/patrol_record.dart';
-import 'package:boar_time/infrastructure/isar/work_record/work_record.dart';
-import 'package:boar_time/presentation/navigation/auto_route/app_router.dart';
+import 'package:boar_time/core/isar/di/isar_provider.dart';
+import 'package:boar_time/core/shared_preferences/di/shared_preferences_provider.dart';
+import 'package:boar_time/core/patrol_record/infrastructure/isar/patrol_record/patrol_record.dart';
+import 'package:boar_time/core/work_record/infrastructure/isar/work_record/work_record.dart';
+import 'package:boar_time/app/navigation/auto_route/app_router.dart';
 import 'package:boar_time/utils/migration/app_meta.dart';
 import 'package:boar_time/utils/migration/migrate_patrol_data.dart';
 import 'package:flutter/material.dart';

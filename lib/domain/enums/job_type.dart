@@ -1,1 +1,0 @@
-enum JobType { butchering, patrol }
