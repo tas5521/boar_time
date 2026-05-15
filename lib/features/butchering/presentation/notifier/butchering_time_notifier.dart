@@ -20,13 +20,11 @@ class ButcheringTimeNotifier
           List<ButcheringTimeState>,
           ({int year, int month})
         > {
-  late final ButcheringTimeUsecase _usecase;
+  ButcheringTimeUsecase get _usecase => ref.read(butcheringTimeUsecaseProvider);
 
   @override
-  FutureOr<List<ButcheringTimeState>> build(arg) {
-    _usecase = ref.read(butcheringTimeUsecaseProvider);
-    return _createButcheringTimeState(arg.year, arg.month);
-  }
+  FutureOr<List<ButcheringTimeState>> build(arg) =>
+      _createButcheringTimeState(arg.year, arg.month);
 
   Future<List<ButcheringTimeState>> _createButcheringTimeState(
     int year,

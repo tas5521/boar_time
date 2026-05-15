@@ -17,12 +17,10 @@ final patrolTimeProvider =
 class PatrolTimeNotifier
     extends
         FamilyAsyncNotifier<List<PatrolTimeState>, ({int year, int month})> {
-  late final PatrolTimeUsecase _usecase;
+  PatrolTimeUsecase get _usecase => ref.read(patrolTimeUsecaseProvider);
   @override
-  FutureOr<List<PatrolTimeState>> build(arg) {
-    _usecase = ref.read(patrolTimeUsecaseProvider);
-    return _createPatrolTimeState(arg.year, arg.month);
-  }
+  FutureOr<List<PatrolTimeState>> build(arg) =>
+      _createPatrolTimeState(arg.year, arg.month);
 
   Future<List<PatrolTimeState>> _createPatrolTimeState(
     int year,
