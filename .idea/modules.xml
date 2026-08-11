@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/boar_time.iml" filepath="$PROJECT_DIR$/boar_time.iml" />
-      <module fileurl="file://$PROJECT_DIR$/android/boar_time_android.iml" filepath="$PROJECT_DIR$/android/boar_time_android.iml" />
     </modules>
   </component>
 </project>
